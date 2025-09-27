@@ -12,9 +12,58 @@ import "reactflow/dist/style.css";
 import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "reactflow";
 import { Article, Card, Footer, Header, Heading1, Main, Portion, Row, Spinner, Text } from "fictoan-react";
 
+import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// TYPES ===============================================================================================================
+interface NodeData {
+    isMule? : boolean;
+    isLocked? : boolean;
+    isShaking? : boolean;
+    onNodeClick? : (nodeId : string, isMule : boolean) => void;
+}
+
 // CUSTOM NODE COMPONENT ===============================================================================================
-const CircleNode = ({data} : { data : { isMule? : boolean } }) => {
-    return <div className={`circle-node ${data.isMule ? "mule-account" : ""}`}></div>;
+const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
+    const handleClick = (event : React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (data.onNodeClick) {
+            data.onNodeClick(id, data.isMule || false);
+        }
+        return false;
+    };
+
+    const handleMouseDown = (event : React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    };
+
+    if (data.isMule && data.isLocked) {
+        return (
+            <div className={`circle-node mule-account locked`} onClick={handleClick} onMouseDown={handleMouseDown}>
+                <img
+                    src={MuleHeadImage.src}
+                    alt="Locked Mule"
+                    style={{
+                        width        : "64px",
+                        height       : "64px",
+                        borderRadius : "50%",
+                        objectFit    : "cover",
+                        maxWidth     : "unset",
+                    }}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div
+            className={`circle-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
+            onClick={handleClick}
+            onMouseDown={handleMouseDown}
+        />
+    );
 };
 
 // CONFIGURATION =======================================================================================================
@@ -33,7 +82,7 @@ const TRANSACTION_CONFIG = {
     MAX_CONCURRENT          : 10,        // Maximum concurrent transactions for performance
 };
 
-// TYPES ===============================================================================================================
+// TYPES ===============================================================================================
 interface TransactionInstance {
     id : string;
     fromNode : Node;
@@ -141,6 +190,10 @@ const GamePage = () => {
     const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
     const [ activeRipples, setActiveRipples ] = useState<NodeRipple[]>([]);
     const [ pendingMoneyLoss, setPendingMoneyLoss ] = useState<Map<string, number>>(new Map());
+    const [ lockedNodes, setLockedNodes ] = useState<Set<string>>(new Set());
+    const [ shakingNodes, setShakingNodes ] = useState<Set<string>>(new Set());
+    const [ muleIndices, setMuleIndices ] = useState<Set<number> | null>(null);
+    const [ baseNodes, setBaseNodes ] = useState<Node[]>([]);
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -206,8 +259,28 @@ const GamePage = () => {
         return () => clearTimeout(timeoutId);
     }, []);
 
-    const nodes = useMemo(() => {
-        if (!gridDimensions) return [];
+    // Handle node clicks
+    const handleNodeClick = useCallback((nodeId : string, isMule : boolean) => {
+        if (isMule) {
+            // Lock mule account
+            setLockedNodes(prev => new Set(prev).add(nodeId));
+        } else {
+            // Shake normal account
+            setShakingNodes(prev => new Set(prev).add(nodeId));
+
+            // Remove shake effect after animation
+            setTimeout(() => {
+                setShakingNodes(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(nodeId);
+                });
+            }, 600); // Match CSS animation duration
+        }
+    }, []);
+
+    // Create base nodes only when grid dimensions change
+    useEffect(() => {
+        if (!gridDimensions) return;
 
         const gridNodes : Node[] = [];
 
@@ -226,23 +299,49 @@ const GamePage = () => {
             }
         }
 
-        // Randomly select mule accounts (up to 25 or 25% of total, whichever is smaller)
-        const totalNodes = gridNodes.length;
-        const muleCount = Math.min(MULE_ACCOUNTS, Math.floor(totalNodes * 0.25));
-        const muleIndices = new Set<number>();
+        // Initialize mule indices only once
+        if (!muleIndices) {
+            const totalNodes = gridNodes.length;
+            const muleCount = Math.min(MULE_ACCOUNTS, Math.floor(totalNodes * 0.25));
+            const newMuleIndices = new Set<number>();
 
-        while (muleIndices.size < muleCount) {
-            const randomIndex = Math.floor(Math.random() * totalNodes);
-            muleIndices.add(randomIndex);
+            while (newMuleIndices.size < muleCount) {
+                const randomIndex = Math.floor(Math.random() * totalNodes);
+                newMuleIndices.add(randomIndex);
+            }
+
+            setMuleIndices(newMuleIndices);
+
+            // Mark selected nodes as mule accounts
+            newMuleIndices.forEach(index => {
+                if (gridNodes[index]) {
+                    gridNodes[index].data = {isMule : true};
+                }
+            });
+        } else {
+            // Use existing mule indices
+            muleIndices.forEach(index => {
+                if (gridNodes[index]) {
+                    gridNodes[index].data = {isMule : true};
+                }
+            });
         }
 
-        // Mark selected nodes as mule accounts
-        muleIndices.forEach(index => {
-            gridNodes[index].data = {isMule : true};
-        });
+        setBaseNodes(gridNodes);
+    }, [ gridDimensions, muleIndices ]);
 
-        return gridNodes;
-    }, [ gridDimensions ]);
+    // Update nodes with dynamic state
+    const nodes = useMemo(() => {
+        return baseNodes.map(node => ({
+            ...node,
+            data : {
+                ...node.data,
+                onNodeClick : handleNodeClick,
+                isLocked    : lockedNodes?.has(node.id) || false,
+                isShaking   : shakingNodes?.has(node.id) || false,
+            },
+        }));
+    }, [ baseNodes, handleNodeClick, lockedNodes, shakingNodes ]);
 
     // Helper function to generate random transaction amount
     const generateRandomAmount = () => {
@@ -254,33 +353,28 @@ const GamePage = () => {
     const getRandomNodes = () => {
         // Get only normal accounts for "from" node (mules don't initiate transactions)
         const normalNodes = nodes.filter(node => !node.data.isMule);
+        // Get available target nodes (exclude locked mules)
+        const availableTargetNodes = nodes.filter(node => !(node.data.isMule && node.data.isLocked));
 
-        if (normalNodes.length === 0) {
-            // Fallback to any node if no normal nodes exist
-            const fromIndex = Math.floor(Math.random() * nodes.length);
-            let toIndex = Math.floor(Math.random() * nodes.length);
-
-            while (toIndex === fromIndex) {
-                toIndex = Math.floor(Math.random() * nodes.length);
-            }
-
-            return {
-                fromNode : nodes[fromIndex],
-                toNode   : nodes[toIndex],
-            };
+        if (normalNodes.length === 0 || availableTargetNodes.length === 0) {
+            return null; // Cannot create transaction
         }
 
         const fromIndex = Math.floor(Math.random() * normalNodes.length);
-        let toIndex = Math.floor(Math.random() * nodes.length);
+        let toIndex = Math.floor(Math.random() * availableTargetNodes.length);
 
         // Ensure we don't select the same node
-        while (nodes[toIndex].id === normalNodes[fromIndex].id) {
-            toIndex = Math.floor(Math.random() * nodes.length);
+        while (availableTargetNodes[toIndex].id === normalNodes[fromIndex].id) {
+            toIndex = Math.floor(Math.random() * availableTargetNodes.length);
+            // Prevent infinite loop if only one valid target
+            if (availableTargetNodes.length === 1 && availableTargetNodes[0].id === normalNodes[fromIndex].id) {
+                return null;
+            }
         }
 
         return {
             fromNode : normalNodes[fromIndex],
-            toNode   : nodes[toIndex],
+            toNode   : availableTargetNodes[toIndex],
         };
     };
 
@@ -306,7 +400,12 @@ const GamePage = () => {
             return; // Don't create more transactions if we're at the limit
         }
 
-        const {fromNode, toNode} = getRandomNodes();
+        const randomNodesResult = getRandomNodes();
+        if (!randomNodesResult) {
+            return; // Cannot create transaction (no valid targets)
+        }
+
+        const {fromNode, toNode} = randomNodesResult;
         const newTransaction : TransactionInstance = {
             id     : `transaction-${Date.now()}-${Math.random()}`,
             fromNode,
@@ -324,11 +423,11 @@ const GamePage = () => {
     // Get all mule nodes
     const muleNodes = useMemo(() => {
         return nodes.filter(node => node.data.isMule);
-    }, [nodes]);
+    }, [ nodes ]);
 
     // Helper function to parse amount from string (₹1,23,456 -> 123456)
     const parseAmount = (amountString : string) => {
-        return parseInt(amountString.replace(/[₹,]/g, ''), 10);
+        return parseInt(amountString.replace(/[₹,]/g, ""), 10);
     };
 
     // Helper function to format amount to string
@@ -340,7 +439,77 @@ const GamePage = () => {
     const handleTransactionComplete = useCallback((transactionId : string) => {
         const completedTransaction = activeTransactions.find(t => t.id === transactionId);
 
-        if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.fromNode.data.isMule) {
+        // Check if transaction hit a locked mule - bounce it back
+        if (completedTransaction && completedTransaction.toNode.data.isMule && completedTransaction.toNode.data.isLocked) {
+            // Bounce the transaction back to sender
+            const bounceTransaction : TransactionInstance = {
+                id     : `bounce-${Date.now()}-${Math.random()}`,
+                fromNode : completedTransaction.toNode,
+                toNode   : completedTransaction.fromNode,
+                amount   : completedTransaction.amount,
+            };
+
+            // Create ripples for bounce
+            createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
+            createRipple(completedTransaction.fromNode.id, completedTransaction.fromNode.position.x, completedTransaction.fromNode.position.y);
+
+            // Add bounce transaction with delay
+            setTimeout(() => {
+                setActiveTransactions(prev => [...prev, bounceTransaction]);
+            }, 300);
+
+            // Remove original transaction
+            setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
+            return;
+        }
+
+        // Handle bounced transaction returning to a mule account
+        if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.toNode.data.isLocked &&
+            completedTransaction.id.startsWith('bounce-')) {
+            // This is a bounced transaction hitting a mule - treat as normal mule behavior
+            const originalAmount = parseAmount(completedTransaction.amount);
+            const splitCount = Math.random() < 0.5 ? 2 : 3;
+
+            const splitAmounts = [];
+            let remainingAmount = originalAmount;
+
+            for (let i = 0; i < splitCount - 1; i++) {
+                const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6));
+                splitAmounts.push(splitAmount);
+                remainingAmount -= splitAmount;
+            }
+            splitAmounts.push(remainingAmount);
+
+            const availableMules = muleNodes.filter(node =>
+                node.id !== completedTransaction.toNode.id && !node.data.isLocked
+            );
+
+            splitAmounts.forEach((splitAmount, index) => {
+                if (availableMules.length > 0) {
+                    const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
+
+                    const newTransaction : TransactionInstance = {
+                        id     : `bounce-split-${Date.now()}-${index}-${Math.random()}`,
+                        fromNode : completedTransaction.toNode,
+                        toNode   : randomMule,
+                        amount   : formatAmount(splitAmount),
+                    };
+
+                    createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
+                    createRipple(randomMule.id, randomMule.position.x, randomMule.position.y);
+
+                    setTimeout(() => {
+                        setActiveTransactions(prev => [...prev, newTransaction]);
+                    }, 200 + index * 100);
+                } else {
+                    setMoneyLostToMules(prev => prev + splitAmount);
+                    setTotalMoneyInCirculation(prev => prev - splitAmount);
+                }
+            });
+
+            setMoneyLostToMules(prev => prev + originalAmount);
+            setTotalMoneyInCirculation(prev => prev - originalAmount);
+        } else if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.fromNode.data.isMule) {
             // Transaction hit a mule account - split and redistribute
             const originalAmount = parseAmount(completedTransaction.amount);
             const splitCount = Math.random() < 0.5 ? 2 : 3; // Randomly 2 or 3 splits
@@ -362,9 +531,10 @@ const GamePage = () => {
             }
             splitAmounts.push(remainingAmount); // Last amount gets the remainder
 
-            // Create new transactions to other mule accounts
-            const availableMules = muleNodes.filter(node => node.id !== completedTransaction.toNode.id);
-            let completedSecondaryCount = 0;
+            // Create new transactions to other mule accounts (exclude locked mules)
+            const availableMules = muleNodes.filter(node =>
+                node.id !== completedTransaction.toNode.id && !node.data.isLocked
+            );
 
             splitAmounts.forEach((splitAmount, index) => {
                 if (availableMules.length > 0) {
@@ -380,13 +550,20 @@ const GamePage = () => {
                     };
 
                     // Create ripples for the new transaction
-                    createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
+                    createRipple(
+                        completedTransaction.toNode.id,
+                        completedTransaction.toNode.position.x,
+                        completedTransaction.toNode.position.y);
                     createRipple(randomMule.id, randomMule.position.x, randomMule.position.y);
 
                     // Add the new transaction with a slight delay
                     setTimeout(() => {
-                        setActiveTransactions(prev => [...prev, newTransaction]);
+                        setActiveTransactions(prev => [ ...prev, newTransaction ]);
                     }, 200 + index * 100); // Stagger the new transactions
+                } else {
+                    // No available mules - money is effectively lost immediately
+                    setMoneyLostToMules(prev => prev + splitAmount);
+                    setTotalMoneyInCirculation(prev => prev - splitAmount);
                 }
             });
         } else if (completedTransaction && completedTransaction.isSecondaryMuleTransaction && completedTransaction.originalAmount) {
@@ -397,7 +574,7 @@ const GamePage = () => {
             const remainingSecondaryTransactions = activeTransactions.filter(t =>
                 t.isSecondaryMuleTransaction &&
                 t.originalAmount === originalAmount &&
-                t.id !== transactionId
+                t.id !== transactionId,
             );
 
             // If this is the last one, update the money counters
@@ -408,7 +585,7 @@ const GamePage = () => {
         }
 
         setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
-    }, [activeTransactions, muleNodes, createRipple, pendingMoneyLoss]);
+    }, [ activeTransactions, muleNodes, createRipple, pendingMoneyLoss ]);
 
     // Start transaction spawning
     useEffect(() => {
@@ -477,9 +654,13 @@ const GamePage = () => {
                                     minZoom={1}
                                     maxZoom={1}
                                     panOnDrag={false}
+                                    panOnScroll={false}
                                     zoomOnScroll={false}
                                     zoomOnPinch={false}
                                     zoomOnDoubleClick={false}
+                                    preventScrolling={false}
+                                    nodesFocusable={false}
+                                    edgesFocusable={false}
                                 >
                                     <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
                                 </ReactFlow>

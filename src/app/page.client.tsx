@@ -5,9 +5,6 @@ import React from "react";
 // STYLES ==============================================================================================================
 import "$styles/home.css";
 
-// ASSETS ==============================================================================================================
-import FictoanLogo from "$assets/images/fictoan-logo.svg";
-
 // OTHER ===============================================================================================================
 import { Button, Card, Element, Heading1, Portion, Row, Text, CodeBlock, Article } from "fictoan-react";
 
@@ -18,8 +15,6 @@ const HomePage = () => {
                 <Portion>
                     <Element as="div" verticallyCentreItems pushItemsToEnds>
                         <Heading1>Hello, world!</Heading1>
-
-                        <FictoanLogo id="fictoan-logo" width="240px" />
                     </Element>
                 </Portion>
             </Row>
