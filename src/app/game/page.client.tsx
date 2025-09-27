@@ -194,6 +194,8 @@ const GamePage = () => {
     const [ shakingNodes, setShakingNodes ] = useState<Set<string>>(new Set());
     const [ muleIndices, setMuleIndices ] = useState<Set<number> | null>(null);
     const [ baseNodes, setBaseNodes ] = useState<Node[]>([]);
+    const [ mulesFoundCount, setMulesFoundCount ] = useState(0);
+    const [ actualMuleCount, setActualMuleCount ] = useState(0);
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -262,8 +264,17 @@ const GamePage = () => {
     // Handle node clicks
     const handleNodeClick = useCallback((nodeId : string, isMule : boolean) => {
         if (isMule) {
-            // Lock mule account
-            setLockedNodes(prev => new Set(prev).add(nodeId));
+            // Check if already locked before making any changes
+            setLockedNodes(prev => {
+                if (prev.has(nodeId)) {
+                    return prev; // Already locked, no changes
+                }
+
+                // Not locked yet - increment counter and lock
+                const newLockedNodes = new Set(prev).add(nodeId);
+                setMulesFoundCount(count => count + 1);
+                return newLockedNodes;
+            });
         } else {
             // Shake normal account
             setShakingNodes(prev => new Set(prev).add(nodeId));
@@ -273,6 +284,7 @@ const GamePage = () => {
                 setShakingNodes(prev => {
                     const newSet = new Set(prev);
                     newSet.delete(nodeId);
+                    return newSet;
                 });
             }, 600); // Match CSS animation duration
         }
@@ -311,6 +323,7 @@ const GamePage = () => {
             }
 
             setMuleIndices(newMuleIndices);
+            setActualMuleCount(muleCount);
 
             // Mark selected nodes as mule accounts
             newMuleIndices.forEach(index => {
@@ -589,38 +602,45 @@ const GamePage = () => {
 
     // Start transaction spawning
     useEffect(() => {
-        // Stop spawning new transactions if no money left in circulation
-        if (totalMoneyInCirculation <= 0) {
+        // Stop spawning new transactions if no money left in circulation or all mules found
+        if (totalMoneyInCirculation <= 0 || mulesFoundCount === actualMuleCount) {
             return;
         }
 
         const interval = setInterval(() => {
             // Check again before creating each transaction
-            if (totalMoneyInCirculation > 0) {
+            if (totalMoneyInCirculation > 0 && mulesFoundCount < actualMuleCount) {
                 createTransaction();
             }
         }, 1000 / TRANSACTION_CONFIG.TRANSACTIONS_PER_SECOND);
 
         return () => clearInterval(interval);
-    }, [ createTransaction, totalMoneyInCirculation ]);
+    }, [ createTransaction, totalMoneyInCirculation, mulesFoundCount, actualMuleCount ]);
 
     return (
         <Article id="game-page">
             <Header id="scorecard">
                 <Card padding="micro" shape="rounded" isFullHeight>
-                    <Row horizontalPadding="micro">
+                    <Row horizontalPadding="micro" retainLayoutAlways>
                         <Portion desktopSpan="one-third">
                             <Text size="small" weight="400">Total Money in Circulation</Text>
-                            <Heading1 marginTop="nano">
+                            <Text marginTop="nano">
                                 ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                            </Heading1>
+                            </Text>
                         </Portion>
 
                         <Portion desktopSpan="one-third">
                             <Text size="small" weight="400">Money Lost to Mules</Text>
-                            <Heading1 textColour="red" marginTop="nano">
+                            <Text textColour="red" marginTop="nano">
                                 ₹{moneyLostToMules.toLocaleString("en-IN")}
-                            </Heading1>
+                            </Text>
+                        </Portion>
+
+                        <Portion desktopSpan="one-third">
+                            <Text size="small" weight="400">Mules Found</Text>
+                            <Text textColour="green" marginTop="nano">
+                                {mulesFoundCount}/{actualMuleCount}
+                            </Text>
                         </Portion>
 
                         {totalMoneyInCirculation <= 0 && (
@@ -628,6 +648,15 @@ const GamePage = () => {
                                 <Text size="small" weight="400" textColour="red">GAME OVER</Text>
                                 <Heading1 textColour="red" marginTop="nano">
                                     All Money Laundered!
+                                </Heading1>
+                            </Portion>
+                        )}
+
+                        {mulesFoundCount === actualMuleCount && actualMuleCount > 0 && (
+                            <Portion desktopSpan="one-third">
+                                <Text size="small" weight="400" textColour="green">VICTORY!</Text>
+                                <Heading1 textColour="green" marginTop="nano">
+                                    All Mules Found!
                                 </Heading1>
                             </Portion>
                         )}
