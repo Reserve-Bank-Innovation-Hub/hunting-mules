@@ -42,6 +42,18 @@
         position         : relative;
     }
 
+    @media (max-width: 767px) {
+        .circle-node {
+            width  : 30px;
+            height : 30px;
+        }
+
+        .circle-node img {
+            width  : 40px !important;
+            height : 40px !important;
+        }
+    }
+
     .circle-node:hover {
         transform : scale(1.05);
     }
@@ -74,8 +86,8 @@
     }
 
     .mule-account {
-        background-color : var(--red-light60);
-        border           : 2px solid var(--red);
+        /*background-color : var(--red-light60);*/
+        /*border           : 2px solid var(--red);*/
     }
 
     .node-ripple {

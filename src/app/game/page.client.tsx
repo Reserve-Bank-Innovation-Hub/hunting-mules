@@ -67,10 +67,15 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
 };
 
 // CONFIGURATION =======================================================================================================
-const GRID_CONFIG = {
-    CIRCLE_SIZE : 40,
-    MIN_SPACING : 80,   // Minimum spacing between circles
-    PADDING     : 50,   // Padding from container edges
+const getGridConfig = () => {
+    const isMobile = window.innerWidth < 768;
+    return {
+        CIRCLE_SIZE : isMobile ? 30 : 40,
+        MIN_SPACING : isMobile ? 10 : 15,  // Minimum spacing, will scale up proportionally
+        PADDING     : isMobile ? 20 : 50,
+        MAX_CELLS   : 100,                  // Maximum total cells
+        TARGET_MULE_PERCENTAGE : 0.25,      // 25% of cells should be mules
+    };
 };
 
 const MULE_ACCOUNTS = 25;
@@ -107,11 +112,12 @@ const AnimatedTransactionCard = ({
     transaction : TransactionInstance;
     onComplete : (id : string) => void;
 }) => {
+    const gridConfig = getGridConfig();
     // Calculate positions accounting for the overlay and centering the card on nodes
-    const fromX = transaction.fromNode.position.x + (GRID_CONFIG.CIRCLE_SIZE / 2) - 50; // Center card (100px width / 2)
-    const fromY = transaction.fromNode.position.y + (GRID_CONFIG.CIRCLE_SIZE / 2) - 20; // Approximate center height
-    const toX = transaction.toNode.position.x + (GRID_CONFIG.CIRCLE_SIZE / 2) - 50;
-    const toY = transaction.toNode.position.y + (GRID_CONFIG.CIRCLE_SIZE / 2) - 20;
+    const fromX = transaction.fromNode.position.x + (gridConfig.CIRCLE_SIZE / 2) - 50; // Center card (100px width / 2)
+    const fromY = transaction.fromNode.position.y + (gridConfig.CIRCLE_SIZE / 2) - 20; // Approximate center height
+    const toX = transaction.toNode.position.x + (gridConfig.CIRCLE_SIZE / 2) - 50;
+    const toY = transaction.toNode.position.y + (gridConfig.CIRCLE_SIZE / 2) - 20;
 
     return (
         <motion.div
@@ -155,12 +161,13 @@ const NodeRippleEffect = ({
     ripple : NodeRipple;
     onComplete : (id : string) => void;
 }) => {
+    const gridConfig = getGridConfig();
     return (
         <motion.div
             className="node-ripple"
             style={{
-                left   : ripple.x + (GRID_CONFIG.CIRCLE_SIZE / 2),
-                top    : ripple.y + (GRID_CONFIG.CIRCLE_SIZE / 2),
+                left   : ripple.x + (gridConfig.CIRCLE_SIZE / 2),
+                top    : ripple.y + (gridConfig.CIRCLE_SIZE / 2),
                 width  : 0,
                 height : 0,
             }}
@@ -170,8 +177,8 @@ const NodeRippleEffect = ({
                 opacity : 1,
             }}
             animate={{
-                width   : GRID_CONFIG.CIRCLE_SIZE * 2,
-                height  : GRID_CONFIG.CIRCLE_SIZE * 2,
+                width   : gridConfig.CIRCLE_SIZE * 2,
+                height  : gridConfig.CIRCLE_SIZE * 2,
                 opacity : 0,
             }}
             transition={{
@@ -216,39 +223,82 @@ const GamePage = () => {
         const calculateGridDimensions = () => {
             if (!containerRef.current) return;
 
+            const gridConfig = getGridConfig();
             const rect = containerRef.current.getBoundingClientRect();
-            const availableWidth = rect.width - (GRID_CONFIG.PADDING * 2);
-            const availableHeight = rect.height - (GRID_CONFIG.PADDING * 2);
+            const availableWidth = rect.width - (gridConfig.PADDING * 2);
+            const availableHeight = rect.height - (gridConfig.PADDING * 2);
 
-            // Calculate maximum columns and rows that can fit
-            const maxCols = Math.floor((availableWidth + GRID_CONFIG.MIN_SPACING) / (GRID_CONFIG.CIRCLE_SIZE + GRID_CONFIG.MIN_SPACING));
-            const maxRows = Math.floor((availableHeight + GRID_CONFIG.MIN_SPACING) / (GRID_CONFIG.CIRCLE_SIZE + GRID_CONFIG.MIN_SPACING));
+            // Calculate maximum possible cells that could fit with minimum spacing
+            const maxPossibleCols = Math.floor((availableWidth + gridConfig.MIN_SPACING) /
+                                               (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
+            const maxPossibleRows = Math.floor((availableHeight + gridConfig.MIN_SPACING) /
+                                               (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
 
-            // Ensure minimum grid size
-            const columns = Math.max(5, Math.min(15, maxCols));
-            const rows = Math.max(5, Math.min(12, maxRows));
+            // Start with the ideal square grid for MAX_CELLS
+            let targetCells = gridConfig.MAX_CELLS;
+            let bestConfig = { rows: 0, columns: 0, totalCells: 0 };
 
-            // Calculate optimal spacing to center the grid
-            const totalCirclesWidth = columns * GRID_CONFIG.CIRCLE_SIZE;
-            const totalCirclesHeight = rows * GRID_CONFIG.CIRCLE_SIZE;
+            // Try to find the best configuration that maximizes cells while fitting the space
+            for (let testRows = maxPossibleRows; testRows >= 3; testRows--) {
+                for (let testCols = maxPossibleCols; testCols >= 3; testCols--) {
+                    const totalCells = testRows * testCols;
 
-            const spacingX = columns > 1 ? (availableWidth - totalCirclesWidth) / (columns - 1) : GRID_CONFIG.MIN_SPACING;
-            const spacingY = rows > 1 ? (availableHeight - totalCirclesHeight) / (rows - 1) : GRID_CONFIG.MIN_SPACING;
+                    // Skip if this exceeds our maximum
+                    if (totalCells > targetCells) continue;
 
-            // Calculate start position to center the grid
-            const totalGridWidth = (columns - 1) * spacingX + GRID_CONFIG.CIRCLE_SIZE;
-            const totalGridHeight = (rows - 1) * spacingY + GRID_CONFIG.CIRCLE_SIZE;
+                    // Check if this configuration would fit with proportional spacing
+                    const testSpacingX = (availableWidth - (testCols * gridConfig.CIRCLE_SIZE)) / (testCols - 1);
+                    const testSpacingY = (availableHeight - (testRows * gridConfig.CIRCLE_SIZE)) / (testRows - 1);
 
-            const startX = (rect.width - totalGridWidth) / 2;
-            const startY = (rect.height - totalGridHeight) / 2;
+                    // Ensure minimum spacing is maintained
+                    if (testSpacingX >= gridConfig.MIN_SPACING && testSpacingY >= gridConfig.MIN_SPACING) {
+                        // Prefer configurations closer to our target
+                        if (totalCells > bestConfig.totalCells) {
+                            bestConfig = {
+                                rows: testRows,
+                                columns: testCols,
+                                totalCells: totalCells
+                            };
+                        }
+                    }
+                }
+            }
+
+            // If we didn't find a valid configuration, use a fallback
+            if (bestConfig.totalCells === 0) {
+                // Fallback to a minimal grid that definitely fits
+                bestConfig.rows = Math.min(5, maxPossibleRows);
+                bestConfig.columns = Math.min(5, maxPossibleCols);
+                bestConfig.totalCells = bestConfig.rows * bestConfig.columns;
+            }
+
+            // Calculate proportional spacing to fill the available space
+            const spacingX = Math.max(
+                gridConfig.MIN_SPACING,
+                (availableWidth - (bestConfig.columns * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.columns - 1)
+            );
+            const spacingY = Math.max(
+                gridConfig.MIN_SPACING,
+                (availableHeight - (bestConfig.rows * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.rows - 1)
+            );
+
+            // Calculate the actual grid dimensions
+            const totalGridWidth = bestConfig.columns * gridConfig.CIRCLE_SIZE + (bestConfig.columns - 1) * spacingX;
+            const totalGridHeight = bestConfig.rows * gridConfig.CIRCLE_SIZE + (bestConfig.rows - 1) * spacingY;
+
+            // Center the grid in the available space
+            const startX = gridConfig.PADDING + (availableWidth - totalGridWidth) / 2;
+            const startY = gridConfig.PADDING + (availableHeight - totalGridHeight) / 2;
+
+            console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells), Spacing: ${spacingX.toFixed(1)}x${spacingY.toFixed(1)}px`);
 
             setGridDimensions({
-                rows,
-                columns,
-                spacingX,
-                spacingY,
-                startX,
-                startY,
+                rows: bestConfig.rows,
+                columns: bestConfig.columns,
+                spacingX: spacingX,
+                spacingY: spacingY,
+                startX: startX,
+                startY: startY,
             });
 
             // Small delay to show loading state
@@ -258,7 +308,18 @@ const GamePage = () => {
         // Wait for next frame to ensure container is rendered
         const timeoutId = setTimeout(calculateGridDimensions, 100);
 
-        return () => clearTimeout(timeoutId);
+        // Add resize listener for responsive updates
+        const handleResize = () => {
+            setIsGridReady(false);
+            calculateGridDimensions();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     // Handle node clicks
@@ -299,8 +360,9 @@ const GamePage = () => {
         for (let row = 0; row < gridDimensions.rows; row++) {
             for (let col = 0; col < gridDimensions.columns; col++) {
                 const nodeId = `circle-${row}-${col}`;
-                const xPosition = gridDimensions.startX + col * gridDimensions.spacingX;
-                const yPosition = gridDimensions.startY + row * gridDimensions.spacingY;
+                const gridConfig = getGridConfig();
+                const xPosition = gridDimensions.startX + col * (gridConfig.CIRCLE_SIZE + gridDimensions.spacingX);
+                const yPosition = gridDimensions.startY + row * (gridConfig.CIRCLE_SIZE + gridDimensions.spacingY);
 
                 gridNodes.push({
                     id       : nodeId,
