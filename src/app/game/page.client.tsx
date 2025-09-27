@@ -92,6 +92,7 @@ const AnimatedTransactionCard = ({
 const GamePage = () => {
     const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
     const [ isGridReady, setIsGridReady ] = useState(false);
+    const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(10000000); // ₹1,00,00,000
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -252,7 +253,14 @@ const GamePage = () => {
         <Article id="game-page">
             <Header id="scorecard">
                 <Card padding="micro" shape="rounded" isFullHeight>
-
+                    <Row horizontalPadding="micro" verticalPadding="micro">
+                        <Portion>
+                            <Text size="small" weight="400" textColour="hue-6">Total Money in Circulation</Text>
+                            <Heading1 textColour="hue-1" marginTop="nano">
+                                ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                            </Heading1>
+                        </Portion>
+                    </Row>
                 </Card>
             </Header>
 
