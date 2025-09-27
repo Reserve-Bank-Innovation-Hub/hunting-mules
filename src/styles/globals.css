@@ -9,6 +9,3 @@
 @import "./theme-dark.css";
 
 /* GLOBAL RULES ///////////////////////////////////////////////////////////// */
-.theme-dark #fictoan-logo {
-    filter : invert(1);
-}

@@ -1,5 +1,5 @@
 {
-    "name": "fictoan-next-boilerplate",
+    "name": "hunting-mules",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -9,8 +9,9 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "fictoan-react": "latest",
-        "next": "14.0.4",
+        "fictoan-react": "1.11.14",
+        "framer-motion": "^12.23.22",
+        "next": "^15.1.0",
         "prismjs": "^1.30.0",
         "react": "^18",
         "react-dom": "^18",
