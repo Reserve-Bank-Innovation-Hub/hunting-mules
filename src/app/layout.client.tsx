@@ -1,16 +1,16 @@
 "use client"
 
-// EXTERNAL DEPS =======================================================================================================
+// EXTERNAL ============================================================================================================
 import React, { ReactNode } from "react";
-
-// INTERNAL DEPS =======================================================================================================
-import { ThemeProvider } from "fictoan-react";
 
 // COMPONENTS ==========================================================================================================
 import { SiteHeader } from "$components/Header/SiteHeader";
 
 // STYLES ==============================================================================================================
 import "$styles/globals.css";
+
+// OTHER ===============================================================================================================
+import { ThemeProvider } from "fictoan-react";
 
 export const RootLayoutClient = ({children} : { children : ReactNode }) => {
     const listOfThemes = ["theme-light", "theme-dark"];
@@ -19,8 +19,6 @@ export const RootLayoutClient = ({children} : { children : ReactNode }) => {
         <html lang="en">
         <body>
         <ThemeProvider themeList={listOfThemes} currentTheme="theme-dark">
-            <SiteHeader />
-
             {children}
         </ThemeProvider>
         </body>
