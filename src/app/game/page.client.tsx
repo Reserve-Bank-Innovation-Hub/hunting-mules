@@ -93,6 +93,7 @@ const GamePage = () => {
     const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
     const [ isGridReady, setIsGridReady ] = useState(false);
     const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(10000000); // ₹1,00,00,000
+    const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -253,11 +254,18 @@ const GamePage = () => {
         <Article id="game-page">
             <Header id="scorecard">
                 <Card padding="micro" shape="rounded" isFullHeight>
-                    <Row horizontalPadding="micro" verticalPadding="micro">
-                        <Portion>
-                            <Text size="small" weight="400" textColour="hue-6">Total Money in Circulation</Text>
-                            <Heading1 textColour="hue-1" marginTop="nano">
+                    <Row horizontalPadding="micro">
+                        <Portion desktopSpan="one-third">
+                            <Text size="small" weight="400">Total Money in Circulation</Text>
+                            <Heading1 marginTop="nano">
                                 ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                            </Heading1>
+                        </Portion>
+
+                        <Portion desktopSpan="one-third">
+                            <Text size="small" weight="400">Money Lost to Mules</Text>
+                            <Heading1 textColour="red" marginTop="nano">
+                                ₹{moneyLostToMules.toLocaleString("en-IN")}
                             </Heading1>
                         </Portion>
                     </Row>
