@@ -13,6 +13,7 @@ import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "react
 import { Article, Card, Footer, Header, Heading1, Main, Portion, Row, Spinner, Text } from "fictoan-react";
 
 import MuleHeadImage from "../../assets/images/mule-head.png";
+import BankIconImage from "../../assets/images/bank-icon.png";
 
 // TYPES ===============================================================================================================
 interface NodeData {
@@ -46,8 +47,6 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
                     src={MuleHeadImage.src}
                     alt="Locked Mule"
                     style={{
-                        width        : "64px",
-                        height       : "64px",
                         borderRadius : "50%",
                         objectFit    : "cover",
                         maxWidth     : "unset",
@@ -58,11 +57,20 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
     }
 
     return (
-        <div
+        <Card
             className={`circle-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
-        />
+        >
+            <img
+                src={BankIconImage.src}
+                alt="Bank Account"
+                style={{
+                    objectFit : "cover",
+                    maxWidth  : "unset",
+                }}
+            />
+        </Card>
     );
 };
 
@@ -70,10 +78,10 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
 const getGridConfig = () => {
     const isMobile = window.innerWidth < 768;
     return {
-        CIRCLE_SIZE : isMobile ? 30 : 40,
-        MIN_SPACING : isMobile ? 10 : 15,  // Minimum spacing, will scale up proportionally
-        PADDING     : isMobile ? 20 : 50,
-        MAX_CELLS   : 100,                  // Maximum total cells
+        CIRCLE_SIZE            : isMobile ? 32 : 40,
+        MIN_SPACING            : isMobile ? 32 : 15,  // Minimum spacing, will scale up proportionally
+        PADDING                : isMobile ? 32 : 50,
+        MAX_CELLS              : 100,                  // Maximum total cells
         TARGET_MULE_PERCENTAGE : 0.25,      // 25% of cells should be mules
     };
 };
@@ -102,6 +110,7 @@ interface NodeRipple {
     nodeId : string;
     x : number;
     y : number;
+    isLocked? : boolean;
 }
 
 // ANIMATED TRANSACTION COMPONENT ======================================================================================
@@ -113,30 +122,31 @@ const AnimatedTransactionCard = ({
     onComplete : (id : string) => void;
 }) => {
     const gridConfig = getGridConfig();
-    // Calculate positions accounting for the overlay and centering the card on nodes
-    const fromX = transaction.fromNode.position.x + (gridConfig.CIRCLE_SIZE / 2) - 50; // Center card (100px width / 2)
-    const fromY = transaction.fromNode.position.y + (gridConfig.CIRCLE_SIZE / 2) - 20; // Approximate center height
-    const toX = transaction.toNode.position.x + (gridConfig.CIRCLE_SIZE / 2) - 50;
-    const toY = transaction.toNode.position.y + (gridConfig.CIRCLE_SIZE / 2) - 20;
+
+    // Calculate the exact center of nodes based on their stored positions
+    // node.position is the top-left corner as set during grid creation
+    const fromCenterX = transaction.fromNode.position.x + (gridConfig.CIRCLE_SIZE / 2);
+    const fromCenterY = transaction.fromNode.position.y + (gridConfig.CIRCLE_SIZE / 2);
+    const toCenterX = transaction.toNode.position.x + (gridConfig.CIRCLE_SIZE / 2);
+    const toCenterY = transaction.toNode.position.y + (gridConfig.CIRCLE_SIZE / 2);
 
     return (
         <motion.div
             className="transaction-card"
             style={{
                 position        : "absolute",
-                left            : fromX,
-                top             : fromY,
-                transformOrigin : "center center",
+                left            : 0,
+                top             : 0,
             }}
             initial={{
                 scale : 0,
-                x     : 0,
-                y     : 0,
+                x     : fromCenterX,
+                y     : fromCenterY,
             }}
             animate={{
                 scale : [ 0, 1, 1, 0 ],
-                x     : [ 0, 0, toX - fromX, toX - fromX ],
-                y     : [ 0, 0, toY - fromY, toY - fromY ],
+                x     : [ fromCenterX, fromCenterX, toCenterX, toCenterX ],
+                y     : [ fromCenterY, fromCenterY, toCenterY, toCenterY ],
             }}
             transition={{
                 duration : (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / 1000,
@@ -146,9 +156,7 @@ const AnimatedTransactionCard = ({
             }}
             onAnimationComplete={() => onComplete(transaction.id)}
         >
-            <Card padding="nano" shape="rounded">
-                <Text>{transaction.amount}</Text>
-            </Card>
+            <Text>{transaction.amount}</Text>
         </motion.div>
     );
 };
@@ -162,14 +170,22 @@ const NodeRippleEffect = ({
     onComplete : (id : string) => void;
 }) => {
     const gridConfig = getGridConfig();
+
+    // Simple center calculation - ripple.x/y is the top-left of the node
+    const centerX = ripple.x + (gridConfig.CIRCLE_SIZE / 2);
+    const centerY = ripple.y + (gridConfig.CIRCLE_SIZE / 2);
+
+    const rippleSize = gridConfig.CIRCLE_SIZE;
+
     return (
         <motion.div
             className="node-ripple"
             style={{
-                left   : ripple.x + (gridConfig.CIRCLE_SIZE / 2),
-                top    : ripple.y + (gridConfig.CIRCLE_SIZE / 2),
-                width  : 0,
-                height : 0,
+                left      : centerX,
+                top       : centerY,
+                width     : 0,
+                height    : 0,
+                transform : "translate(-50%, -50%)",
             }}
             initial={{
                 width   : 0,
@@ -177,8 +193,8 @@ const NodeRippleEffect = ({
                 opacity : 1,
             }}
             animate={{
-                width   : gridConfig.CIRCLE_SIZE * 2,
-                height  : gridConfig.CIRCLE_SIZE * 2,
+                width   : rippleSize * 3,
+                height  : rippleSize * 3,
                 opacity : 0,
             }}
             transition={{
@@ -230,13 +246,13 @@ const GamePage = () => {
 
             // Calculate maximum possible cells that could fit with minimum spacing
             const maxPossibleCols = Math.floor((availableWidth + gridConfig.MIN_SPACING) /
-                                               (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
+                (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
             const maxPossibleRows = Math.floor((availableHeight + gridConfig.MIN_SPACING) /
-                                               (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
+                (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
 
             // Start with the ideal square grid for MAX_CELLS
             let targetCells = gridConfig.MAX_CELLS;
-            let bestConfig = { rows: 0, columns: 0, totalCells: 0 };
+            let bestConfig = {rows : 0, columns : 0, totalCells : 0};
 
             // Try to find the best configuration that maximizes cells while fitting the space
             for (let testRows = maxPossibleRows; testRows >= 3; testRows--) {
@@ -255,9 +271,9 @@ const GamePage = () => {
                         // Prefer configurations closer to our target
                         if (totalCells > bestConfig.totalCells) {
                             bestConfig = {
-                                rows: testRows,
-                                columns: testCols,
-                                totalCells: totalCells
+                                rows       : testRows,
+                                columns    : testCols,
+                                totalCells : totalCells,
                             };
                         }
                     }
@@ -275,11 +291,11 @@ const GamePage = () => {
             // Calculate proportional spacing to fill the available space
             const spacingX = Math.max(
                 gridConfig.MIN_SPACING,
-                (availableWidth - (bestConfig.columns * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.columns - 1)
+                (availableWidth - (bestConfig.columns * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.columns - 1),
             );
             const spacingY = Math.max(
                 gridConfig.MIN_SPACING,
-                (availableHeight - (bestConfig.rows * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.rows - 1)
+                (availableHeight - (bestConfig.rows * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.rows - 1),
             );
 
             // Calculate the actual grid dimensions
@@ -290,15 +306,16 @@ const GamePage = () => {
             const startX = gridConfig.PADDING + (availableWidth - totalGridWidth) / 2;
             const startY = gridConfig.PADDING + (availableHeight - totalGridHeight) / 2;
 
-            console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells), Spacing: ${spacingX.toFixed(1)}x${spacingY.toFixed(1)}px`);
+            console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells), Spacing: ${spacingX.toFixed(
+                1)}x${spacingY.toFixed(1)}px`);
 
             setGridDimensions({
-                rows: bestConfig.rows,
-                columns: bestConfig.columns,
-                spacingX: spacingX,
-                spacingY: spacingY,
-                startX: startX,
-                startY: startY,
+                rows     : bestConfig.rows,
+                columns  : bestConfig.columns,
+                spacingX : spacingX,
+                spacingY : spacingY,
+                startX   : startX,
+                startY   : startY,
             });
 
             // Small delay to show loading state
@@ -314,11 +331,11 @@ const GamePage = () => {
             calculateGridDimensions();
         };
 
-        window.addEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
 
         return () => {
             clearTimeout(timeoutId);
-            window.removeEventListener('resize', handleResize);
+            window.removeEventListener("resize", handleResize);
         };
     }, []);
 
@@ -454,12 +471,13 @@ const GamePage = () => {
     };
 
     // Create ripple effect for a node
-    const createRipple = useCallback((nodeId : string, x : number, y : number) => {
+    const createRipple = useCallback((nodeId : string, x : number, y : number, isLocked : boolean = false) => {
         const newRipple : NodeRipple = {
             id : `ripple-${Date.now()}-${Math.random()}`,
             nodeId,
             x,
             y,
+            isLocked,
         };
         setActiveRipples(prev => [ ...prev, newRipple ]);
     }, []);
@@ -489,8 +507,8 @@ const GamePage = () => {
         };
 
         // Create ripples for both nodes
-        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y);
-        createRipple(toNode.id, toNode.position.x, toNode.position.y);
+        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, fromNode.data.isLocked || false);
+        createRipple(toNode.id, toNode.position.x, toNode.position.y, toNode.data.isLocked || false);
 
         setActiveTransactions(prev => [ ...prev, newTransaction ]);
     }, [ nodes, activeTransactions.length, createRipple ]);
@@ -518,19 +536,27 @@ const GamePage = () => {
         if (completedTransaction && completedTransaction.toNode.data.isMule && completedTransaction.toNode.data.isLocked) {
             // Bounce the transaction back to sender
             const bounceTransaction : TransactionInstance = {
-                id     : `bounce-${Date.now()}-${Math.random()}`,
+                id       : `bounce-${Date.now()}-${Math.random()}`,
                 fromNode : completedTransaction.toNode,
                 toNode   : completedTransaction.fromNode,
                 amount   : completedTransaction.amount,
             };
 
             // Create ripples for bounce
-            createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
-            createRipple(completedTransaction.fromNode.id, completedTransaction.fromNode.position.x, completedTransaction.fromNode.position.y);
+            createRipple(
+                completedTransaction.toNode.id,
+                completedTransaction.toNode.position.x,
+                completedTransaction.toNode.position.y,
+                completedTransaction.toNode.data.isLocked || false);
+            createRipple(
+                completedTransaction.fromNode.id,
+                completedTransaction.fromNode.position.x,
+                completedTransaction.fromNode.position.y,
+                completedTransaction.fromNode.data.isLocked || false);
 
             // Add bounce transaction with delay
             setTimeout(() => {
-                setActiveTransactions(prev => [...prev, bounceTransaction]);
+                setActiveTransactions(prev => [ ...prev, bounceTransaction ]);
             }, 300);
 
             // Remove original transaction
@@ -540,7 +566,7 @@ const GamePage = () => {
 
         // Handle bounced transaction returning to a mule account
         if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.toNode.data.isLocked &&
-            completedTransaction.id.startsWith('bounce-')) {
+            completedTransaction.id.startsWith("bounce-")) {
             // This is a bounced transaction hitting a mule - treat as normal mule behavior
             const originalAmount = parseAmount(completedTransaction.amount);
             const splitCount = Math.random() < 0.5 ? 2 : 3;
@@ -556,7 +582,7 @@ const GamePage = () => {
             splitAmounts.push(remainingAmount);
 
             const availableMules = muleNodes.filter(node =>
-                node.id !== completedTransaction.toNode.id && !node.data.isLocked
+                node.id !== completedTransaction.toNode.id && !node.data.isLocked,
             );
 
             splitAmounts.forEach((splitAmount, index) => {
@@ -564,17 +590,25 @@ const GamePage = () => {
                     const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
 
                     const newTransaction : TransactionInstance = {
-                        id     : `bounce-split-${Date.now()}-${index}-${Math.random()}`,
+                        id       : `bounce-split-${Date.now()}-${index}-${Math.random()}`,
                         fromNode : completedTransaction.toNode,
                         toNode   : randomMule,
                         amount   : formatAmount(splitAmount),
                     };
 
-                    createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
-                    createRipple(randomMule.id, randomMule.position.x, randomMule.position.y);
+                    createRipple(
+                        completedTransaction.toNode.id,
+                        completedTransaction.toNode.position.x,
+                        completedTransaction.toNode.position.y,
+                        completedTransaction.toNode.data.isLocked || false);
+                    createRipple(
+                        randomMule.id,
+                        randomMule.position.x,
+                        randomMule.position.y,
+                        randomMule.data.isLocked || false);
 
                     setTimeout(() => {
-                        setActiveTransactions(prev => [...prev, newTransaction]);
+                        setActiveTransactions(prev => [ ...prev, newTransaction ]);
                     }, 200 + index * 100);
                 } else {
                     setMoneyLostToMules(prev => prev + splitAmount);
@@ -608,7 +642,7 @@ const GamePage = () => {
 
             // Create new transactions to other mule accounts (exclude locked mules)
             const availableMules = muleNodes.filter(node =>
-                node.id !== completedTransaction.toNode.id && !node.data.isLocked
+                node.id !== completedTransaction.toNode.id && !node.data.isLocked,
             );
 
             splitAmounts.forEach((splitAmount, index) => {
@@ -628,8 +662,13 @@ const GamePage = () => {
                     createRipple(
                         completedTransaction.toNode.id,
                         completedTransaction.toNode.position.x,
-                        completedTransaction.toNode.position.y);
-                    createRipple(randomMule.id, randomMule.position.x, randomMule.position.y);
+                        completedTransaction.toNode.position.y,
+                        completedTransaction.toNode.data.isLocked || false);
+                    createRipple(
+                        randomMule.id,
+                        randomMule.position.x,
+                        randomMule.position.y,
+                        randomMule.data.isLocked || false);
 
                     // Add the new transaction with a slight delay
                     setTimeout(() => {

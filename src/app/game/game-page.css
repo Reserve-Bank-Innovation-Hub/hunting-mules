@@ -27,9 +27,9 @@
     .circle-node {
         width            : 40px;
         height           : 40px;
-        border-radius    : 50%;
-        background-color : #e0e0e0;
-        border           : 2px solid #888;
+        border-radius    : 4px;
+        background-color : #ffffff;
+        border           : 1px solid var(--slate-light90);
         display          : flex;
         align-items      : center;
         justify-content  : center;
@@ -40,19 +40,25 @@
         pointer-events   : auto;
         z-index          : 10;
         position         : relative;
-    }
+        overflow         : hidden;
 
-    @media (max-width: 767px) {
-        .circle-node {
-            width  : 30px;
-            height : 30px;
-        }
-
-        .circle-node img {
-            width  : 40px !important;
-            height : 40px !important;
+        img {
+            width  : 32px;
+            height : 32px;
         }
     }
+
+    /*@media (max-width : 767px) {*/
+    /*    .circle-node {*/
+    /*        width  : 30px;*/
+    /*        height : 30px;*/
+    /*    }*/
+
+    /*    .circle-node img {*/
+    /*        width  : 40px !important;*/
+    /*        height : 40px !important;*/
+    /*    }*/
+    /*}*/
 
     .circle-node:hover {
         transform : scale(1.05);
@@ -63,8 +69,24 @@
     }
 
     .circle-node.locked {
-        border : 3px solid var(--green);
-        cursor : default;
+        width            : 48px;
+        height           : 48px;
+        border-radius    : 50%;
+        background-color : #ffffff;
+        display          : flex;
+        align-items      : center;
+        justify-content  : center;
+        cursor           : default;
+        transition       : transform 0.1s ease;
+        pointer-events   : auto;
+        z-index          : 10;
+        position         : relative;
+        overflow         : hidden;
+
+        img {
+            width  : 100%;
+            height : 100%;
+        }
     }
 
     .circle-node.locked:hover {
@@ -72,16 +94,24 @@
     }
 
     .transaction-card {
-        width          : 100px;
-        z-index        : 5;
-        border         : 1px solid var(--slate-light60);
-        will-change    : transform;
-        pointer-events : none;
+        width            : fit-content;
+        z-index          : 15;
+        border-radius    : 8px;
+        border           : 2px solid var(--blue);
+        background-color : white;
+        will-change      : transform;
+        pointer-events   : none;
+        padding          : 6px 12px !important;
+        box-shadow       : 0 4px 12px 0 rgba(0, 0, 0, 0.3), 0 6px 24px 0 rgba(0, 0, 0, 0.25);
+        transform        : translate(-50%, -50%);
+        transform-origin : center center;
 
         p {
             font-size   : 14px;
             font-weight : 700;
             text-align  : center;
+            margin      : 0;
+            color       : var(--blue);
         }
     }
 
@@ -94,8 +124,8 @@
         position       : absolute;
         border         : 2px solid var(--blue);
         border-radius  : 50%;
-        transform      : translate(-50%, -50%);
         pointer-events : none;
+        opacity        : 0.6;
     }
 
 }
