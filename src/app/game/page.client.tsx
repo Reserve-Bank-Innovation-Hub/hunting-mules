@@ -39,6 +39,8 @@ interface TransactionInstance {
     fromNode : Node;
     toNode : Node;
     amount : string;
+    isSecondaryMuleTransaction? : boolean;
+    originalAmount? : number;
 }
 
 interface NodeRipple {
@@ -138,6 +140,7 @@ const GamePage = () => {
     const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(10000000); // ₹1,00,00,000
     const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
     const [ activeRipples, setActiveRipples ] = useState<NodeRipple[]>([]);
+    const [ pendingMoneyLoss, setPendingMoneyLoss ] = useState<Map<string, number>>(new Map());
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -249,16 +252,34 @@ const GamePage = () => {
 
     // Helper function to get random nodes
     const getRandomNodes = () => {
-        const fromIndex = Math.floor(Math.random() * nodes.length);
+        // Get only normal accounts for "from" node (mules don't initiate transactions)
+        const normalNodes = nodes.filter(node => !node.data.isMule);
+
+        if (normalNodes.length === 0) {
+            // Fallback to any node if no normal nodes exist
+            const fromIndex = Math.floor(Math.random() * nodes.length);
+            let toIndex = Math.floor(Math.random() * nodes.length);
+
+            while (toIndex === fromIndex) {
+                toIndex = Math.floor(Math.random() * nodes.length);
+            }
+
+            return {
+                fromNode : nodes[fromIndex],
+                toNode   : nodes[toIndex],
+            };
+        }
+
+        const fromIndex = Math.floor(Math.random() * normalNodes.length);
         let toIndex = Math.floor(Math.random() * nodes.length);
 
         // Ensure we don't select the same node
-        while (toIndex === fromIndex) {
+        while (nodes[toIndex].id === normalNodes[fromIndex].id) {
             toIndex = Math.floor(Math.random() * nodes.length);
         }
 
         return {
-            fromNode : nodes[fromIndex],
+            fromNode : normalNodes[fromIndex],
             toNode   : nodes[toIndex],
         };
     };
@@ -300,10 +321,94 @@ const GamePage = () => {
         setActiveTransactions(prev => [ ...prev, newTransaction ]);
     }, [ nodes, activeTransactions.length, createRipple ]);
 
+    // Get all mule nodes
+    const muleNodes = useMemo(() => {
+        return nodes.filter(node => node.data.isMule);
+    }, [nodes]);
+
+    // Helper function to parse amount from string (₹1,23,456 -> 123456)
+    const parseAmount = (amountString : string) => {
+        return parseInt(amountString.replace(/[₹,]/g, ''), 10);
+    };
+
+    // Helper function to format amount to string
+    const formatAmount = (amount : number) => {
+        return `₹${amount.toLocaleString("en-IN")}`;
+    };
+
     // Handle transaction completion
     const handleTransactionComplete = useCallback((transactionId : string) => {
+        const completedTransaction = activeTransactions.find(t => t.id === transactionId);
+
+        if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.fromNode.data.isMule) {
+            // Transaction hit a mule account - split and redistribute
+            const originalAmount = parseAmount(completedTransaction.amount);
+            const splitCount = Math.random() < 0.5 ? 2 : 3; // Randomly 2 or 3 splits
+            const parentTransactionId = `parent-${transactionId}`;
+
+            // Track how many secondary transactions we're creating
+            const newPendingLoss = new Map(pendingMoneyLoss);
+            newPendingLoss.set(parentTransactionId, originalAmount);
+            setPendingMoneyLoss(newPendingLoss);
+
+            // Split the amount
+            const splitAmounts = [];
+            let remainingAmount = originalAmount;
+
+            for (let i = 0; i < splitCount - 1; i++) {
+                const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6)); // 20-80% of remaining
+                splitAmounts.push(splitAmount);
+                remainingAmount -= splitAmount;
+            }
+            splitAmounts.push(remainingAmount); // Last amount gets the remainder
+
+            // Create new transactions to other mule accounts
+            const availableMules = muleNodes.filter(node => node.id !== completedTransaction.toNode.id);
+            let completedSecondaryCount = 0;
+
+            splitAmounts.forEach((splitAmount, index) => {
+                if (availableMules.length > 0) {
+                    const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
+
+                    const newTransaction : TransactionInstance = {
+                        id                         : `mule-transaction-${Date.now()}-${index}-${Math.random()}`,
+                        fromNode                   : completedTransaction.toNode,
+                        toNode                     : randomMule,
+                        amount                     : formatAmount(splitAmount),
+                        isSecondaryMuleTransaction : true,
+                        originalAmount             : originalAmount, // Store original amount for final deduction
+                    };
+
+                    // Create ripples for the new transaction
+                    createRipple(completedTransaction.toNode.id, completedTransaction.toNode.position.x, completedTransaction.toNode.position.y);
+                    createRipple(randomMule.id, randomMule.position.x, randomMule.position.y);
+
+                    // Add the new transaction with a slight delay
+                    setTimeout(() => {
+                        setActiveTransactions(prev => [...prev, newTransaction]);
+                    }, 200 + index * 100); // Stagger the new transactions
+                }
+            });
+        } else if (completedTransaction && completedTransaction.isSecondaryMuleTransaction && completedTransaction.originalAmount) {
+            // This is a secondary mule transaction completing - check if all are done
+            const originalAmount = completedTransaction.originalAmount;
+
+            // Check if this is the last secondary transaction for this original transaction
+            const remainingSecondaryTransactions = activeTransactions.filter(t =>
+                t.isSecondaryMuleTransaction &&
+                t.originalAmount === originalAmount &&
+                t.id !== transactionId
+            );
+
+            // If this is the last one, update the money counters
+            if (remainingSecondaryTransactions.length === 0) {
+                setMoneyLostToMules(prev => prev + originalAmount);
+                setTotalMoneyInCirculation(prev => prev - originalAmount);
+            }
+        }
+
         setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
-    }, []);
+    }, [activeTransactions, muleNodes, createRipple, pendingMoneyLoss]);
 
     // Start transaction spawning
     useEffect(() => {

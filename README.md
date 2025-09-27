@@ -1,7 +1,7 @@
 # Hunting Mules - Transaction Visualization Game
 
 ## Overview
-A real-time transaction visualization game that displays animated money transfers between bank accounts on a responsive grid.
+A real-time money laundering detection game that visualizes how illicit funds flow through mule accounts in a banking network. Watch as money gets split and redistributed through suspicious accounts, causing losses to the financial system.
 
 ## Features
 
@@ -14,8 +14,19 @@ A real-time transaction visualization game that displays animated money transfer
 - **Regular Accounts**: Gray circles representing normal bank accounts
 - **Mule Accounts**: Red circles representing suspicious accounts (up to 25 or 25% of total)
 
+### Money Laundering Logic
+- **Transaction Initiation**: Only normal accounts initiate transactions (mules are passive)
+- **Mule Account Behavior**: When money hits a mule account, it automatically splits into 2-3 smaller amounts
+- **Secondary Redistribution**: Split amounts get sent to other mule accounts with visual delays
+- **Money Loss**: Original amount is lost from circulation after all secondary transactions complete
+- **Ripple Effects**: Visual ripples appear around nodes when they participate in transactions
+
+### Scorecard Tracking
+- **Total Money in Circulation**: Starts at ₹1,00,00,000, decreases as money hits mules
+- **Money Lost to Mules**: Tracks cumulative losses from money laundering activities
+
 ### Animated Transactions
-- **Random Transfers**: Transactions spawn between random accounts every 500ms (2 per second)
+- **Random Transfers**: Transactions spawn from normal accounts every 500ms (2 per second)
 - **Smooth Animation**: Cards scale from 0→1, fly between nodes, then scale to 0
 - **Random Amounts**: Transaction values between ₹1,000 - ₹1,00,000
 - **Performance Optimized**: Maximum 10 concurrent animations
