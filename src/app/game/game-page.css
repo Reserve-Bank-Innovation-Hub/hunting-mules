@@ -38,11 +38,11 @@
     }
 
     .transaction-card {
-        width            : 100px;
-        z-index          : 5;
-        border           : 1px solid var(--slate-light60);
-        will-change      : transform;
-        pointer-events   : none;
+        width          : 100px;
+        z-index        : 5;
+        border         : 1px solid var(--slate-light60);
+        will-change    : transform;
+        pointer-events : none;
 
         p {
             font-size   : 14px;
@@ -54,6 +54,14 @@
     .mule-account {
         background-color : var(--red-light60);
         border           : 2px solid var(--red);
+    }
+
+    .node-ripple {
+        position       : absolute;
+        border         : 2px solid var(--blue);
+        border-radius  : 50%;
+        transform      : translate(-50%, -50%);
+        pointer-events : none;
     }
 
     @keyframes spin {

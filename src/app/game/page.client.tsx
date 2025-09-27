@@ -20,7 +20,7 @@ const CircleNode = ({data} : { data : { isMule? : boolean } }) => {
 // CONFIGURATION =======================================================================================================
 const GRID_CONFIG = {
     CIRCLE_SIZE : 40,
-    MIN_SPACING : 60,   // Minimum spacing between circles
+    MIN_SPACING : 80,   // Minimum spacing between circles
     PADDING     : 50,   // Padding from container edges
 };
 
@@ -39,6 +39,13 @@ interface TransactionInstance {
     fromNode : Node;
     toNode : Node;
     amount : string;
+}
+
+interface NodeRipple {
+    id : string;
+    nodeId : string;
+    x : number;
+    y : number;
 }
 
 // ANIMATED TRANSACTION COMPONENT ======================================================================================
@@ -89,11 +96,48 @@ const AnimatedTransactionCard = ({
     );
 };
 
+// RIPPLE COMPONENT ====================================================================================================
+const NodeRippleEffect = ({
+    ripple,
+    onComplete,
+} : {
+    ripple : NodeRipple;
+    onComplete : (id : string) => void;
+}) => {
+    return (
+        <motion.div
+            className="node-ripple"
+            style={{
+                left   : ripple.x + (GRID_CONFIG.CIRCLE_SIZE / 2),
+                top    : ripple.y + (GRID_CONFIG.CIRCLE_SIZE / 2),
+                width  : 0,
+                height : 0,
+            }}
+            initial={{
+                width   : 0,
+                height  : 0,
+                opacity : 1,
+            }}
+            animate={{
+                width   : GRID_CONFIG.CIRCLE_SIZE * 2,
+                height  : GRID_CONFIG.CIRCLE_SIZE * 2,
+                opacity : 0,
+            }}
+            transition={{
+                duration : 1,
+                ease     : "easeOut",
+            }}
+            onAnimationComplete={() => onComplete(ripple.id)}
+        />
+    );
+};
+
 const GamePage = () => {
     const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
     const [ isGridReady, setIsGridReady ] = useState(false);
     const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(10000000); // ₹1,00,00,000
     const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
+    const [ activeRipples, setActiveRipples ] = useState<NodeRipple[]>([]);
     const [ gridDimensions, setGridDimensions ] = useState<{
                                                                rows : number;
                                                                columns : number;
@@ -219,6 +263,22 @@ const GamePage = () => {
         };
     };
 
+    // Create ripple effect for a node
+    const createRipple = useCallback((nodeId : string, x : number, y : number) => {
+        const newRipple : NodeRipple = {
+            id : `ripple-${Date.now()}-${Math.random()}`,
+            nodeId,
+            x,
+            y,
+        };
+        setActiveRipples(prev => [ ...prev, newRipple ]);
+    }, []);
+
+    // Handle ripple completion
+    const handleRippleComplete = useCallback((rippleId : string) => {
+        setActiveRipples(prev => prev.filter(r => r.id !== rippleId));
+    }, []);
+
     // Create new transaction
     const createTransaction = useCallback(() => {
         if (activeTransactions.length >= TRANSACTION_CONFIG.MAX_CONCURRENT) {
@@ -233,8 +293,12 @@ const GamePage = () => {
             amount : generateRandomAmount(),
         };
 
+        // Create ripples for both nodes
+        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y);
+        createRipple(toNode.id, toNode.position.x, toNode.position.y);
+
         setActiveTransactions(prev => [ ...prev, newTransaction ]);
-    }, [ nodes, activeTransactions.length ]);
+    }, [ nodes, activeTransactions.length, createRipple ]);
 
     // Handle transaction completion
     const handleTransactionComplete = useCallback((transactionId : string) => {
@@ -316,6 +380,29 @@ const GamePage = () => {
                                                 key={transaction.id}
                                                 transaction={transaction}
                                                 onComplete={handleTransactionComplete}
+                                            />
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Node Ripples Overlay */}
+                                <div
+                                    style={{
+                                        position      : "absolute",
+                                        top           : 0,
+                                        left          : 0,
+                                        width         : "100%",
+                                        height        : "100%",
+                                        pointerEvents : "none",
+                                        zIndex        : 5,
+                                    }}
+                                >
+                                    <AnimatePresence>
+                                        {activeRipples.map((ripple) => (
+                                            <NodeRippleEffect
+                                                key={ripple.id}
+                                                ripple={ripple}
+                                                onComplete={handleRippleComplete}
                                             />
                                         ))}
                                     </AnimatePresence>
