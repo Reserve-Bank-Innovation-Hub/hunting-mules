@@ -412,12 +412,20 @@ const GamePage = () => {
 
     // Start transaction spawning
     useEffect(() => {
+        // Stop spawning new transactions if no money left in circulation
+        if (totalMoneyInCirculation <= 0) {
+            return;
+        }
+
         const interval = setInterval(() => {
-            createTransaction();
+            // Check again before creating each transaction
+            if (totalMoneyInCirculation > 0) {
+                createTransaction();
+            }
         }, 1000 / TRANSACTION_CONFIG.TRANSACTIONS_PER_SECOND);
 
         return () => clearInterval(interval);
-    }, [ createTransaction ]);
+    }, [ createTransaction, totalMoneyInCirculation ]);
 
     return (
         <Article id="game-page">
@@ -437,6 +445,15 @@ const GamePage = () => {
                                 ₹{moneyLostToMules.toLocaleString("en-IN")}
                             </Heading1>
                         </Portion>
+
+                        {totalMoneyInCirculation <= 0 && (
+                            <Portion desktopSpan="one-third">
+                                <Text size="small" weight="400" textColour="red">GAME OVER</Text>
+                                <Heading1 textColour="red" marginTop="nano">
+                                    All Money Laundered!
+                                </Heading1>
+                            </Portion>
+                        )}
                     </Row>
                 </Card>
             </Header>
