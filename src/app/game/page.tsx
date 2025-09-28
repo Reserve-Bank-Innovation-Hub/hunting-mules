@@ -2,19 +2,19 @@
 import GamePage from "./page.client";
 
 export const metadata = {
-    title       : "Sujan Sundareswaran — The online presence of",
-    description : "Designer, amateur developer and amateur-er writer. A jack of many trades and master of few.",
+    title       : "Play Game — Hunting Mules",
+    description : "Interactive financial fraud detection game. Click on mule accounts to lock them before they launder all the money. Track transactions in real-time and save as much money as possible from money mules.",
     openGraph   : {
-        title       : "Sujan Sundareswaran — The online presence of",
-        description : "Designer, amateur developer and amateur-er writer. A jack of many trades and master of few.",
-        url         : "https://sujansundareswaran.com/",
-        siteName    : "Sujan Sundareswaran",
+        title       : "Play Game — Hunting Mules",
+        description : "Interactive financial fraud detection game. Click on mule accounts to lock them before they launder all the money. Track transactions in real-time and save as much money as possible from money mules.",
+        url         : "https://hunting-mules.com/game",
+        siteName    : "Hunting Mules",
         images      : [
             {
-                url    : "https://s3.ap-south-1.amazonaws.com/sujansundareswaran.com/images-cdn/og.png",
+                url    : "https://hunting-mules.s3.ap-south-1.amazonaws.com/mule-hunter.jpg",
                 width  : 1200,
                 height : 630,
-                alt    : "Sujan Sundareswaran — The online presence of",
+                alt    : "Play Game — Hunting Mules",
             },
         ],
         locale      : "en_US",
@@ -22,9 +22,9 @@ export const metadata = {
     },
     twitter     : {
         card        : "summary_large_image",
-        title       : "Sujan Sundareswaran — The online presence of",
-        description : "Designer, amateur developer and amateur-er writer. A jack of many trades and master of few.",
-        images      : [ "https://s3.ap-south-1.amazonaws.com/sujansundareswaran.com/images-cdn/og.png" ],
+        title       : "Play Game — Hunting Mules",
+        description : "Interactive financial fraud detection game. Click on mule accounts to lock them before they launder all the money. Track transactions in real-time and save as much money as possible from money mules.",
+        images      : [ "https://hunting-mules.s3.ap-south-1.amazonaws.com/mule-hunter.jpg" ],
     },
 };
 

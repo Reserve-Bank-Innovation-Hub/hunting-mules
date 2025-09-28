@@ -9,3 +9,7 @@
 @import "./theme-dark.css";
 
 /* GLOBAL RULES ///////////////////////////////////////////////////////////// */
+button,
+button p {
+    text-shadow: 2px 1px 2px #000;
+}

@@ -2,19 +2,19 @@
 import HomePage from "./page.client";
 
 export const metadata = {
-    title       : "Blog — Sujan Sundareswaran",
-    description : "My ramblings and other such discursive digressions. Thoughts on design, development, and everything in between.",
+    title       : "Hunting Mules — Financial Fraud Detection Game",
+    description : "Spot accounts that send money to multiple accounts at once. Click on them to lock them and prevent them from transacting. Find them quickly to save the maximum amount as possible!",
     openGraph   : {
-        title       : "Blog — Sujan Sundareswaran",
-        description : "My ramblings and other such discursive digressions. Thoughts on design, development, and everything in between.",
-        url         : "https://sujansundareswaran.com/blog",
-        siteName    : "Sujan Sundareswaran",
+        title       : "Hunting Mules — Financial Fraud Detection Game",
+        description : "Spot accounts that send money to multiple accounts at once. Click on them to lock them and prevent them from transacting. Find them quickly to save the maximum amount as possible!",
+        url         : "https://hunting-mules.com",
+        siteName    : "Hunting Mules",
         images      : [
             {
-                url    : "https://s3.ap-south-1.amazonaws.com/sujansundareswaran.com/images-cdn/blog-og.png",
+                url    : "https://hunting-mules.s3.ap-south-1.amazonaws.com/mule-hunter.jpg",
                 width  : 1200,
                 height : 630,
-                alt    : "Blog — Sujan Sundareswaran",
+                alt    : "Hunting Mules — Financial Fraud Detection Game",
             },
         ],
         locale      : "en_US",
@@ -22,9 +22,9 @@ export const metadata = {
     },
     twitter     : {
         card        : "summary_large_image",
-        title       : "Blog — Sujan Sundareswaran",
-        description : "My ramblings and other such discursive digressions. Thoughts on design, development, and everything in between.",
-        images      : [ "https://s3.ap-south-1.amazonaws.com/sujansundareswaran.com/images-cdn/blog-og.png" ],
+        title       : "Hunting Mules — Financial Fraud Detection Game",
+        description : "Spot accounts that send money to multiple accounts at once. Click on them to lock them and prevent them from transacting. Find them quickly to save the maximum amount as possible!",
+        images      : [ "https://hunting-mules.s3.ap-south-1.amazonaws.com/mule-hunter.jpg" ],
     },
 };
 
