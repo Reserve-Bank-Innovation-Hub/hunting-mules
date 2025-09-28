@@ -1,6 +1,5 @@
 /* Using the IBM Plex font family v6.3.0 */
 
-/* SANS — IBM PLEX SANS ===================================================== */
 @font-face {
     font-family : "Determination";
     src         : url("./determination/determination.ttf") format("truetype");
@@ -8,24 +7,30 @@
     font-style  : normal;
 }
 
-/* SANS — IBM PLEX SANS ===================================================== */
 @font-face {
-    font-family : "IBM Plex Sans";
-    src         : url("IBM-Plex-Sans/IBMPlexSans-Regular.woff2") format("woff2");
+    font-family : "Aurora";
+    src         : url("./aurora_24/aurora-24.ttf") format("truetype");
     font-weight : 400;
     font-style  : normal;
 }
 
 @font-face {
-    font-family : "IBM Plex Sans";
-    src         : url("IBM-Plex-Sans/IBMPlexSans-Italic.woff2") format("woff2");
+    font-family : "Retro Gaming";
+    src         : url("retro-gaming/RetroGaming.ttf") format("truetype");
     font-weight : 400;
-    font-style  : italic;
+    font-style  : normal;
 }
 
 @font-face {
-    font-family : "IBM Plex Sans";
-    src         : url("IBM-Plex-Sans/IBMPlexSans-Bold.woff2") format("woff2");
+    font-family : "Minecraft";
+    src         : url("minecraft-standard/MinecraftStandard.otf") format("opentype");
+    font-weight : 400;
+    font-style  : normal;
+}
+
+@font-face {
+    font-family : "Minecraft";
+    src         : url("minecraft-standard/MinecraftStandardBold.otf") format("opentype");
     font-weight : 700;
     font-style  : normal;
 }

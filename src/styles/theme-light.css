@@ -1,10 +1,15 @@
 .theme-light {
-    --font-sans-serif      : "Determination", sans-serif;
-    --font-serif           : "IBM Plex Serif", serif;
-    --font-mono            : "IBM Plex Mono", monospace;
+    --font-sans-serif       : "Minecraft", "Retro Gaming", sans-serif;
+    --font-serif            : "IBM Plex Serif", serif;
+    --font-mono             : "IBM Plex Mono", monospace;
 
-    --global-border-radius : 0;
+    --global-border-radius  : 0;
 
-    --heading-text-colour  : var(--black);
-    --paragraph-font       : "Determination", sans-serif;
+    --heading-text-colour   : var(--black);
+    --paragraph-line-height : 1.6;
+
+    --heading-font          : "Minecraft", "Retro Gaming", sans-serif;
+    --paragraph-font        : "Minecraft", "Retro Gaming", sans-serif;
+
+    --font-size-max         : 14px;
 }

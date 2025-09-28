@@ -48,7 +48,7 @@ const HomePage = () => {
                     </Text>
 
                     <Text textColour="white" align="centre" marginBottom="micro">
-                        Find them quickly to save the maximum amount as possible—you are the MULE HUNTER!
+                        Find them quickly to save as much money as you can—you are the MULE HUNTER!
                     </Text>
 
                     <Div horizontallyCentreThis>

@@ -773,27 +773,36 @@ const GamePage = () => {
         <Article id="game-page">
             <Row id="scorecard" retainLayoutAlways marginBottom="none">
                 <Portion desktopSpan="one-third">
-                    <Card className="metric-card" padding="micro" isFullHeight>
-                        <Text size="small">Total money in circulation</Text>
-                        <Heading6 weight="400">
+                    <Card
+                        className="metric-card"
+                        padding="micro" bgColour="amber-light60" isFullHeight
+                    >
+                        <Text size="small">Amount in circulation</Text>
+                        <Heading6>
                             ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
                         </Heading6>
                     </Card>
                 </Portion>
 
                 <Portion desktopSpan="one-third">
-                    <Card className="metric-card" padding="micro" isFullHeight>
-                        <Text>Money stolen by mules</Text>
-                        <Heading6 weight="400" textColour="red">
+                    <Card
+                        className="metric-card"
+                        padding="micro" bgColour="amber-light60" isFullHeight
+                    >
+                        <Text>Amount stolen by mules</Text>
+                        <Heading6 textColour="red">
                             ₹{moneyLostToMules.toLocaleString("en-IN")}
                         </Heading6>
                     </Card>
                 </Portion>
 
                 <Portion desktopSpan="one-third">
-                    <Card className="metric-card" padding="micro" isFullHeight>
-                        <Text size="small" weight="400">Mules found</Text>
-                        <Heading6 weight="400" textColour="green">
+                    <Card
+                        className="metric-card"
+                        padding="micro" bgColour="amber-light60" isFullHeight
+                    >
+                        <Text size="small">Mules found</Text>
+                        <Heading6 textColour="green">
                             {mulesFoundCount}/{actualMuleCount}
                         </Heading6>
                     </Card>
