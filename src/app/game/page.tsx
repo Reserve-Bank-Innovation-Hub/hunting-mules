@@ -2,7 +2,7 @@
 import GamePage from "./page.client";
 
 export const metadata = {
-    title       : "Play Game — Hunting Mules",
+    title       : "Play Game",
     description : "Interactive financial fraud detection game. Click on mule accounts to lock them before they launder all the money. Track transactions in real-time and save as much money as possible from money mules.",
     openGraph   : {
         title       : "Play Game — Hunting Mules",

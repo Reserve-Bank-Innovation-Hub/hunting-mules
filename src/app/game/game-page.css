@@ -5,15 +5,17 @@
     height                : 100vh;
     gap                   : 24px;
     padding               : 24px;
+    background-color      : var(--grey-dark80);
 
     #play-area .card {
         position : relative;
     }
 
     /* SCORECARD //////////////////////////////////////////////////////////// */
-    #scorecard {
-        display               : grid;
-        grid-template-columns : repeat(3, 1fr);
+    .metric-card {
+        display         : flex;
+        flex-direction  : column;
+        justify-content : space-between;
     }
 
     /* PLAY AREA //////////////////////////////////////////////////////////// */
@@ -32,26 +34,24 @@
     }
 
     .circle-node {
-        width            : 40px;
-        height           : 40px;
-        border-radius    : 4px;
-        background-color : #ffffff;
-        border           : 1px solid var(--slate-light90);
-        display          : flex;
-        align-items      : center;
-        justify-content  : center;
-        font-size        : 12px;
-        color            : #333;
-        cursor           : pointer;
-        transition       : transform 0.1s ease;
-        pointer-events   : auto;
-        z-index          : 10;
-        position         : relative;
-        overflow         : hidden;
+        width           : 40px;
+        height          : 40px;
+        border-radius   : 4px;
+        display         : flex;
+        align-items     : center;
+        justify-content : center;
+        font-size       : 12px;
+        color           : #333;
+        cursor          : pointer;
+        transition      : transform 0.1s ease;
+        pointer-events  : auto;
+        z-index         : 10;
+        position        : relative;
+        overflow        : hidden;
 
         img {
-            width  : 32px;
-            height : 32px;
+            width  : 40px;
+            height : 40px;
         }
     }
 

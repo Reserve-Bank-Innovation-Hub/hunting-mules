@@ -22,7 +22,7 @@ import {
     Modal,
     showModal,
     hideModal,
-    Div, Header, Heading4,
+    Div, Header, Heading4, Portion, Row,
 } from "fictoan-react";
 
 import MuleHeadImage from "../../assets/images/mule-head.png";
@@ -72,7 +72,7 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
     }
 
     return (
-        <Card
+        <Div
             className={`circle-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
@@ -85,7 +85,7 @@ const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
                     maxWidth  : "unset",
                 }}
             />
-        </Card>
+        </Div>
     );
 };
 
@@ -771,34 +771,37 @@ const GamePage = () => {
 
     return (
         <Article id="game-page">
-            <Card
-                id="scorecard"
-                padding="micro" isFullHeight
-            >
-                <Div>
-                    <Text size="small">Total money in circulation</Text>
-                    <Heading6 weight="400">
-                        ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                    </Heading6>
-                </Div>
+            <Row id="scorecard" retainLayoutAlways marginBottom="none">
+                <Portion desktopSpan="one-third">
+                    <Card className="metric-card" padding="micro" isFullHeight>
+                        <Text size="small">Total money in circulation</Text>
+                        <Heading6 weight="400">
+                            ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                        </Heading6>
+                    </Card>
+                </Portion>
 
-                <Div>
-                    <Text>Money lost to mules</Text>
-                    <Heading6 weight="400" textColour="red">
-                        ₹{moneyLostToMules.toLocaleString("en-IN")}
-                    </Heading6>
-                </Div>
+                <Portion desktopSpan="one-third">
+                    <Card className="metric-card" padding="micro" isFullHeight>
+                        <Text>Money stolen by mules</Text>
+                        <Heading6 weight="400" textColour="red">
+                            ₹{moneyLostToMules.toLocaleString("en-IN")}
+                        </Heading6>
+                    </Card>
+                </Portion>
 
-                <Div>
-                    <Text size="small" weight="400">Mules found</Text>
-                    <Text textColour="green" marginTop="nano">
-                        {mulesFoundCount}/{actualMuleCount}
-                    </Text>
-                </Div>
-            </Card>
+                <Portion desktopSpan="one-third">
+                    <Card className="metric-card" padding="micro" isFullHeight>
+                        <Text size="small" weight="400">Mules found</Text>
+                        <Heading6 weight="400" textColour="green">
+                            {mulesFoundCount}/{actualMuleCount}
+                        </Heading6>
+                    </Card>
+                </Portion>
+            </Row>
 
             <Main id="play-area">
-                <Card isFullHeight>
+                <Card bgColour="grey-light60" isFullHeight>
                     <div ref={containerRef} style={{position : "relative", width : "100%", height : "100%"}}>
                         {!isGridReady ? (
                             // Loading State
@@ -824,7 +827,7 @@ const GamePage = () => {
                                     nodesFocusable={false}
                                     edgesFocusable={false}
                                 >
-                                    <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+                                    <Background color="#000" variant={BackgroundVariant.Dots} gap={12} size={1} />
                                 </ReactFlow>
 
                                 {/* Animated Transactions Overlay */}
