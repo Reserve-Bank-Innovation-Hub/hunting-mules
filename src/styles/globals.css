@@ -2,7 +2,7 @@
 @import "fictoan-react/dist/index.css";
 
 /* FONTS ==================================================================== */
-@import "./fonts.css";
+@import "../assets/fonts/fonts.css";
 
 /* THEMES =================================================================== */
 @import "./theme-light.css";

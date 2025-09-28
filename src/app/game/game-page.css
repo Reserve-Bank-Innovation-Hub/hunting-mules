@@ -10,6 +10,13 @@
         position : relative;
     }
 
+    /* SCORECARD //////////////////////////////////////////////////////////// */
+    #scorecard {
+        display               : grid;
+        grid-template-columns : repeat(3, 1fr);
+    }
+
+    /* PLAY AREA //////////////////////////////////////////////////////////// */
     .react-flow__attribution {
         display : none;
     }
@@ -97,13 +104,12 @@
         width            : fit-content;
         z-index          : 15;
         border-radius    : 8px;
-        border           : 2px solid var(--blue);
+        border           : 1px solid var(--slate-light60);
         background-color : white;
         will-change      : transform;
         pointer-events   : none;
         padding          : 6px 12px !important;
         box-shadow       : 0 4px 12px 0 rgba(0, 0, 0, 0.3), 0 6px 24px 0 rgba(0, 0, 0, 0.25);
-        /* Removed transform: translate(-50%, -50%) to handle in JS */
         transform-origin : center center;
 
         p {
@@ -111,7 +117,7 @@
             font-weight : 700;
             text-align  : center;
             margin      : 0;
-            color       : var(--blue);
+            color       : var(--slate);
         }
     }
 
@@ -128,6 +134,30 @@
         opacity        : 0.6;
     }
 
+    /* MODALS /////////////////////////////////////////////////////////////// */
+    [data-modal]#game-over-modal.show-backdrop:popover-open::backdrop {
+        background-color : var(--red-dark20-opacity80) !important;
+    }
+
+    [data-modal]#victory-modal.show-backdrop:popover-open::backdrop {
+        background-color : var(--green-dark20-opacity80) !important;
+    }
+
+    .modal-image {
+        margin    : 0 auto;
+        width     : 50%;
+        max-width : 400px;
+    }
+
+    #game-over-modal {
+        width : 600px;
+
+        .modal-image {
+            width     : 100%;
+            max-width : unset;
+            z-index   : -1;
+        }
+    }
 }
 
 @keyframes shake {

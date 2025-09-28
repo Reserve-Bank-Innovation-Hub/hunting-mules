@@ -1,5 +1,9 @@
 .theme-light {
-    --font-sans-serif : "IBM Plex Sans", sans-serif;
-    --font-serif      : "IBM Plex Serif", serif;
-    --font-mono       : "IBM Plex Mono", monospace;
+    --font-sans-serif      : "Determination", sans-serif;
+    --font-serif           : "IBM Plex Serif", serif;
+    --font-mono            : "IBM Plex Mono", monospace;
+
+    --global-border-radius : 0;
+
+    --heading-text-colour: var(--black);
 }

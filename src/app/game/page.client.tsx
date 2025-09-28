@@ -10,9 +10,24 @@ import "reactflow/dist/style.css";
 
 // OTHER ===============================================================================================================
 import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "reactflow";
-import { Article, Card, Footer, Header, Heading1, Main, Portion, Row, Spinner, Text } from "fictoan-react";
+import {
+    Article,
+    Card,
+    Heading1,
+    Heading6,
+    Main,
+    Spinner,
+    Text,
+    Button,
+    Modal,
+    showModal,
+    hideModal,
+    Div, Header, Heading4,
+} from "fictoan-react";
 
 import MuleHeadImage from "../../assets/images/mule-head.png";
+import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
+import MulesEscapeImage from "../../assets/images/mule-escape.jpg";
 import BankIconImage from "../../assets/images/bank-icon.png";
 
 // TYPES ===============================================================================================================
@@ -89,7 +104,8 @@ const getGridConfig = () => {
 const MULE_ACCOUNTS = 25;
 
 const TRANSACTION_CONFIG = {
-    TRANSACTIONS_PER_SECOND : 2,        // Number of new transactions per second
+    STARTING_AMOUNT         : 10000000,  // ₹1,00,00,000
+    TRANSACTIONS_PER_SECOND : 2,         // Number of new transactions per second
     SCALE_TIME_MS           : 500,       // Time to scale up/down in milliseconds
     TRANSACTION_TIME_MS     : 2000,      // Time to fly between nodes in milliseconds
     MAX_CONCURRENT          : 10,        // Maximum concurrent transactions for performance
@@ -131,53 +147,38 @@ const AnimatedTransactionCard = ({
     const toCenterY = transaction.toNode.position.y + (gridConfig.CIRCLE_SIZE / 2);
 
     return (
-        <>
-            {/* Debug: Green dot at transaction starting position */}
-            <div
-                style={{
-                    position        : "absolute",
-                    left            : fromCenterX - 2,
-                    top             : fromCenterY - 2,
-                    width           : "4px",
-                    height          : "4px",
-                    backgroundColor : "lime",
-                    borderRadius    : "50%",
-                    zIndex          : 25,
-                }}
-            />
-            <motion.div
-                className="transaction-card"
-                style={{
-                    position        : "absolute",
-                    left            : 0,
-                    top             : 0,
-                    transformOrigin : "center center",
-                }}
-                initial={{
-                    scale      : 0,
-                    x          : fromCenterX,
-                    y          : fromCenterY,
-                    translateX : "-50%",
-                    translateY : "-50%",
-                }}
-                animate={{
-                    scale      : [ 0, 1, 1, 0 ],
-                    x          : [ fromCenterX, fromCenterX, toCenterX, toCenterX ],
-                    y          : [ fromCenterY, fromCenterY, toCenterY, toCenterY ],
-                    translateX : "-50%",
-                    translateY : "-50%",
-                }}
-                transition={{
-                    duration : (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / 1000,
-                    times    : [ 0, TRANSACTION_CONFIG.SCALE_TIME_MS / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS),
-                        (TRANSACTION_CONFIG.SCALE_TIME_MS + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS), 1 ],
-                    ease     : "easeInOut",
-                }}
-                onAnimationComplete={() => onComplete(transaction.id)}
-            >
-                <Text>{transaction.amount}</Text>
-            </motion.div>
-        </>
+        <motion.div
+            className="transaction-card"
+            style={{
+                position        : "absolute",
+                left            : 0,
+                top             : 0,
+                transformOrigin : "center center",
+            }}
+            initial={{
+                scale      : 0,
+                x          : fromCenterX,
+                y          : fromCenterY,
+                translateX : "-50%",
+                translateY : "-50%",
+            }}
+            animate={{
+                scale      : [ 0, 1, 1, 0 ],
+                x          : [ fromCenterX, fromCenterX, toCenterX, toCenterX ],
+                y          : [ fromCenterY, fromCenterY, toCenterY, toCenterY ],
+                translateX : "-50%",
+                translateY : "-50%",
+            }}
+            transition={{
+                duration : (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / 1000,
+                times    : [ 0, TRANSACTION_CONFIG.SCALE_TIME_MS / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS),
+                    (TRANSACTION_CONFIG.SCALE_TIME_MS + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS), 1 ],
+                ease     : "easeInOut",
+            }}
+            onAnimationComplete={() => onComplete(transaction.id)}
+        >
+            <Text weight="400">{transaction.amount}</Text>
+        </motion.div>
     );
 };
 
@@ -229,7 +230,7 @@ const NodeRippleEffect = ({
 const GamePage = () => {
     const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
     const [ isGridReady, setIsGridReady ] = useState(false);
-    const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(10000000); // ₹1,00,00,000
+    const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(TRANSACTION_CONFIG.STARTING_AMOUNT);
     const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
     const [ activeRipples, setActiveRipples ] = useState<NodeRipple[]>([]);
     const [ pendingMoneyLoss, setPendingMoneyLoss ] = useState<Map<string, number>>(new Map());
@@ -247,6 +248,8 @@ const GamePage = () => {
                                                                startX : number;
                                                                startY : number;
                                                            } | null>(null);
+    const [ gameOverModalShown, setGameOverModalShown ] = useState(false);
+    const [ victoryModalShown, setVictoryModalShown ] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -738,55 +741,64 @@ const GamePage = () => {
         return () => clearInterval(interval);
     }, [ createTransaction, totalMoneyInCirculation, mulesFoundCount, actualMuleCount ]);
 
+    // Show game over modal when money reaches 0
+    useEffect(() => {
+        if (totalMoneyInCirculation <= 0 && !gameOverModalShown) {
+            setTimeout(() => {
+                showModal("game-over-modal");
+                setGameOverModalShown(true);
+            }, 1000); // Small delay to let the last transaction complete
+        }
+    }, [ totalMoneyInCirculation, gameOverModalShown ]);
+
+    // Show victory modal when all mules are found
+    useEffect(() => {
+        if (mulesFoundCount === actualMuleCount && actualMuleCount > 0 && !victoryModalShown) {
+            setTimeout(() => {
+                showModal("victory-modal");
+                setVictoryModalShown(true);
+            }, 500); // Small delay for better UX
+        }
+    }, [ mulesFoundCount, actualMuleCount, victoryModalShown ]);
+
+    // Test modal on component mount
+    // useEffect(() => {
+    //     // Test showing victory modal after component is ready
+    //     setTimeout(() => {
+    //         showModal("victory-modal");
+    //     }, 2000);
+    // }, []);
+
     return (
         <Article id="game-page">
-            <Header id="scorecard">
-                <Card padding="micro" shape="rounded" isFullHeight>
-                    <Row horizontalPadding="micro" retainLayoutAlways>
-                        <Portion desktopSpan="one-third">
-                            <Text size="small" weight="400">Total Money in Circulation</Text>
-                            <Text marginTop="nano">
-                                ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                            </Text>
-                        </Portion>
+            <Card
+                id="scorecard"
+                padding="micro" isFullHeight
+            >
+                <Div>
+                    <Text size="small">Total money in circulation</Text>
+                    <Heading6 weight="400">
+                        ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                    </Heading6>
+                </Div>
 
-                        <Portion desktopSpan="one-third">
-                            <Text size="small" weight="400">Money Lost to Mules</Text>
-                            <Text textColour="red" marginTop="nano">
-                                ₹{moneyLostToMules.toLocaleString("en-IN")}
-                            </Text>
-                        </Portion>
+                <Div>
+                    <Text>Money lost to mules</Text>
+                    <Heading6 weight="400" textColour="red">
+                        ₹{moneyLostToMules.toLocaleString("en-IN")}
+                    </Heading6>
+                </Div>
 
-                        <Portion desktopSpan="one-third">
-                            <Text size="small" weight="400">Mules Found</Text>
-                            <Text textColour="green" marginTop="nano">
-                                {mulesFoundCount}/{actualMuleCount}
-                            </Text>
-                        </Portion>
-
-                        {totalMoneyInCirculation <= 0 && (
-                            <Portion desktopSpan="one-third">
-                                <Text size="small" weight="400" textColour="red">GAME OVER</Text>
-                                <Heading1 textColour="red" marginTop="nano">
-                                    All Money Laundered!
-                                </Heading1>
-                            </Portion>
-                        )}
-
-                        {mulesFoundCount === actualMuleCount && actualMuleCount > 0 && (
-                            <Portion desktopSpan="one-third">
-                                <Text size="small" weight="400" textColour="green">VICTORY!</Text>
-                                <Heading1 textColour="green" marginTop="nano">
-                                    All Mules Found!
-                                </Heading1>
-                            </Portion>
-                        )}
-                    </Row>
-                </Card>
-            </Header>
+                <Div>
+                    <Text size="small" weight="400">Mules found</Text>
+                    <Text textColour="green" marginTop="nano">
+                        {mulesFoundCount}/{actualMuleCount}
+                    </Text>
+                </Div>
+            </Card>
 
             <Main id="play-area">
-                <Card shape="rounded" isFullHeight>
+                <Card isFullHeight>
                     <div ref={containerRef} style={{position : "relative", width : "100%", height : "100%"}}>
                         {!isGridReady ? (
                             // Loading State
@@ -865,6 +877,93 @@ const GamePage = () => {
                     </div>
                 </Card>
             </Main>
+
+            {/* GAME OVER MODAL //////////////////////////////////////////////////////////////////////////////////// */}
+            <Modal
+                id="game-over-modal"
+                isDismissible={false}
+                showBackdrop
+                blurBackdrop
+                label="Game Over"
+                description="All money has been laundered by the mules"
+            >
+                <>
+                    <Header marginBottom="micro">
+                        <img
+                            className="modal-image"
+                            src={MulesEscapeImage.src}
+                            alt="Mules eliminated"
+                        />
+
+                        <Heading1 weight="400" textColour="red" align="centre" verticalMargin="nano">
+                            GAME OVER!
+                        </Heading1>
+
+                        <Heading6 weight="400" align="centre">
+                            All money has been laundered!
+                        </Heading6>
+                    </Header>
+
+                    <Heading4 weight="400" align="centre" marginBottom="small">
+                        You found {mulesFoundCount} out of {actualMuleCount} mule accounts.
+                    </Heading4>
+
+                    <Button
+                        kind="primary" horizontallyCentreThis
+                        size="large" marginBottom="micro"
+                        onClick={() => {
+                            hideModal("game-over-modal");
+                            window.location.reload();
+                        }}
+                    >
+                        PLAY AGAIN
+                    </Button>
+                </>
+            </Modal>
+
+            {/* VICTORY MODAL ////////////////////////////////////////////////////////////////////////////////////// */}
+            <Modal
+                id="victory-modal"
+                isDismissible={false}
+                showBackdrop
+                blurBackdrop
+                label="Victory"
+                description="All mule accounts have been found"
+                padding="small"
+            >
+                <>
+                    <Header marginBottom="micro">
+                        <img
+                            className="modal-image"
+                            src={MulesEliminatedImage.src}
+                            alt="Mules eliminated"
+                        />
+
+                        <Heading1 weight="400" textColour="green" align="centre" marginBottom="nano" marginTop="micro">
+                            VICTORY!
+                        </Heading1>
+
+                        <Heading6 weight="400" align="centre">
+                            You got all {actualMuleCount} mule accounts
+                        </Heading6>
+                    </Header>
+
+                    <Heading4 weight="400" align="centre" marginBottom="small">
+                        Money saved: ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                    </Heading4>
+
+                    <Button
+                        kind="primary" horizontallyCentreThis
+                        size="large"
+                        onClick={() => {
+                            hideModal("victory-modal");
+                            window.location.reload();
+                        }}
+                    >
+                        PLAY AGAIN
+                    </Button>
+                </>
+            </Modal>
         </Article>
     );
 };
