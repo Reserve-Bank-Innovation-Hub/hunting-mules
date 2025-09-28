@@ -1,7 +1,15 @@
 .theme-dark {
-    --font-sans-serif : "IBM Plex Sans", sans-serif;
-    --font-serif      : "IBM Plex Serif", serif;
-    --font-mono       : "IBM Plex Mono", monospace;
-    /* FICTOAN VARIABLES ==================================================== */
-    --body-bg         : black;
+    --font-sans-serif       : "Minecraft", "Retro Gaming", sans-serif;
+    --font-serif            : "IBM Plex Serif", serif;
+    --font-mono             : "IBM Plex Mono", monospace;
+
+    --global-border-radius  : 0;
+
+    --heading-text-colour   : var(--black);
+    --paragraph-line-height : 1.6;
+
+    --heading-font          : "Minecraft", "Retro Gaming", sans-serif;
+    --paragraph-font        : "Minecraft", "Retro Gaming", sans-serif;
+
+    --font-size-max         : 14px;
 }
