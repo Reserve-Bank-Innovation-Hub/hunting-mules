@@ -771,44 +771,74 @@ const GamePage = () => {
 
     return (
         <Article id="game-page">
+            {/* SCORECARD ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Row id="scorecard" retainLayoutAlways marginBottom="none">
-                <Portion desktopSpan="one-third">
+                <Portion desktopSpan="one-third" hideOnMobile>
                     <Card
                         className="metric-card"
                         padding="micro" bgColour="amber-light60" isFullHeight
                     >
-                        <Text size="small">Amount in circulation</Text>
+                        <Text>In circulation</Text>
                         <Heading6>
                             ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
                         </Heading6>
                     </Card>
                 </Portion>
 
-                <Portion desktopSpan="one-third">
+                <Portion desktopSpan="one-third" hideOnMobile>
                     <Card
                         className="metric-card"
                         padding="micro" bgColour="amber-light60" isFullHeight
                     >
-                        <Text>Amount stolen by mules</Text>
+                        <Text>Stolen by mules</Text>
                         <Heading6 textColour="red">
                             ₹{moneyLostToMules.toLocaleString("en-IN")}
                         </Heading6>
                     </Card>
                 </Portion>
 
-                <Portion desktopSpan="one-third">
+                <Portion desktopSpan="one-third" hideOnMobile>
                     <Card
                         className="metric-card"
                         padding="micro" bgColour="amber-light60" isFullHeight
                     >
-                        <Text size="small">Mules found</Text>
+                        <Text>Mules found</Text>
                         <Heading6 textColour="green">
                             {mulesFoundCount}/{actualMuleCount}
                         </Heading6>
                     </Card>
                 </Portion>
+
+                <Portion showOnlyOnMobile>
+                    <Card
+                        className="metric-card"
+                        padding="micro" bgColour="amber-light60" isFullHeight
+                    >
+                        <Div verticallyCentreItems pushItemsToEnds>
+                            <Text>In circulation</Text>
+                            <Heading6>
+                                ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                            </Heading6>
+                        </Div>
+
+                        <Div verticallyCentreItems pushItemsToEnds>
+                            <Text>Stolen by mules</Text>
+                            <Heading6 textColour="red">
+                                ₹{moneyLostToMules.toLocaleString("en-IN")}
+                            </Heading6>
+                        </Div>
+
+                        <Div verticallyCentreItems pushItemsToEnds>
+                            <Text>Mules found</Text>
+                            <Heading6 textColour="green">
+                                {mulesFoundCount}/{actualMuleCount}
+                            </Heading6>
+                        </Div>
+                    </Card>
+                </Portion>
             </Row>
 
+            {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Main id="play-area">
                 <Card bgColour="grey-light60" isFullHeight>
                     <div ref={containerRef} style={{position : "relative", width : "100%", height : "100%"}}>

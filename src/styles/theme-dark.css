@@ -12,4 +12,7 @@
     --paragraph-font        : "Minecraft", "Retro Gaming", sans-serif;
 
     --font-size-max         : 14px;
+
+    --font-size-min         : 11px;
+    --scale-ratio-min       : 1.1;
 }
