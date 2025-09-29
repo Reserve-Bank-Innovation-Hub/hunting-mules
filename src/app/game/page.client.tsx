@@ -5,7 +5,7 @@ import React, { useMemo, useEffect } from "react";
 import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "reactflow";
 
 // UI ==================================================================================================================
-import { Article, Card, Main, Spinner } from "fictoan-react";
+import { Article, Card, Div, Main, Spinner } from "fictoan-react";
 
 // LOCAL COMPONENTS ====================================================================================================
 import { AccountNode } from "$components/AccountNode/AccountNode";
@@ -104,11 +104,13 @@ const GamePage = () => {
 
             {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Main id="play-area">
-                <Card bgColour="grey-light60" isFullHeight>
+                <Card bgColour="amber-light90" isFullHeight>
                     <div ref={gridLayout.containerRef} style={{position : "relative", width : "100%", height : "100%"}}>
                         {!gameState.isGridReady ? (
                             // Loading State
-                            <Spinner />
+                                <Div padding="small" marginTop="small">
+                                    <Spinner />
+                                </Div>
                         ) : (
                             <>
                                 <ReactFlow

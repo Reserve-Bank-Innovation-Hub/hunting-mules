@@ -1,7 +1,7 @@
 "use client";
 
 // UI ==================================================================================================================
-import { Card, Heading6, Text, Div, Row, Portion } from "fictoan-react";
+import { Card, Heading6, Text, Div, Row, Portion, Heading4 } from "fictoan-react";
 
 // STYLES ==============================================================================================================
 import "./scorecard.css";
@@ -27,10 +27,10 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
-                    <Text>In circulation</Text>
-                    <Heading6>
+                    <Text textColour="amber-dark60">In circulation</Text>
+                    <Heading4>
                         ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                    </Heading6>
+                    </Heading4>
                 </Card>
             </Portion>
 
@@ -39,10 +39,10 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
-                    <Text>Stolen by mules</Text>
-                    <Heading6 textColour="red">
+                    <Text textColour="amber-dark60">Stolen by mules</Text>
+                    <Heading4 textColour="red">
                         ₹{moneyLostToMules.toLocaleString("en-IN")}
-                    </Heading6>
+                    </Heading4>
                 </Card>
             </Portion>
 
@@ -51,10 +51,10 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
-                    <Text>Mules found</Text>
-                    <Heading6 textColour="green">
+                    <Text textColour="amber-dark60">Mules found</Text>
+                    <Heading4 textColour="green">
                         {mulesFoundCount}/{actualMuleCount}
-                    </Heading6>
+                    </Heading4>
                 </Card>
             </Portion>
 
