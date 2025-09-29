@@ -2,7 +2,6 @@
 
 // EXTERNAL ============================================================================================================
 import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 // STYLES ==============================================================================================================
 import "./game-page.css";
@@ -13,131 +12,29 @@ import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "react
 import {
     Article,
     Card,
-    Heading1,
-    Heading6,
     Main,
     Spinner,
-    Text,
-    Button,
-    Modal,
     showModal,
-    hideModal,
-    Div, Header, Heading4, Portion, Row,
 } from "fictoan-react";
-
-import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
-import MulesEscapeImage from "../../assets/images/mule-escape.jpg";
 
 // COMPONENTS
 import { CircleNode } from "../../components/CircleNode/CircleNode";
+import { AnimationOverlay } from "../../components/AnimationOverlay/AnimationOverlay";
+import { Scorecard } from "../../components/Scorecard/Scorecard";
+import { GameModals } from "../../components/GameModals/GameModals";
 
 // HOOKS
 import { useGameState } from "../../hooks/useGameState";
 
 // LIB
 import { getGridConfig, MULE_ACCOUNTS, TRANSACTION_CONFIG } from "../../lib/gameConfig";
-import { TransactionInstance, NodeRipple, NodeData, GridDimensions } from "../../lib/gameTypes";
+import { TransactionInstance, NodeRipple, NodeData } from "../../lib/gameTypes";
+import { calculateGridDimensions } from "../../lib/gridCalculations";
 
 
 
 
-// ANIMATED TRANSACTION COMPONENT ======================================================================================
-const AnimatedTransactionCard = ({
-    transaction,
-    onComplete,
-} : {
-    transaction : TransactionInstance;
-    onComplete : (id : string) => void;
-}) => {
-    const gridConfig = getGridConfig();
 
-    // Calculate the exact center of nodes based on their stored positions
-    // node.position is the top-left corner as set during grid creation
-    const fromCenterX = transaction.fromNode.position.x + (gridConfig.CIRCLE_SIZE / 2);
-    const fromCenterY = transaction.fromNode.position.y + (gridConfig.CIRCLE_SIZE / 2);
-    const toCenterX = transaction.toNode.position.x + (gridConfig.CIRCLE_SIZE / 2);
-    const toCenterY = transaction.toNode.position.y + (gridConfig.CIRCLE_SIZE / 2);
-
-    return (
-        <motion.div
-            className="transaction-card"
-            style={{
-                position        : "absolute",
-                left            : 0,
-                top             : 0,
-                transformOrigin : "center center",
-            }}
-            initial={{
-                scale      : 0,
-                x          : fromCenterX,
-                y          : fromCenterY,
-                translateX : "-50%",
-                translateY : "-50%",
-            }}
-            animate={{
-                scale      : [ 0, 1, 1, 0 ],
-                x          : [ fromCenterX, fromCenterX, toCenterX, toCenterX ],
-                y          : [ fromCenterY, fromCenterY, toCenterY, toCenterY ],
-                translateX : "-50%",
-                translateY : "-50%",
-            }}
-            transition={{
-                duration : (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / 1000,
-                times    : [ 0, TRANSACTION_CONFIG.SCALE_TIME_MS / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS),
-                    (TRANSACTION_CONFIG.SCALE_TIME_MS + TRANSACTION_CONFIG.TRANSACTION_TIME_MS) / (TRANSACTION_CONFIG.SCALE_TIME_MS * 2 + TRANSACTION_CONFIG.TRANSACTION_TIME_MS), 1 ],
-                ease     : "easeInOut",
-            }}
-            onAnimationComplete={() => onComplete(transaction.id)}
-        >
-            <Text weight="400">{transaction.amount}</Text>
-        </motion.div>
-    );
-};
-
-// RIPPLE COMPONENT ====================================================================================================
-const NodeRippleEffect = ({
-    ripple,
-    onComplete,
-} : {
-    ripple : NodeRipple;
-    onComplete : (id : string) => void;
-}) => {
-    const gridConfig = getGridConfig();
-
-    // Simple center calculation - ripple.x/y is the top-left of the node
-    const centerX = ripple.x + (gridConfig.CIRCLE_SIZE / 2);
-    const centerY = ripple.y + (gridConfig.CIRCLE_SIZE / 2);
-
-    const rippleSize = gridConfig.CIRCLE_SIZE;
-
-    return (
-        <motion.div
-            className="node-ripple"
-            style={{
-                left      : centerX,
-                top       : centerY,
-                width     : 0,
-                height    : 0,
-                transform : "translate(-50%, -50%)",
-            }}
-            initial={{
-                width   : 0,
-                height  : 0,
-                opacity : 1,
-            }}
-            animate={{
-                width   : rippleSize * 3,
-                height  : rippleSize * 3,
-                opacity : 0,
-            }}
-            transition={{
-                duration : 1,
-                ease     : "easeOut",
-            }}
-            onAnimationComplete={() => onComplete(ripple.id)}
-        />
-    );
-};
 
 const GamePage = () => {
     const {
@@ -181,99 +78,24 @@ const GamePage = () => {
 
     // Calculate grid dimensions based on container size
     useEffect(() => {
-        const calculateGridDimensions = () => {
+        const calculateGrid = () => {
             if (!containerRef.current) return;
 
-            const gridConfig = getGridConfig();
             const rect = containerRef.current.getBoundingClientRect();
-            const availableWidth = rect.width - (gridConfig.PADDING * 2);
-            const availableHeight = rect.height - (gridConfig.PADDING * 2);
-
-            // Calculate maximum possible cells that could fit with minimum spacing
-            const maxPossibleCols = Math.floor((availableWidth + gridConfig.MIN_SPACING) /
-                (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
-            const maxPossibleRows = Math.floor((availableHeight + gridConfig.MIN_SPACING) /
-                (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
-
-            // Start with the ideal square grid for MAX_CELLS
-            let targetCells = gridConfig.MAX_CELLS;
-            let bestConfig = {rows : 0, columns : 0, totalCells : 0};
-
-            // Try to find the best configuration that maximizes cells while fitting the space
-            for (let testRows = maxPossibleRows; testRows >= 3; testRows--) {
-                for (let testCols = maxPossibleCols; testCols >= 3; testCols--) {
-                    const totalCells = testRows * testCols;
-
-                    // Skip if this exceeds our maximum
-                    if (totalCells > targetCells) continue;
-
-                    // Check if this configuration would fit with proportional spacing
-                    const testSpacingX = (availableWidth - (testCols * gridConfig.CIRCLE_SIZE)) / (testCols - 1);
-                    const testSpacingY = (availableHeight - (testRows * gridConfig.CIRCLE_SIZE)) / (testRows - 1);
-
-                    // Ensure minimum spacing is maintained
-                    if (testSpacingX >= gridConfig.MIN_SPACING && testSpacingY >= gridConfig.MIN_SPACING) {
-                        // Prefer configurations closer to our target
-                        if (totalCells > bestConfig.totalCells) {
-                            bestConfig = {
-                                rows       : testRows,
-                                columns    : testCols,
-                                totalCells : totalCells,
-                            };
-                        }
-                    }
-                }
-            }
-
-            // If we didn't find a valid configuration, use a fallback
-            if (bestConfig.totalCells === 0) {
-                // Fallback to a minimal grid that definitely fits
-                bestConfig.rows = Math.min(5, maxPossibleRows);
-                bestConfig.columns = Math.min(5, maxPossibleCols);
-                bestConfig.totalCells = bestConfig.rows * bestConfig.columns;
-            }
-
-            // Calculate proportional spacing to fill the available space
-            const spacingX = Math.max(
-                gridConfig.MIN_SPACING,
-                (availableWidth - (bestConfig.columns * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.columns - 1),
-            );
-            const spacingY = Math.max(
-                gridConfig.MIN_SPACING,
-                (availableHeight - (bestConfig.rows * gridConfig.CIRCLE_SIZE)) / Math.max(1, bestConfig.rows - 1),
-            );
-
-            // Calculate the actual grid dimensions
-            const totalGridWidth = bestConfig.columns * gridConfig.CIRCLE_SIZE + (bestConfig.columns - 1) * spacingX;
-            const totalGridHeight = bestConfig.rows * gridConfig.CIRCLE_SIZE + (bestConfig.rows - 1) * spacingY;
-
-            // Center the grid in the available space
-            const startX = gridConfig.PADDING + (availableWidth - totalGridWidth) / 2;
-            const startY = gridConfig.PADDING + (availableHeight - totalGridHeight) / 2;
-
-            console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells), Spacing: ${spacingX.toFixed(
-                1)}x${spacingY.toFixed(1)}px`);
-
-            setGridDimensions({
-                rows     : bestConfig.rows,
-                columns  : bestConfig.columns,
-                spacingX : spacingX,
-                spacingY : spacingY,
-                startX   : startX,
-                startY   : startY,
-            });
+            const dimensions = calculateGridDimensions(rect);
+            setGridDimensions(dimensions);
 
             // Small delay to show loading state
             setTimeout(() => setIsGridReady(true), 300);
         };
 
         // Wait for next frame to ensure container is rendered
-        const timeoutId = setTimeout(calculateGridDimensions, 100);
+        const timeoutId = setTimeout(calculateGrid, 100);
 
         // Add resize listener for responsive updates
         const handleResize = () => {
             setIsGridReady(false);
-            calculateGridDimensions();
+            calculateGrid();
         };
 
         window.addEventListener("resize", handleResize);
@@ -693,72 +515,12 @@ const GamePage = () => {
 
     return (
         <Article id="game-page">
-            {/* SCORECARD ////////////////////////////////////////////////////////////////////////////////////////// */}
-            <Row id="scorecard" retainLayoutAlways marginBottom="none">
-                <Portion desktopSpan="one-third" hideOnMobile>
-                    <Card
-                        className="metric-card"
-                        padding="micro" bgColour="amber-light60" isFullHeight
-                    >
-                        <Text>In circulation</Text>
-                        <Heading6>
-                            ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                        </Heading6>
-                    </Card>
-                </Portion>
-
-                <Portion desktopSpan="one-third" hideOnMobile>
-                    <Card
-                        className="metric-card"
-                        padding="micro" bgColour="amber-light60" isFullHeight
-                    >
-                        <Text>Stolen by mules</Text>
-                        <Heading6 textColour="red">
-                            ₹{moneyLostToMules.toLocaleString("en-IN")}
-                        </Heading6>
-                    </Card>
-                </Portion>
-
-                <Portion desktopSpan="one-third" hideOnMobile>
-                    <Card
-                        className="metric-card"
-                        padding="micro" bgColour="amber-light60" isFullHeight
-                    >
-                        <Text>Mules found</Text>
-                        <Heading6 textColour="green">
-                            {mulesFoundCount}/{actualMuleCount}
-                        </Heading6>
-                    </Card>
-                </Portion>
-
-                <Portion showOnlyOnMobile>
-                    <Card
-                        className="metric-card"
-                        padding="micro" bgColour="amber-light60" isFullHeight
-                    >
-                        <Div verticallyCentreItems pushItemsToEnds>
-                            <Text>In circulation</Text>
-                            <Heading6>
-                                ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                            </Heading6>
-                        </Div>
-
-                        <Div verticallyCentreItems pushItemsToEnds>
-                            <Text>Stolen by mules</Text>
-                            <Heading6 textColour="red">
-                                ₹{moneyLostToMules.toLocaleString("en-IN")}
-                            </Heading6>
-                        </Div>
-
-                        <Div verticallyCentreItems pushItemsToEnds>
-                            <Text>Mules found</Text>
-                            <Heading6 textColour="green">
-                                {mulesFoundCount}/{actualMuleCount}
-                            </Heading6>
-                        </Div>
-                    </Card>
-                </Portion>
-            </Row>
+            <Scorecard
+                totalMoneyInCirculation={totalMoneyInCirculation}
+                moneyLostToMules={moneyLostToMules}
+                mulesFoundCount={mulesFoundCount}
+                actualMuleCount={actualMuleCount}
+            />
 
             {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Main id="play-area">
@@ -791,143 +553,23 @@ const GamePage = () => {
                                     <Background color="#000" variant={BackgroundVariant.Dots} gap={12} size={1} />
                                 </ReactFlow>
 
-                                {/* Animated Transactions Overlay */}
-                                <div
-                                    style={{
-                                        position      : "absolute",
-                                        top           : 0,
-                                        left          : 0,
-                                        width         : "100%",
-                                        height        : "100%",
-                                        pointerEvents : "none",
-                                        zIndex        : 10,
-                                    }}
-                                >
-                                    <AnimatePresence>
-                                        {activeTransactions.map((transaction) => (
-                                            <AnimatedTransactionCard
-                                                key={transaction.id}
-                                                transaction={transaction}
-                                                onComplete={handleTransactionComplete}
-                                            />
-                                        ))}
-                                    </AnimatePresence>
-                                </div>
-
-                                {/* Node Ripples Overlay */}
-                                <div
-                                    style={{
-                                        position      : "absolute",
-                                        top           : 0,
-                                        left          : 0,
-                                        width         : "100%",
-                                        height        : "100%",
-                                        pointerEvents : "none",
-                                        zIndex        : 5,
-                                    }}
-                                >
-                                    <AnimatePresence>
-                                        {activeRipples.map((ripple) => (
-                                            <NodeRippleEffect
-                                                key={ripple.id}
-                                                ripple={ripple}
-                                                onComplete={handleRippleComplete}
-                                            />
-                                        ))}
-                                    </AnimatePresence>
-                                </div>
+                                <AnimationOverlay
+                                    activeTransactions={activeTransactions}
+                                    activeRipples={activeRipples}
+                                    onTransactionComplete={handleTransactionComplete}
+                                    onRippleComplete={handleRippleComplete}
+                                />
                             </>
                         )}
                     </div>
                 </Card>
             </Main>
 
-            {/* GAME OVER MODAL //////////////////////////////////////////////////////////////////////////////////// */}
-            <Modal
-                id="game-over-modal"
-                isDismissible={false}
-                showBackdrop
-                blurBackdrop
-                label="Game Over"
-                description="All money has been laundered by the mules"
-            >
-                <>
-                    <Header marginBottom="micro">
-                        <img
-                            className="modal-image"
-                            src={MulesEscapeImage.src}
-                            alt="Mules eliminated"
-                        />
-
-                        <Heading1 weight="400" textColour="red" align="centre" verticalMargin="nano">
-                            GAME OVER!
-                        </Heading1>
-
-                        <Heading6 weight="400" align="centre">
-                            All money has been laundered!
-                        </Heading6>
-                    </Header>
-
-                    <Heading4 weight="400" align="centre" marginBottom="small">
-                        You found {mulesFoundCount} out of {actualMuleCount} mule accounts.
-                    </Heading4>
-
-                    <Button
-                        kind="primary" horizontallyCentreThis
-                        size="large" marginBottom="micro"
-                        onClick={() => {
-                            hideModal("game-over-modal");
-                            window.location.reload();
-                        }}
-                    >
-                        PLAY AGAIN
-                    </Button>
-                </>
-            </Modal>
-
-            {/* VICTORY MODAL ////////////////////////////////////////////////////////////////////////////////////// */}
-            <Modal
-                id="victory-modal"
-                isDismissible={false}
-                showBackdrop
-                blurBackdrop
-                label="Victory"
-                description="All mule accounts have been found"
-                padding="small"
-            >
-                <>
-                    <Header marginBottom="micro">
-                        <img
-                            className="modal-image"
-                            src={MulesEliminatedImage.src}
-                            alt="Mules eliminated"
-                        />
-
-                        <Heading1 weight="400" textColour="green" align="centre" marginBottom="nano" marginTop="micro">
-                            VICTORY!
-                        </Heading1>
-
-                        <Heading6 weight="400" align="centre">
-                            You got all {actualMuleCount} mule accounts
-                        </Heading6>
-                    </Header>
-
-                    <Heading4 weight="400" align="centre" marginBottom="small">
-                        Money saved: ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                    </Heading4>
-
-                    <Button
-                        kind="primary" horizontallyCentreThis
-                        size="large"
-                        onClick={() => {
-                            hideModal("victory-modal");
-                            window.location.reload();
-                        }}
-                    >
-                        PLAY AGAIN
-                    </Button>
-                </>
-            </Modal>
+            <GameModals
+                mulesFoundCount={mulesFoundCount}
+                actualMuleCount={actualMuleCount}
+                totalMoneyInCirculation={totalMoneyInCirculation}
+            />
         </Article>
     );
 };

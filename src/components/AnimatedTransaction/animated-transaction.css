@@ -1,0 +1,24 @@
+.transaction-card {
+    width            : fit-content;
+    z-index          : 15;
+    border-radius    : 8px;
+    border           : 1px solid var(--slate-light60);
+    background-color : white;
+    will-change      : transform;
+    pointer-events   : none;
+    padding          : 6px 12px !important;
+    box-shadow       : 0 4px 12px 0 rgba(0, 0, 0, 0.3), 0 6px 24px 0 rgba(0, 0, 0, 0.25);
+    transform-origin : center center;
+
+    p {
+        font-size   : 14px;
+        font-weight : 700;
+        text-align  : center;
+        margin      : 0;
+        color       : var(--slate);
+
+        @media screen and (max-width : 768px) {
+            font-size : 8px;
+        }
+    }
+}

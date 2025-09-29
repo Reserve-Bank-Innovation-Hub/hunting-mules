@@ -1,0 +1,24 @@
+/* MODALS */
+[data-modal]#game-over-modal.show-backdrop:popover-open::backdrop {
+    background-color : var(--red-dark20-opacity80) !important;
+}
+
+[data-modal]#victory-modal.show-backdrop:popover-open::backdrop {
+    background-color : var(--green-dark20-opacity80) !important;
+}
+
+.modal-image {
+    margin    : 0 auto;
+    width     : 50%;
+    max-width : 400px;
+}
+
+#game-over-modal {
+    width : 600px;
+
+    .modal-image {
+        width     : 100%;
+        max-width : unset;
+        z-index   : -1;
+    }
+}
