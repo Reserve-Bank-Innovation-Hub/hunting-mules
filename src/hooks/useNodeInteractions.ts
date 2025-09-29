@@ -1,18 +1,25 @@
 // REACT CORE ==========================================================================================================
 import { useCallback } from "react";
 
+// LIB =================================================================================================================
+import { TransactionInstance } from "$lib/gameTypes";
+
 interface UseNodeInteractionsProps {
-    lockedNodes        : Set<string>;
-    setLockedNodes     : (updater : (prev : Set<string>) => Set<string>) => void;
-    setShakingNodes    : (updater : (prev : Set<string>) => Set<string>) => void;
-    setMulesFoundCount : (updater : (prev : number) => number) => void;
+    lockedNodes           : Set<string>;
+    activeTransactions    : TransactionInstance[];
+    setLockedNodes        : (updater : (prev : Set<string>) => Set<string>) => void;
+    setShakingNodes       : (updater : (prev : Set<string>) => Set<string>) => void;
+    setMulesFoundCount    : (updater : (prev : number) => number) => void;
+    setActiveTransactions : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
 }
 
 export const useNodeInteractions = ({
     lockedNodes,
+    activeTransactions,
     setLockedNodes,
     setShakingNodes,
     setMulesFoundCount,
+    setActiveTransactions,
 } : UseNodeInteractionsProps) => {
 
     // Handle node clicks
@@ -27,6 +34,25 @@ export const useNodeInteractions = ({
                 // Not locked yet - increment counter and lock
                 const newLockedNodes = new Set(prev).add(nodeId);
                 setMulesFoundCount(count => count + 1);
+
+                // Check for and reverse any mid-flight transactions to this mule
+                setActiveTransactions(transactions =>
+                    transactions.map(transaction => {
+                        // If transaction is heading to this mule and not already bounced, reverse it
+                        if (transaction.toNode.id === nodeId && !transaction.isBounced) {
+                            return {
+                                ...transaction,
+                                isBounced: true,
+                                // Swap the from and to nodes to reverse direction
+                                fromNode: transaction.toNode,
+                                toNode: transaction.fromNode,
+                                startTime: Date.now(), // Reset animation start time
+                            };
+                        }
+                        return transaction;
+                    })
+                );
+
                 return newLockedNodes;
             });
         } else {
@@ -42,7 +68,7 @@ export const useNodeInteractions = ({
                 });
             }, 600); // Match CSS animation duration
         }
-    }, [ setLockedNodes, setShakingNodes, setMulesFoundCount ]);
+    }, [ setLockedNodes, setShakingNodes, setMulesFoundCount, setActiveTransactions ]);
 
     return {
         handleNodeClick,

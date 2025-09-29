@@ -14,6 +14,8 @@ export interface TransactionInstance {
     amount                       : string;
     isSecondaryMuleTransaction ? : boolean;
     originalAmount             ? : number;
+    isBounced                  ? : boolean;
+    startTime                  ? : number;
 }
 
 export interface NodeRipple {

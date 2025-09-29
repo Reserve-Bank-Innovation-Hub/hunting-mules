@@ -29,10 +29,12 @@ const GamePage = () => {
     const gridLayout = useGridLayout();
 
     const nodeInteractions = useNodeInteractions({
-        lockedNodes        : gameState.lockedNodes,
-        setLockedNodes     : gameState.setLockedNodes,
-        setShakingNodes    : gameState.setShakingNodes,
-        setMulesFoundCount : gameState.setMulesFoundCount,
+        lockedNodes           : gameState.lockedNodes,
+        activeTransactions    : gameState.activeTransactions,
+        setLockedNodes        : gameState.setLockedNodes,
+        setShakingNodes       : gameState.setShakingNodes,
+        setMulesFoundCount    : gameState.setMulesFoundCount,
+        setActiveTransactions : gameState.setActiveTransactions,
     });
 
     const gameFlow = useGameFlow({
