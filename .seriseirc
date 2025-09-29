@@ -4,8 +4,8 @@ HEADER_CHAR = =
 
 [groups]
 # Use quotes to match the exact package name
-// REACT CORE = "react", "react-router-dom", "next/", next, tanstack, tauri, "react-use", dnd-kit, react-dom, three, three/
-// UI = "fictoan-react", framer
+// REACT CORE = "react", "react-router-dom", "next/", next, reactflow, tauri, "react-use", dnd-kit, react-dom, three, three
+// UI = "fictoan-react", framer, framer-motion
 // LOCAL COMPONENTS = components/, Page, Element, $element, Element/, $tags
 // CONFIGS = configs/,
 // STATE MANAGEMENT = zustand, store/

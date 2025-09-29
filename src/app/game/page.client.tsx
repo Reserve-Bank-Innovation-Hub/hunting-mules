@@ -1,79 +1,68 @@
 "use client";
 
-// EXTERNAL ============================================================================================================
+// REACT CORE ==========================================================================================================
 import React, { useMemo, useEffect } from "react";
+import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "reactflow";
+
+// UI ==================================================================================================================
+import { Article, Card, Main, Spinner } from "fictoan-react";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { AccountNode } from "$components/AccountNode/AccountNode";
+import { AnimationOverlay } from "$components/AnimationOverlay/AnimationOverlay";
+import { GameModals } from "$components/GameModals/GameModals";
+import { Scorecard } from "$components/Scorecard/Scorecard";
+
+// HOOKS ===============================================================================================================
+import { useGameFlow } from "$hooks/useGameFlow";
+import { useGameState } from "$hooks/useGameState";
+import { useGridLayout } from "$hooks/useGridLayout";
+import { useNodeInteractions } from "$hooks/useNodeInteractions";
+import { useTransactions } from "$hooks/useTransactions";
 
 // STYLES ==============================================================================================================
 import "./game-page.css";
 import "reactflow/dist/style.css";
-
-// OTHER ===============================================================================================================
-import ReactFlow, { Background, BackgroundVariant, Node, NodeTypes } from "reactflow";
-import {
-    Article,
-    Card,
-    Main,
-    Spinner,
-} from "fictoan-react";
-
-// COMPONENTS
-import { CircleNode } from "../../components/CircleNode/CircleNode";
-import { AnimationOverlay } from "../../components/AnimationOverlay/AnimationOverlay";
-import { Scorecard } from "../../components/Scorecard/Scorecard";
-import { GameModals } from "../../components/GameModals/GameModals";
-
-// HOOKS
-import { useGameState } from "../../hooks/useGameState";
-import { useGridLayout } from "../../hooks/useGridLayout";
-import { useNodeInteractions } from "../../hooks/useNodeInteractions";
-import { useTransactions } from "../../hooks/useTransactions";
-import { useGameFlow } from "../../hooks/useGameFlow";
-
-
-
-
-
-
 
 const GamePage = () => {
     const gameState = useGameState();
     const gridLayout = useGridLayout();
 
     const nodeInteractions = useNodeInteractions({
-        lockedNodes: gameState.lockedNodes,
-        setLockedNodes: gameState.setLockedNodes,
-        setShakingNodes: gameState.setShakingNodes,
-        setMulesFoundCount: gameState.setMulesFoundCount,
+        lockedNodes        : gameState.lockedNodes,
+        setLockedNodes     : gameState.setLockedNodes,
+        setShakingNodes    : gameState.setShakingNodes,
+        setMulesFoundCount : gameState.setMulesFoundCount,
     });
 
     const gameFlow = useGameFlow({
-        totalMoneyInCirculation: gameState.totalMoneyInCirculation,
-        mulesFoundCount: gameState.mulesFoundCount,
-        actualMuleCount: gameState.actualMuleCount,
-        gameOverModalShown: gameState.gameOverModalShown,
-        victoryModalShown: gameState.victoryModalShown,
-        setGameOverModalShown: gameState.setGameOverModalShown,
-        setVictoryModalShown: gameState.setVictoryModalShown,
-        setActiveRipples: gameState.setActiveRipples,
+        totalMoneyInCirculation : gameState.totalMoneyInCirculation,
+        mulesFoundCount         : gameState.mulesFoundCount,
+        actualMuleCount         : gameState.actualMuleCount,
+        gameOverModalShown      : gameState.gameOverModalShown,
+        victoryModalShown       : gameState.victoryModalShown,
+        setGameOverModalShown   : gameState.setGameOverModalShown,
+        setVictoryModalShown    : gameState.setVictoryModalShown,
+        setActiveRipples        : gameState.setActiveRipples,
     });
 
     const transactions = useTransactions({
-        nodes: gameState.baseNodes,
-        activeTransactions: gameState.activeTransactions,
-        pendingMoneyLoss: gameState.pendingMoneyLoss,
-        lockedNodes: gameState.lockedNodes,
-        totalMoneyInCirculation: gameState.totalMoneyInCirculation,
-        mulesFoundCount: gameState.mulesFoundCount,
-        actualMuleCount: gameState.actualMuleCount,
-        setActiveTransactions: gameState.setActiveTransactions,
-        setMoneyLostToMules: gameState.setMoneyLostToMules,
-        setTotalMoneyInCirculation: gameState.setTotalMoneyInCirculation,
-        setPendingMoneyLoss: gameState.setPendingMoneyLoss,
-        createRipple: gameFlow.createRipple,
+        nodes                      : gameState.baseNodes,
+        activeTransactions         : gameState.activeTransactions,
+        pendingMoneyLoss           : gameState.pendingMoneyLoss,
+        lockedNodes                : gameState.lockedNodes,
+        totalMoneyInCirculation    : gameState.totalMoneyInCirculation,
+        mulesFoundCount            : gameState.mulesFoundCount,
+        actualMuleCount            : gameState.actualMuleCount,
+        setActiveTransactions      : gameState.setActiveTransactions,
+        setMoneyLostToMules        : gameState.setMoneyLostToMules,
+        setTotalMoneyInCirculation : gameState.setTotalMoneyInCirculation,
+        setPendingMoneyLoss        : gameState.setPendingMoneyLoss,
+        createRipple               : gameFlow.createRipple,
     });
 
     const nodeTypes : NodeTypes = useMemo(() => ({
-        circle : CircleNode,
+        circle : AccountNode,
     }), []);
 
     // Setup grid layout
@@ -84,31 +73,28 @@ const GamePage = () => {
             gameState.setBaseNodes,
             gameState.setMuleIndices,
             gameState.setActualMuleCount,
-            gameState.muleIndices
+            gameState.muleIndices,
         );
-    }, [gameState.muleIndices]);
-
+    }, [ gameState.muleIndices ]);
 
 
     // Update nodes with dynamic state
     const nodes = useMemo(() => {
         return gameState.baseNodes.map(node => ({
             ...node,
-            data: {
+            data : {
                 ...node.data,
-                onNodeClick: nodeInteractions.handleNodeClick,
-                isLocked: gameState.lockedNodes?.has(node.id) || false,
-                isShaking: gameState.shakingNodes?.has(node.id) || false,
+                onNodeClick : nodeInteractions.handleNodeClick,
+                isLocked    : gameState.lockedNodes?.has(node.id) || false,
+                isShaking   : gameState.shakingNodes?.has(node.id) || false,
             },
         }));
-    }, [gameState.baseNodes, nodeInteractions.handleNodeClick, gameState.lockedNodes, gameState.shakingNodes]);
-
-
-
+    }, [ gameState.baseNodes, nodeInteractions.handleNodeClick, gameState.lockedNodes, gameState.shakingNodes ]);
 
 
     return (
         <Article id="game-page">
+            {/* SCORECARD ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Scorecard
                 totalMoneyInCirculation={gameState.totalMoneyInCirculation}
                 moneyLostToMules={gameState.moneyLostToMules}

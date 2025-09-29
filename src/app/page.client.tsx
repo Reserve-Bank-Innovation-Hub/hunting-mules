@@ -1,19 +1,19 @@
 "use client";
 
-// EXTERNAL ============================================================================================================
+// REACT CORE ==========================================================================================================
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
+
+// UI ==================================================================================================================
+import { Button, Portion, Row, Text, Article, Heading6, Div } from "fictoan-react";
+
+// ASSETS ==============================================================================================================
+import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
 
-// OTHER ===============================================================================================================
-import { Button, Portion, Row, Text, Article, Heading6, Div } from "fictoan-react";
-
-import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
-
 const HomePage = () => {
-
     return (
         <Article id="page-home" verticalPadding="small">
             <Row horizontalPadding="large">
@@ -60,6 +60,6 @@ const HomePage = () => {
             </Row>
         </Article>
     );
-}
+};
 
 export default HomePage;

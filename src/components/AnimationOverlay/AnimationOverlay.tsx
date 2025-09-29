@@ -1,15 +1,21 @@
 "use client";
 
+// UI ==================================================================================================================
 import { AnimatePresence } from "framer-motion";
-import { AnimatedTransaction } from "../AnimatedTransaction/AnimatedTransaction";
-import { NodeRippleEffect } from "../NodeRippleEffect/NodeRippleEffect";
-import { TransactionInstance, NodeRipple } from "../../lib/gameTypes";
+import { Div } from "fictoan-react";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { AnimatedTransaction } from "$components/AnimatedTransaction/AnimatedTransaction";
+import { NodeRippleEffect } from "$components/NodeRippleEffect/NodeRippleEffect";
+
+// LIB =================================================================================================================
+import { TransactionInstance, NodeRipple } from "$lib/gameTypes";
 
 interface AnimationOverlayProps {
-    activeTransactions: TransactionInstance[];
-    activeRipples: NodeRipple[];
-    onTransactionComplete: (id: string) => void;
-    onRippleComplete: (id: string) => void;
+    activeTransactions    : TransactionInstance[];
+    activeRipples         : NodeRipple[];
+    onTransactionComplete : (id : string) => void;
+    onRippleComplete      : (id : string) => void;
 }
 
 export const AnimationOverlay = ({
@@ -17,11 +23,11 @@ export const AnimationOverlay = ({
     activeRipples,
     onTransactionComplete,
     onRippleComplete,
-}: AnimationOverlayProps) => {
+} : AnimationOverlayProps) => {
     return (
         <>
-            {/* Animated Transactions Overlay */}
-            <div
+            {/* Animated transactions overlay */}
+            <Div
                 style={{
                     position      : "absolute",
                     top           : 0,
@@ -41,10 +47,10 @@ export const AnimationOverlay = ({
                         />
                     ))}
                 </AnimatePresence>
-            </div>
+            </Div>
 
-            {/* Node Ripples Overlay */}
-            <div
+            {/* Node ripples overlay */}
+            <Div
                 style={{
                     position      : "absolute",
                     top           : 0,
@@ -64,7 +70,7 @@ export const AnimationOverlay = ({
                         />
                     ))}
                 </AnimatePresence>
-            </div>
+            </Div>
         </>
     );
 };

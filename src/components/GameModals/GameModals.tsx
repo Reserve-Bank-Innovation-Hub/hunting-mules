@@ -1,32 +1,33 @@
 "use client";
 
+// UI ==================================================================================================================
 import { Button, Modal, Header, Heading1, Heading6, Heading4, hideModal } from "fictoan-react";
 
-// ASSETS
+// ASSETS ==============================================================================================================
 import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
 import MulesEscapeImage from "../../assets/images/mule-escape.jpg";
 
-// STYLES
+// STYLES ==============================================================================================================
 import "./game-modals.css";
 
 interface GameModalsProps {
-    mulesFoundCount: number;
-    actualMuleCount: number;
-    totalMoneyInCirculation: number;
+    mulesFoundCount         : number;
+    actualMuleCount         : number;
+    totalMoneyInCirculation : number;
 }
 
 export const GameModals = ({
     mulesFoundCount,
     actualMuleCount,
     totalMoneyInCirculation,
-}: GameModalsProps) => {
+} : GameModalsProps) => {
     const handlePlayAgain = () => {
         window.location.reload();
     };
 
     return (
         <>
-            {/* GAME OVER MODAL */}
+            {/* GAME OVER MODAL //////////////////////////////////////////////////////////////////////////////////// */}
             <Modal
                 id="game-over-modal"
                 isDismissible={false}
@@ -69,7 +70,7 @@ export const GameModals = ({
                 </>
             </Modal>
 
-            {/* VICTORY MODAL */}
+            {/* VICTORY MODAL ////////////////////////////////////////////////////////////////////////////////////// */}
             <Modal
                 id="victory-modal"
                 isDismissible={false}

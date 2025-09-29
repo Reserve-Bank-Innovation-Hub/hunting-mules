@@ -1,22 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+// UI ==================================================================================================================
 import { Text } from "fictoan-react";
-import { TransactionInstance } from "../../lib/gameTypes";
-import { getGridConfig, TRANSACTION_CONFIG } from "../../lib/gameConfig";
+import { motion } from "framer-motion";
 
-// STYLES
+// LIB =================================================================================================================
+import { TransactionInstance } from "$lib/gameTypes";
+import { getGridConfig, TRANSACTION_CONFIG } from "$lib/gameConfig";
+
+// STYLES ==============================================================================================================
 import "./animated-transaction.css";
 
 interface AnimatedTransactionProps {
-    transaction: TransactionInstance;
-    onComplete: (id: string) => void;
+    transaction : TransactionInstance;
+    onComplete  : (id : string) => void;
 }
 
 export const AnimatedTransaction = ({
     transaction,
     onComplete,
-}: AnimatedTransactionProps) => {
+} : AnimatedTransactionProps) => {
     const gridConfig = getGridConfig();
 
     // Calculate the exact center of nodes based on their stored positions

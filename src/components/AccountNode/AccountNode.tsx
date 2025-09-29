@@ -1,24 +1,27 @@
 "use client";
 
+// REACT CORE ==========================================================================================================
 import React from "react";
+
+// UI ==================================================================================================================
 import { Div } from "fictoan-react";
 
-// ASSETS
-import MuleHeadImage from "../../assets/images/mule-head.png";
+// ASSETS ==============================================================================================================
 import BankIconImage from "../../assets/images/bank-icon.png";
+import MuleHeadImage from "../../assets/images/mule-head.png";
 
-// STYLES
-import "./circle-node.css";
+// STYLES ==============================================================================================================
+import "./account-node.css";
 
 // TYPES
 interface NodeData {
-    isMule? : boolean;
-    isLocked? : boolean;
-    isShaking? : boolean;
-    onNodeClick? : (nodeId : string, isMule : boolean) => void;
+        isMule      ? : boolean;
+        isLocked    ? : boolean;
+        isShaking   ? : boolean;
+        onNodeClick ? : (nodeId : string, isMule : boolean) => void;
 }
 
-export const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
+export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
     const handleClick = (event : React.MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
@@ -36,7 +39,7 @@ export const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
 
     if (data.isMule && data.isLocked) {
         return (
-            <div className={`circle-node mule-account locked`} onClick={handleClick} onMouseDown={handleMouseDown}>
+            <Div className={`account-node mule-account locked`} onClick={handleClick} onMouseDown={handleMouseDown}>
                 <img
                     src={MuleHeadImage.src}
                     alt="Locked Mule"
@@ -46,13 +49,13 @@ export const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
                         maxWidth     : "unset",
                     }}
                 />
-            </div>
+            </Div>
         );
     }
 
     return (
         <Div
-            className={`circle-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
+            className={`account-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
         >

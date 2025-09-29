@@ -1,15 +1,16 @@
 "use client";
 
+// UI ==================================================================================================================
 import { Card, Heading6, Text, Div, Row, Portion } from "fictoan-react";
 
-// STYLES
+// STYLES ==============================================================================================================
 import "./scorecard.css";
 
 interface ScorecardProps {
-    totalMoneyInCirculation: number;
-    moneyLostToMules: number;
-    mulesFoundCount: number;
-    actualMuleCount: number;
+    totalMoneyInCirculation : number;
+    moneyLostToMules        : number;
+    mulesFoundCount         : number;
+    actualMuleCount         : number;
 }
 
 export const Scorecard = ({
@@ -17,9 +18,10 @@ export const Scorecard = ({
     moneyLostToMules,
     mulesFoundCount,
     actualMuleCount,
-}: ScorecardProps) => {
+} : ScorecardProps) => {
     return (
         <Row id="scorecard" retainLayoutAlways marginBottom="none">
+            {/* DESKTOP STYLES ===================================================================================== */}
             <Portion desktopSpan="one-third" hideOnMobile>
                 <Card
                     className="metric-card"
@@ -56,6 +58,7 @@ export const Scorecard = ({
                 </Card>
             </Portion>
 
+            {/* MOBILE STYLES ====================================================================================== */}
             <Portion showOnlyOnMobile>
                 <Card
                     className="metric-card"

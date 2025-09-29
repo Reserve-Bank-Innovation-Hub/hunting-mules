@@ -1,9 +1,7 @@
 #scorecard {
-    /* Scorecard styles will be handled by the parent game page */
-}
-
-.metric-card {
-    display         : flex;
-    flex-direction  : column;
-    justify-content : space-between;
+    .metric-card {
+        display         : flex;
+        flex-direction  : column;
+        justify-content : space-between;
+    }
 }

@@ -1,22 +1,25 @@
-import { useCallback, useEffect, useMemo } from "react";
+// REACT CORE ==========================================================================================================
 import { Node } from "reactflow";
-import { TransactionInstance, NodeRipple } from "../lib/gameTypes";
-import { TRANSACTION_CONFIG } from "../lib/gameConfig";
-import { generateRandomAmount, parseAmount, formatAmount } from "../lib/transactionUtils";
+import { useCallback, useEffect, useMemo } from "react";
+
+// LIB =================================================================================================================
+import { TRANSACTION_CONFIG } from "$lib/gameConfig";
+import { TransactionInstance, NodeRipple } from "$lib/gameTypes";
+import { generateRandomAmount, parseAmount, formatAmount } from "$lib/transactionUtils";
 
 interface UseTransactionsProps {
-    nodes: Node[];
-    activeTransactions: TransactionInstance[];
-    pendingMoneyLoss: Map<string, number>;
-    lockedNodes: Set<string>;
-    totalMoneyInCirculation: number;
-    mulesFoundCount: number;
-    actualMuleCount: number;
-    setActiveTransactions: (updater: (prev: TransactionInstance[]) => TransactionInstance[]) => void;
-    setMoneyLostToMules: (updater: (prev: number) => number) => void;
-    setTotalMoneyInCirculation: (updater: (prev: number) => number) => void;
-    setPendingMoneyLoss: (updater: (prev: Map<string, number>) => Map<string, number>) => void;
-    createRipple: (nodeId: string, x: number, y: number, isLocked?: boolean) => void;
+        nodes                      : Node[];
+        activeTransactions         : TransactionInstance[];
+        pendingMoneyLoss           : Map<string, number>;
+        lockedNodes                : Set<string>;
+        totalMoneyInCirculation    : number;
+        mulesFoundCount            : number;
+        actualMuleCount            : number;
+        setActiveTransactions      : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
+        setMoneyLostToMules        : (updater : (prev : number) => number) => void;
+        setTotalMoneyInCirculation : (updater : (prev : number) => number) => void;
+        setPendingMoneyLoss        : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
+        createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean) => void;
 }
 
 export const useTransactions = ({
@@ -32,12 +35,12 @@ export const useTransactions = ({
     setTotalMoneyInCirculation,
     setPendingMoneyLoss,
     createRipple,
-}: UseTransactionsProps) => {
+} : UseTransactionsProps) => {
 
     // Get all mule nodes
     const muleNodes = useMemo(() => {
         return nodes.filter(node => node.data.isMule);
-    }, [nodes]);
+    }, [ nodes ]);
 
     // Helper function to get random nodes
     const getRandomNodes = useCallback(() => {
@@ -63,10 +66,10 @@ export const useTransactions = ({
         }
 
         return {
-            fromNode: normalNodes[fromIndex],
-            toNode: availableTargetNodes[toIndex],
+            fromNode : normalNodes[fromIndex],
+            toNode   : availableTargetNodes[toIndex],
         };
-    }, [nodes, lockedNodes]);
+    }, [ nodes, lockedNodes ]);
 
     // Create new transaction
     const createTransaction = useCallback(() => {
@@ -79,195 +82,197 @@ export const useTransactions = ({
             return; // Cannot create transaction (no valid targets)
         }
 
-        const { fromNode, toNode } = randomNodesResult;
-        const newTransaction: TransactionInstance = {
-            id: `transaction-${Date.now()}-${Math.random()}`,
+        const {fromNode, toNode} = randomNodesResult;
+        const newTransaction : TransactionInstance = {
+            id     : `transaction-${Date.now()}-${Math.random()}`,
             fromNode,
             toNode,
-            amount: generateRandomAmount(),
+            amount : generateRandomAmount(),
         };
 
         // Create ripples for both nodes
         createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, fromNode.data.isLocked || false);
         createRipple(toNode.id, toNode.position.x, toNode.position.y, toNode.data.isLocked || false);
 
-        setActiveTransactions(prev => [...prev, newTransaction]);
-    }, [activeTransactions.length, getRandomNodes, createRipple, setActiveTransactions]);
+        setActiveTransactions(prev => [ ...prev, newTransaction ]);
+    }, [ activeTransactions.length, getRandomNodes, createRipple, setActiveTransactions ]);
 
     // Handle transaction completion
-    const handleTransactionComplete = useCallback((transactionId: string) => {
-        const completedTransaction = activeTransactions.find(t => t.id === transactionId);
+    const handleTransactionComplete = useCallback(
+        (transactionId : string) => {
+            const completedTransaction = activeTransactions.find(t => t.id === transactionId);
 
-        // Check if transaction hit a locked mule - bounce it back
-        if (completedTransaction && completedTransaction.toNode.data.isMule && completedTransaction.toNode.data.isLocked) {
-            // Bounce the transaction back to sender
-            const bounceTransaction: TransactionInstance = {
-                id: `bounce-${Date.now()}-${Math.random()}`,
-                fromNode: completedTransaction.toNode,
-                toNode: completedTransaction.fromNode,
-                amount: completedTransaction.amount,
-            };
+            // Check if transaction hit a locked mule - bounce it back
+            if (completedTransaction && completedTransaction.toNode.data.isMule && completedTransaction.toNode.data.isLocked) {
+                // Bounce the transaction back to sender
+                const bounceTransaction : TransactionInstance = {
+                    id       : `bounce-${Date.now()}-${Math.random()}`,
+                    fromNode : completedTransaction.toNode,
+                    toNode   : completedTransaction.fromNode,
+                    amount   : completedTransaction.amount,
+                };
 
-            // Create ripples for bounce
-            createRipple(
-                completedTransaction.toNode.id,
-                completedTransaction.toNode.position.x,
-                completedTransaction.toNode.position.y,
-                completedTransaction.toNode.data.isLocked || false);
-            createRipple(
-                completedTransaction.fromNode.id,
-                completedTransaction.fromNode.position.x,
-                completedTransaction.fromNode.position.y,
-                completedTransaction.fromNode.data.isLocked || false);
+                // Create ripples for bounce
+                createRipple(
+                    completedTransaction.toNode.id,
+                    completedTransaction.toNode.position.x,
+                    completedTransaction.toNode.position.y,
+                    completedTransaction.toNode.data.isLocked || false);
+                createRipple(
+                    completedTransaction.fromNode.id,
+                    completedTransaction.fromNode.position.x,
+                    completedTransaction.fromNode.position.y,
+                    completedTransaction.fromNode.data.isLocked || false);
 
-            // Add bounce transaction with delay
-            setTimeout(() => {
-                setActiveTransactions(prev => [...prev, bounceTransaction]);
-            }, 300);
+                // Add bounce transaction with delay
+                setTimeout(() => {
+                    setActiveTransactions(prev => [ ...prev, bounceTransaction ]);
+                }, 300);
 
-            // Remove original transaction
-            setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
-            return;
-        }
-
-        // Handle bounced transaction returning to a mule account
-        if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.toNode.data.isLocked &&
-            completedTransaction.id.startsWith("bounce-")) {
-            // This is a bounced transaction hitting a mule - treat as normal mule behavior
-            const originalAmount = parseAmount(completedTransaction.amount);
-            const splitCount = Math.random() < 0.5 ? 2 : 3;
-
-            const splitAmounts = [];
-            let remainingAmount = originalAmount;
-
-            for (let i = 0; i < splitCount - 1; i++) {
-                const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6));
-                splitAmounts.push(splitAmount);
-                remainingAmount -= splitAmount;
+                // Remove original transaction
+                setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
+                return;
             }
-            splitAmounts.push(remainingAmount);
 
-            const availableMules = muleNodes.filter(node =>
-                node.id !== completedTransaction.toNode.id && !node.data.isLocked,
-            );
+            // Handle bounced transaction returning to a mule account
+            if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.toNode.data.isLocked &&
+                completedTransaction.id.startsWith("bounce-")) {
+                // This is a bounced transaction hitting a mule - treat as normal mule behavior
+                const originalAmount = parseAmount(completedTransaction.amount);
+                const splitCount = Math.random() < 0.5 ? 2 : 3;
 
-            splitAmounts.forEach((splitAmount, index) => {
-                if (availableMules.length > 0) {
-                    const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
+                const splitAmounts = [];
+                let remainingAmount = originalAmount;
 
-                    const newTransaction: TransactionInstance = {
-                        id: `bounce-split-${Date.now()}-${index}-${Math.random()}`,
-                        fromNode: completedTransaction.toNode,
-                        toNode: randomMule,
-                        amount: formatAmount(splitAmount),
-                    };
-
-                    createRipple(
-                        completedTransaction.toNode.id,
-                        completedTransaction.toNode.position.x,
-                        completedTransaction.toNode.position.y,
-                        completedTransaction.toNode.data.isLocked || false);
-                    createRipple(
-                        randomMule.id,
-                        randomMule.position.x,
-                        randomMule.position.y,
-                        randomMule.data.isLocked || false);
-
-                    setTimeout(() => {
-                        setActiveTransactions(prev => [...prev, newTransaction]);
-                    }, 200 + index * 100);
-                } else {
-                    setMoneyLostToMules(prev => prev + splitAmount);
-                    setTotalMoneyInCirculation(prev => prev - splitAmount);
+                for (let i = 0; i < splitCount - 1; i++) {
+                    const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6));
+                    splitAmounts.push(splitAmount);
+                    remainingAmount -= splitAmount;
                 }
-            });
+                splitAmounts.push(remainingAmount);
 
-            setMoneyLostToMules(prev => prev + originalAmount);
-            setTotalMoneyInCirculation(prev => prev - originalAmount);
-        } else if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.fromNode.data.isMule) {
-            // Transaction hit a mule account - split and redistribute
-            const originalAmount = parseAmount(completedTransaction.amount);
-            const splitCount = Math.random() < 0.5 ? 2 : 3; // Randomly 2 or 3 splits
-            const parentTransactionId = `parent-${transactionId}`;
+                const availableMules = muleNodes.filter(node =>
+                    node.id !== completedTransaction.toNode.id && !node.data.isLocked,
+                );
 
-            // Track how many secondary transactions we're creating
-            setPendingMoneyLoss(prev => {
-                const newPendingLoss = new Map(prev);
-                newPendingLoss.set(parentTransactionId, originalAmount);
-                return newPendingLoss;
-            });
+                splitAmounts.forEach((splitAmount, index) => {
+                    if (availableMules.length > 0) {
+                        const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
 
-            // Split the amount
-            const splitAmounts = [];
-            let remainingAmount = originalAmount;
+                        const newTransaction : TransactionInstance = {
+                            id       : `bounce-split-${Date.now()}-${index}-${Math.random()}`,
+                            fromNode : completedTransaction.toNode,
+                            toNode   : randomMule,
+                            amount   : formatAmount(splitAmount),
+                        };
 
-            for (let i = 0; i < splitCount - 1; i++) {
-                const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6)); // 20-80% of remaining
-                splitAmounts.push(splitAmount);
-                remainingAmount -= splitAmount;
-            }
-            splitAmounts.push(remainingAmount); // Last amount gets the remainder
+                        createRipple(
+                            completedTransaction.toNode.id,
+                            completedTransaction.toNode.position.x,
+                            completedTransaction.toNode.position.y,
+                            completedTransaction.toNode.data.isLocked || false);
+                        createRipple(
+                            randomMule.id,
+                            randomMule.position.x,
+                            randomMule.position.y,
+                            randomMule.data.isLocked || false);
 
-            // Create new transactions to other mule accounts (exclude locked mules)
-            const availableMules = muleNodes.filter(node =>
-                node.id !== completedTransaction.toNode.id && !node.data.isLocked,
-            );
+                        setTimeout(() => {
+                            setActiveTransactions(prev => [ ...prev, newTransaction ]);
+                        }, 200 + index * 100);
+                    } else {
+                        setMoneyLostToMules(prev => prev + splitAmount);
+                        setTotalMoneyInCirculation(prev => prev - splitAmount);
+                    }
+                });
 
-            splitAmounts.forEach((splitAmount, index) => {
-                if (availableMules.length > 0) {
-                    const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
-
-                    const newTransaction: TransactionInstance = {
-                        id: `mule-transaction-${Date.now()}-${index}-${Math.random()}`,
-                        fromNode: completedTransaction.toNode,
-                        toNode: randomMule,
-                        amount: formatAmount(splitAmount),
-                        isSecondaryMuleTransaction: true,
-                        originalAmount: originalAmount, // Store original amount for final deduction
-                    };
-
-                    // Create ripples for the new transaction
-                    createRipple(
-                        completedTransaction.toNode.id,
-                        completedTransaction.toNode.position.x,
-                        completedTransaction.toNode.position.y,
-                        completedTransaction.toNode.data.isLocked || false);
-                    createRipple(
-                        randomMule.id,
-                        randomMule.position.x,
-                        randomMule.position.y,
-                        randomMule.data.isLocked || false);
-
-                    // Add the new transaction with a slight delay
-                    setTimeout(() => {
-                        setActiveTransactions(prev => [...prev, newTransaction]);
-                    }, 200 + index * 100); // Stagger the new transactions
-                } else {
-                    // No available mules - money is effectively lost immediately
-                    setMoneyLostToMules(prev => prev + splitAmount);
-                    setTotalMoneyInCirculation(prev => prev - splitAmount);
-                }
-            });
-        } else if (completedTransaction && completedTransaction.isSecondaryMuleTransaction && completedTransaction.originalAmount) {
-            // This is a secondary mule transaction completing - check if all are done
-            const originalAmount = completedTransaction.originalAmount;
-
-            // Check if this is the last secondary transaction for this original transaction
-            const remainingSecondaryTransactions = activeTransactions.filter(t =>
-                t.isSecondaryMuleTransaction &&
-                t.originalAmount === originalAmount &&
-                t.id !== transactionId,
-            );
-
-            // If this is the last one, update the money counters
-            if (remainingSecondaryTransactions.length === 0) {
                 setMoneyLostToMules(prev => prev + originalAmount);
                 setTotalMoneyInCirculation(prev => prev - originalAmount);
-            }
-        }
+            } else if (completedTransaction && completedTransaction.toNode.data.isMule && !completedTransaction.fromNode.data.isMule) {
+                // Transaction hit a mule account - split and redistribute
+                const originalAmount = parseAmount(completedTransaction.amount);
+                const splitCount = Math.random() < 0.5 ? 2 : 3; // Randomly 2 or 3 splits
+                const parentTransactionId = `parent-${transactionId}`;
 
-        setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
-    }, [activeTransactions, muleNodes, createRipple, pendingMoneyLoss, setActiveTransactions, setMoneyLostToMules, setTotalMoneyInCirculation, setPendingMoneyLoss]);
+                // Track how many secondary transactions we're creating
+                setPendingMoneyLoss(prev => {
+                    const newPendingLoss = new Map(prev);
+                    newPendingLoss.set(parentTransactionId, originalAmount);
+                    return newPendingLoss;
+                });
+
+                // Split the amount
+                const splitAmounts = [];
+                let remainingAmount = originalAmount;
+
+                for (let i = 0; i < splitCount - 1; i++) {
+                    const splitAmount = Math.floor(remainingAmount * (0.2 + Math.random() * 0.6)); // 20-80% of remaining
+                    splitAmounts.push(splitAmount);
+                    remainingAmount -= splitAmount;
+                }
+                splitAmounts.push(remainingAmount); // Last amount gets the remainder
+
+                // Create new transactions to other mule accounts (exclude locked mules)
+                const availableMules = muleNodes.filter(node =>
+                    node.id !== completedTransaction.toNode.id && !node.data.isLocked,
+                );
+
+                splitAmounts.forEach((splitAmount, index) => {
+                    if (availableMules.length > 0) {
+                        const randomMule = availableMules[Math.floor(Math.random() * availableMules.length)];
+
+                        const newTransaction : TransactionInstance = {
+                            id                         : `mule-transaction-${Date.now()}-${index}-${Math.random()}`,
+                            fromNode                   : completedTransaction.toNode,
+                            toNode                     : randomMule,
+                            amount                     : formatAmount(splitAmount),
+                            isSecondaryMuleTransaction : true,
+                            originalAmount             : originalAmount, // Store original amount for final deduction
+                        };
+
+                        // Create ripples for the new transaction
+                        createRipple(
+                            completedTransaction.toNode.id,
+                            completedTransaction.toNode.position.x,
+                            completedTransaction.toNode.position.y,
+                            completedTransaction.toNode.data.isLocked || false);
+                        createRipple(
+                            randomMule.id,
+                            randomMule.position.x,
+                            randomMule.position.y,
+                            randomMule.data.isLocked || false);
+
+                        // Add the new transaction with a slight delay
+                        setTimeout(() => {
+                            setActiveTransactions(prev => [ ...prev, newTransaction ]);
+                        }, 200 + index * 100); // Stagger the new transactions
+                    } else {
+                        // No available mules - money is effectively lost immediately
+                        setMoneyLostToMules(prev => prev + splitAmount);
+                        setTotalMoneyInCirculation(prev => prev - splitAmount);
+                    }
+                });
+            } else if (completedTransaction && completedTransaction.isSecondaryMuleTransaction && completedTransaction.originalAmount) {
+                // This is a secondary mule transaction completing - check if all are done
+                const originalAmount = completedTransaction.originalAmount;
+
+                // Check if this is the last secondary transaction for this original transaction
+                const remainingSecondaryTransactions = activeTransactions.filter(t =>
+                    t.isSecondaryMuleTransaction &&
+                    t.originalAmount === originalAmount &&
+                    t.id !== transactionId,
+                );
+
+                // If this is the last one, update the money counters
+                if (remainingSecondaryTransactions.length === 0) {
+                    setMoneyLostToMules(prev => prev + originalAmount);
+                    setTotalMoneyInCirculation(prev => prev - originalAmount);
+                }
+            }
+
+            setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
+        },
+        [ activeTransactions, muleNodes, createRipple, pendingMoneyLoss, setActiveTransactions, setMoneyLostToMules, setTotalMoneyInCirculation, setPendingMoneyLoss ]);
 
     // Start transaction spawning
     useEffect(() => {
@@ -295,19 +300,23 @@ export const useTransactions = ({
                         return current;
                     }
 
-                    const { fromNode, toNode } = randomNodesResult;
+                    const {fromNode, toNode} = randomNodesResult;
                     const newTransaction = {
-                        id: `transaction-${Date.now()}-${Math.random()}`,
+                        id     : `transaction-${Date.now()}-${Math.random()}`,
                         fromNode,
                         toNode,
-                        amount: generateRandomAmount(),
+                        amount : generateRandomAmount(),
                     };
 
                     // Create ripples for both nodes
-                    createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, fromNode.data.isLocked || false);
+                    createRipple(
+                        fromNode.id,
+                        fromNode.position.x,
+                        fromNode.position.y,
+                        fromNode.data.isLocked || false);
                     createRipple(toNode.id, toNode.position.x, toNode.position.y, toNode.data.isLocked || false);
 
-                    return [...current, newTransaction];
+                    return [ ...current, newTransaction ];
                 });
             }
         }, 1000 / TRANSACTION_CONFIG.TRANSACTIONS_PER_SECOND);
@@ -315,7 +324,7 @@ export const useTransactions = ({
         return () => {
             clearInterval(interval);
         };
-    }, [totalMoneyInCirculation, mulesFoundCount, actualMuleCount, nodes.length, getRandomNodes, createRipple]);
+    }, [ totalMoneyInCirculation, mulesFoundCount, actualMuleCount, nodes.length, getRandomNodes, createRipple ]);
 
     return {
         handleTransactionComplete,

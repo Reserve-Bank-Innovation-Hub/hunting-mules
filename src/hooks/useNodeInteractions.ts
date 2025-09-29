@@ -1,10 +1,11 @@
+// REACT CORE ==========================================================================================================
 import { useCallback } from "react";
 
 interface UseNodeInteractionsProps {
-    lockedNodes: Set<string>;
-    setLockedNodes: (updater: (prev: Set<string>) => Set<string>) => void;
-    setShakingNodes: (updater: (prev: Set<string>) => Set<string>) => void;
-    setMulesFoundCount: (updater: (prev: number) => number) => void;
+    lockedNodes        : Set<string>;
+    setLockedNodes     : (updater : (prev : Set<string>) => Set<string>) => void;
+    setShakingNodes    : (updater : (prev : Set<string>) => Set<string>) => void;
+    setMulesFoundCount : (updater : (prev : number) => number) => void;
 }
 
 export const useNodeInteractions = ({
@@ -12,10 +13,10 @@ export const useNodeInteractions = ({
     setLockedNodes,
     setShakingNodes,
     setMulesFoundCount,
-}: UseNodeInteractionsProps) => {
+} : UseNodeInteractionsProps) => {
 
     // Handle node clicks
-    const handleNodeClick = useCallback((nodeId: string, isMule: boolean) => {
+    const handleNodeClick = useCallback((nodeId : string, isMule : boolean) => {
         if (isMule) {
             // Check if already locked before making any changes
             setLockedNodes(prev => {
@@ -41,7 +42,7 @@ export const useNodeInteractions = ({
                 });
             }, 600); // Match CSS animation duration
         }
-    }, [setLockedNodes, setShakingNodes, setMulesFoundCount]);
+    }, [ setLockedNodes, setShakingNodes, setMulesFoundCount ]);
 
     return {
         handleNodeClick,

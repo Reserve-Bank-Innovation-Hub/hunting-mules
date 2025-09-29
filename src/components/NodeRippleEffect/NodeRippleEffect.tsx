@@ -1,21 +1,24 @@
 "use client";
 
+// UI ==================================================================================================================
 import { motion } from "framer-motion";
-import { NodeRipple } from "../../lib/gameTypes";
-import { getGridConfig } from "../../lib/gameConfig";
 
-// STYLES
+// LIB =================================================================================================================
+import { NodeRipple } from "$lib/gameTypes";
+import { getGridConfig } from "$lib/gameConfig";
+
+// STYLES ==============================================================================================================
 import "./node-ripple-effect.css";
 
 interface NodeRippleEffectProps {
-    ripple: NodeRipple;
-    onComplete: (id: string) => void;
+    ripple     : NodeRipple;
+    onComplete : (id : string) => void;
 }
 
 export const NodeRippleEffect = ({
     ripple,
     onComplete,
-}: NodeRippleEffectProps) => {
+} : NodeRippleEffectProps) => {
     const gridConfig = getGridConfig();
 
     // Simple center calculation - ripple.x/y is the top-left of the node

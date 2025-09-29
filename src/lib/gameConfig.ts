@@ -4,8 +4,8 @@ export const getGridConfig = () => {
         CIRCLE_SIZE            : isMobile ? 32 : 40,
         MIN_SPACING            : isMobile ? 32 : 15,  // Minimum spacing, will scale up proportionally
         PADDING                : isMobile ? 32 : 50,
-        MAX_CELLS              : 100,                  // Maximum total cells
-        TARGET_MULE_PERCENTAGE : 0.25,      // 25% of cells should be mules
+        MAX_CELLS              : 100,                 // Maximum total cells
+        TARGET_MULE_PERCENTAGE : 0.25,                // 25% of cells should be mules
     };
 };
 

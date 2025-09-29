@@ -1,7 +1,8 @@
-import { getGridConfig } from "./gameConfig";
+// OTHER ===============================================================================================================
 import { GridDimensions } from "./gameTypes";
+import { getGridConfig } from "./gameConfig";
 
-export const calculateGridDimensions = (containerRect: DOMRect): GridDimensions => {
+export const calculateGridDimensions = (containerRect : DOMRect) : GridDimensions => {
     const gridConfig = getGridConfig();
     const availableWidth = containerRect.width - (gridConfig.PADDING * 2);
     const availableHeight = containerRect.height - (gridConfig.PADDING * 2);

@@ -5,11 +5,11 @@ export const generateRandomAmount = () => {
 };
 
 // Helper function to parse amount from string (₹1,23,456 -> 123456)
-export const parseAmount = (amountString: string) => {
+export const parseAmount = (amountString : string) => {
     return parseInt(amountString.replace(/[₹,]/g, ""), 10);
 };
 
 // Helper function to format amount to string
-export const formatAmount = (amount: number) => {
+export const formatAmount = (amount : number) => {
     return `₹${amount.toLocaleString("en-IN")}`;
 };

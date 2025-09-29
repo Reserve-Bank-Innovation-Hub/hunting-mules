@@ -1,16 +1,21 @@
+// REACT CORE ==========================================================================================================
 import { useEffect, useCallback } from "react";
+
+// UI ==================================================================================================================
 import { showModal } from "fictoan-react";
-import { NodeRipple } from "../lib/gameTypes";
+
+// LIB =================================================================================================================
+import { NodeRipple } from "$lib/gameTypes";
 
 interface UseGameFlowProps {
-    totalMoneyInCirculation: number;
-    mulesFoundCount: number;
-    actualMuleCount: number;
-    gameOverModalShown: boolean;
-    victoryModalShown: boolean;
-    setGameOverModalShown: (shown: boolean) => void;
-    setVictoryModalShown: (shown: boolean) => void;
-    setActiveRipples: (updater: (prev: NodeRipple[]) => NodeRipple[]) => void;
+    totalMoneyInCirculation : number;
+    mulesFoundCount         : number;
+    actualMuleCount         : number;
+    gameOverModalShown      : boolean;
+    victoryModalShown       : boolean;
+    setGameOverModalShown   : (shown : boolean) => void;
+    setVictoryModalShown    : (shown : boolean) => void;
+    setActiveRipples        : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
 }
 
 export const useGameFlow = ({
@@ -22,24 +27,24 @@ export const useGameFlow = ({
     setGameOverModalShown,
     setVictoryModalShown,
     setActiveRipples,
-}: UseGameFlowProps) => {
+} : UseGameFlowProps) => {
 
     // Create ripple effect for a node
-    const createRipple = useCallback((nodeId: string, x: number, y: number, isLocked: boolean = false) => {
-        const newRipple: NodeRipple = {
-            id: `ripple-${Date.now()}-${Math.random()}`,
+    const createRipple = useCallback((nodeId : string, x : number, y : number, isLocked : boolean = false) => {
+        const newRipple : NodeRipple = {
+            id : `ripple-${Date.now()}-${Math.random()}`,
             nodeId,
             x,
             y,
             isLocked,
         };
-        setActiveRipples(prev => [...prev, newRipple]);
-    }, [setActiveRipples]);
+        setActiveRipples(prev => [ ...prev, newRipple ]);
+    }, [ setActiveRipples ]);
 
     // Handle ripple completion
-    const handleRippleComplete = useCallback((rippleId: string) => {
+    const handleRippleComplete = useCallback((rippleId : string) => {
         setActiveRipples(prev => prev.filter(r => r.id !== rippleId));
-    }, [setActiveRipples]);
+    }, [ setActiveRipples ]);
 
     // Show game over modal when money reaches 0
     useEffect(() => {
@@ -49,7 +54,7 @@ export const useGameFlow = ({
                 setGameOverModalShown(true);
             }, 1000); // Small delay to let the last transaction complete
         }
-    }, [totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown]);
+    }, [ totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown ]);
 
     // Show victory modal when all mules are found
     useEffect(() => {
@@ -59,7 +64,7 @@ export const useGameFlow = ({
                 setVictoryModalShown(true);
             }, 500); // Small delay for better UX
         }
-    }, [mulesFoundCount, actualMuleCount, victoryModalShown, setVictoryModalShown]);
+    }, [ mulesFoundCount, actualMuleCount, victoryModalShown, setVictoryModalShown ]);
 
     return {
         createRipple,

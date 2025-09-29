@@ -1,10 +1,11 @@
-// FRAMEWORK ===========================================================================================================
+// REACT CORE ==========================================================================================================
+import { Metadata } from "next";
 import { ReactNode } from "react";
 
 // OTHER ===============================================================================================================
 import { RootLayoutClient } from "./layout.client";
 
-export const metadata = {
+export const metadata : Metadata = {
     title        : {
         template : "%s — Hunting Mules",
         default  : "Hunting Mules — Financial Fraud Detection Game",

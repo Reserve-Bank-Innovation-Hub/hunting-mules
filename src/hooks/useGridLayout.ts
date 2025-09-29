@@ -1,30 +1,28 @@
-import { useEffect, useRef } from "react";
+// REACT CORE ==========================================================================================================
+import React, { useRef } from "react";
 import { Node } from "reactflow";
-import { getGridConfig, MULE_ACCOUNTS } from "../lib/gameConfig";
-import { calculateGridDimensions } from "../lib/gridCalculations";
+
+// LIB =================================================================================================================
+import { calculateGridDimensions } from "$lib/gridCalculations";
+import { getGridConfig, MULE_ACCOUNTS } from "$lib/gameConfig";
 
 interface UseGridLayoutReturn {
-    containerRef: React.RefObject<HTMLDivElement>;
-    setupGrid: (
-        setGridDimensions: (dimensions: any) => void,
-        setIsGridReady: (ready: boolean) => void,
-        setBaseNodes: (nodes: Node[]) => void,
-        setMuleIndices: (indices: Set<number>) => void,
-        setActualMuleCount: (count: number) => void,
-        muleIndices: Set<number> | null
-    ) => void;
+        containerRef : React.RefObject<HTMLDivElement>;
+        setupGrid    : (
+                setGridDimensions : (dimensions : any) => void, setIsGridReady : (ready : boolean) => void, setBaseNodes : (nodes : Node[]) => void, setMuleIndices : (indices : Set<number>) => void, setActualMuleCount : (count : number) => void, muleIndices : Set<number> | null,
+        ) => void;
 }
 
-export const useGridLayout = (): UseGridLayoutReturn => {
+export const useGridLayout = () : UseGridLayoutReturn => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const setupGrid = (
-        setGridDimensions: (dimensions: any) => void,
-        setIsGridReady: (ready: boolean) => void,
-        setBaseNodes: (nodes: Node[]) => void,
-        setMuleIndices: (indices: Set<number>) => void,
-        setActualMuleCount: (count: number) => void,
-        muleIndices: Set<number> | null
+        setGridDimensions : (dimensions : any) => void,
+        setIsGridReady : (ready : boolean) => void,
+        setBaseNodes : (nodes : Node[]) => void,
+        setMuleIndices : (indices : Set<number>) => void,
+        setActualMuleCount : (count : number) => void,
+        muleIndices : Set<number> | null,
     ) => {
         const calculateGrid = () => {
             if (!containerRef.current) {
@@ -36,7 +34,7 @@ export const useGridLayout = (): UseGridLayoutReturn => {
             setGridDimensions(dimensions);
 
             // Create grid nodes
-            const gridNodes: Node[] = [];
+            const gridNodes : Node[] = [];
             for (let row = 0; row < dimensions.rows; row++) {
                 for (let col = 0; col < dimensions.columns; col++) {
                     const nodeId = `circle-${row}-${col}`;
@@ -45,10 +43,10 @@ export const useGridLayout = (): UseGridLayoutReturn => {
                     const yPosition = dimensions.startY + row * (gridConfig.CIRCLE_SIZE + dimensions.spacingY);
 
                     gridNodes.push({
-                        id: nodeId,
-                        type: "circle",
-                        position: { x: xPosition, y: yPosition },
-                        data: { isMule: false },
+                        id       : nodeId,
+                        type     : "circle",
+                        position : {x : xPosition, y : yPosition},
+                        data     : {isMule : false},
                     });
                 }
             }
@@ -70,14 +68,14 @@ export const useGridLayout = (): UseGridLayoutReturn => {
                 // Mark selected nodes as mule accounts
                 newMuleIndices.forEach(index => {
                     if (gridNodes[index]) {
-                        gridNodes[index].data = { isMule: true };
+                        gridNodes[index].data = {isMule : true};
                     }
                 });
             } else {
                 // Use existing mule indices
                 muleIndices.forEach(index => {
                     if (gridNodes[index]) {
-                        gridNodes[index].data = { isMule: true };
+                        gridNodes[index].data = {isMule : true};
                     }
                 });
             }
