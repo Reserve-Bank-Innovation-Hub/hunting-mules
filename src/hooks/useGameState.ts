@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Node } from "reactflow";
-import { TransactionInstance, NodeRipple, GridDimensions } from "../lib/gameTypes";
+import { TransactionInstance, NodeRipple, GridDimensions, UseGameStateReturn } from "../lib/gameTypes";
 import { TRANSACTION_CONFIG } from "../lib/gameConfig";
 
-export const useGameState = () => {
+export const useGameState = (): UseGameStateReturn => {
     const [activeTransactions, setActiveTransactions] = useState<TransactionInstance[]>([]);
     const [isGridReady, setIsGridReady] = useState(false);
     const [totalMoneyInCirculation, setTotalMoneyInCirculation] = useState(TRANSACTION_CONFIG.STARTING_AMOUNT);
@@ -19,6 +19,25 @@ export const useGameState = () => {
     const [gridDimensions, setGridDimensions] = useState<GridDimensions | null>(null);
     const [gameOverModalShown, setGameOverModalShown] = useState(false);
     const [victoryModalShown, setVictoryModalShown] = useState(false);
+
+    // Optimized setters using useCallback for stable references
+    const stableSetters = {
+        setActiveTransactions: useCallback(setActiveTransactions, []),
+        setIsGridReady: useCallback(setIsGridReady, []),
+        setTotalMoneyInCirculation: useCallback(setTotalMoneyInCirculation, []),
+        setMoneyLostToMules: useCallback(setMoneyLostToMules, []),
+        setActiveRipples: useCallback(setActiveRipples, []),
+        setPendingMoneyLoss: useCallback(setPendingMoneyLoss, []),
+        setLockedNodes: useCallback(setLockedNodes, []),
+        setShakingNodes: useCallback(setShakingNodes, []),
+        setMuleIndices: useCallback(setMuleIndices, []),
+        setBaseNodes: useCallback(setBaseNodes, []),
+        setMulesFoundCount: useCallback(setMulesFoundCount, []),
+        setActualMuleCount: useCallback(setActualMuleCount, []),
+        setGridDimensions: useCallback(setGridDimensions, []),
+        setGameOverModalShown: useCallback(setGameOverModalShown, []),
+        setVictoryModalShown: useCallback(setVictoryModalShown, []),
+    };
 
     return {
         // State values
@@ -37,22 +56,7 @@ export const useGameState = () => {
         gridDimensions,
         gameOverModalShown,
         victoryModalShown,
-
-        // State setters
-        setActiveTransactions,
-        setIsGridReady,
-        setTotalMoneyInCirculation,
-        setMoneyLostToMules,
-        setActiveRipples,
-        setPendingMoneyLoss,
-        setLockedNodes,
-        setShakingNodes,
-        setMuleIndices,
-        setBaseNodes,
-        setMulesFoundCount,
-        setActualMuleCount,
-        setGridDimensions,
-        setGameOverModalShown,
-        setVictoryModalShown,
+        // Stable setters
+        ...stableSetters,
     };
 };
