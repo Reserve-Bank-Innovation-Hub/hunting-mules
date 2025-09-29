@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import "$/app/home.css";
 
 // OTHER ===============================================================================================================
-import { Button, Card, Element, Heading1, Portion, Row, Text, CodeBlock, Article, Heading6, Div } from "fictoan-react";
+import { Button, Portion, Row, Text, Article, Heading6, Div } from "fictoan-react";
 
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 

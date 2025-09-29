@@ -25,109 +25,21 @@ import {
     Div, Header, Heading4, Portion, Row,
 } from "fictoan-react";
 
-import MuleHeadImage from "../../assets/images/mule-head.png";
 import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
 import MulesEscapeImage from "../../assets/images/mule-escape.jpg";
-import BankIconImage from "../../assets/images/bank-icon.png";
 
-// TYPES ===============================================================================================================
-interface NodeData {
-    isMule? : boolean;
-    isLocked? : boolean;
-    isShaking? : boolean;
-    onNodeClick? : (nodeId : string, isMule : boolean) => void;
-}
+// COMPONENTS
+import { CircleNode } from "../../components/CircleNode/CircleNode";
 
-// CUSTOM NODE COMPONENT ===============================================================================================
-const CircleNode = ({data, id} : { data : NodeData, id : string }) => {
-    const handleClick = (event : React.MouseEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (data.onNodeClick) {
-            data.onNodeClick(id, data.isMule || false);
-        }
-        return false;
-    };
+// HOOKS
+import { useGameState } from "../../hooks/useGameState";
 
-    const handleMouseDown = (event : React.MouseEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    };
+// LIB
+import { getGridConfig, MULE_ACCOUNTS, TRANSACTION_CONFIG } from "../../lib/gameConfig";
+import { TransactionInstance, NodeRipple, NodeData, GridDimensions } from "../../lib/gameTypes";
 
-    if (data.isMule && data.isLocked) {
-        return (
-            <div className={`circle-node mule-account locked`} onClick={handleClick} onMouseDown={handleMouseDown}>
-                <img
-                    src={MuleHeadImage.src}
-                    alt="Locked Mule"
-                    style={{
-                        borderRadius : "50%",
-                        objectFit    : "cover",
-                        maxWidth     : "unset",
-                    }}
-                />
-            </div>
-        );
-    }
 
-    return (
-        <Div
-            className={`circle-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
-            onClick={handleClick}
-            onMouseDown={handleMouseDown}
-        >
-            <img
-                src={BankIconImage.src}
-                alt="Bank Account"
-                style={{
-                    objectFit : "cover",
-                    maxWidth  : "unset",
-                }}
-            />
-        </Div>
-    );
-};
 
-// CONFIGURATION =======================================================================================================
-const getGridConfig = () => {
-    const isMobile = window.innerWidth < 768;
-    return {
-        CIRCLE_SIZE            : isMobile ? 32 : 40,
-        MIN_SPACING            : isMobile ? 32 : 15,  // Minimum spacing, will scale up proportionally
-        PADDING                : isMobile ? 32 : 50,
-        MAX_CELLS              : 100,                  // Maximum total cells
-        TARGET_MULE_PERCENTAGE : 0.25,      // 25% of cells should be mules
-    };
-};
-
-const MULE_ACCOUNTS = 25;
-
-const TRANSACTION_CONFIG = {
-    STARTING_AMOUNT         : 10000000,  // ₹1,00,00,000
-    TRANSACTIONS_PER_SECOND : 2,         // Number of new transactions per second
-    SCALE_TIME_MS           : 500,       // Time to scale up/down in milliseconds
-    TRANSACTION_TIME_MS     : 2000,      // Time to fly between nodes in milliseconds
-    MAX_CONCURRENT          : 10,        // Maximum concurrent transactions for performance
-};
-
-// TYPES ===============================================================================================
-interface TransactionInstance {
-    id : string;
-    fromNode : Node;
-    toNode : Node;
-    amount : string;
-    isSecondaryMuleTransaction? : boolean;
-    originalAmount? : number;
-}
-
-interface NodeRipple {
-    id : string;
-    nodeId : string;
-    x : number;
-    y : number;
-    isLocked? : boolean;
-}
 
 // ANIMATED TRANSACTION COMPONENT ======================================================================================
 const AnimatedTransactionCard = ({
@@ -228,28 +140,38 @@ const NodeRippleEffect = ({
 };
 
 const GamePage = () => {
-    const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
-    const [ isGridReady, setIsGridReady ] = useState(false);
-    const [ totalMoneyInCirculation, setTotalMoneyInCirculation ] = useState(TRANSACTION_CONFIG.STARTING_AMOUNT);
-    const [ moneyLostToMules, setMoneyLostToMules ] = useState(0);
-    const [ activeRipples, setActiveRipples ] = useState<NodeRipple[]>([]);
-    const [ pendingMoneyLoss, setPendingMoneyLoss ] = useState<Map<string, number>>(new Map());
-    const [ lockedNodes, setLockedNodes ] = useState<Set<string>>(new Set());
-    const [ shakingNodes, setShakingNodes ] = useState<Set<string>>(new Set());
-    const [ muleIndices, setMuleIndices ] = useState<Set<number> | null>(null);
-    const [ baseNodes, setBaseNodes ] = useState<Node[]>([]);
-    const [ mulesFoundCount, setMulesFoundCount ] = useState(0);
-    const [ actualMuleCount, setActualMuleCount ] = useState(0);
-    const [ gridDimensions, setGridDimensions ] = useState<{
-                                                               rows : number;
-                                                               columns : number;
-                                                               spacingX : number;
-                                                               spacingY : number;
-                                                               startX : number;
-                                                               startY : number;
-                                                           } | null>(null);
-    const [ gameOverModalShown, setGameOverModalShown ] = useState(false);
-    const [ victoryModalShown, setVictoryModalShown ] = useState(false);
+    const {
+        activeTransactions,
+        isGridReady,
+        totalMoneyInCirculation,
+        moneyLostToMules,
+        activeRipples,
+        pendingMoneyLoss,
+        lockedNodes,
+        shakingNodes,
+        muleIndices,
+        baseNodes,
+        mulesFoundCount,
+        actualMuleCount,
+        gridDimensions,
+        gameOverModalShown,
+        victoryModalShown,
+        setActiveTransactions,
+        setIsGridReady,
+        setTotalMoneyInCirculation,
+        setMoneyLostToMules,
+        setActiveRipples,
+        setPendingMoneyLoss,
+        setLockedNodes,
+        setShakingNodes,
+        setMuleIndices,
+        setBaseNodes,
+        setMulesFoundCount,
+        setActualMuleCount,
+        setGridDimensions,
+        setGameOverModalShown,
+        setVictoryModalShown,
+    } = useGameState();
 
     const containerRef = useRef<HTMLDivElement>(null);
 

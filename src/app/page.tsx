@@ -2,7 +2,7 @@
 import HomePage from "./page.client";
 
 export const metadata = {
-    title       : "Financial Fraud Detection Game",
+    title       : "MuleHunter",
     description : "Spot accounts that send money to multiple accounts at once. Click on them to lock them and prevent them from transacting. Find them quickly to save the maximum amount as possible!",
     openGraph   : {
         title       : "Financial Fraud Detection Game — Hunting Mules",
