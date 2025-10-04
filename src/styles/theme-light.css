@@ -1,15 +1,22 @@
 .theme-light {
-    --font-sans-serif       : "Minecraft", "Retro Gaming", sans-serif;
-    --font-serif            : "IBM Plex Serif", serif;
-    --font-mono             : "IBM Plex Mono", monospace;
+    --font-sans-serif                     : "Minecraft", "Retro Gaming", sans-serif;
+    --font-serif                          : "IBM Plex Serif", serif;
+    --font-mono                           : "IBM Plex Mono", monospace;
 
-    --global-border-radius  : 0;
+    --global-border-radius                : 0;
 
-    --heading-text-colour   : var(--black);
-    --paragraph-line-height : 1.6;
+    --heading-text-colour                 : var(--black);
+    --paragraph-line-height               : 1.6;
 
-    --heading-font          : "Minecraft", "Retro Gaming", sans-serif;
-    --paragraph-font        : "Minecraft", "Retro Gaming", sans-serif;
+    --heading-font                        : "Minecraft", "Retro Gaming", sans-serif;
+    --paragraph-font                      : "Minecraft", "Retro Gaming", sans-serif;
 
-    --font-size-max         : 14px;
+    --button-primary-bg-default           : var(--amber);
+    --button-primary-border-default       : var(--amber-dark20);
+    --button-primary-border-width-default : 4px;
+    --button-primary-text-default         : var(--amber-light70);
+
+    --button-primary-bg-hover             : var(--amber-light40);
+    --button-primary-border-hover         : var(--amber-dark20);
+    --button-primary-border-width-hover   : 4px;
 }

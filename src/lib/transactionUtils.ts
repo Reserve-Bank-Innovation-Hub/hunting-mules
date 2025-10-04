@@ -1,6 +1,6 @@
 // Helper function to generate random transaction amount
 export const generateRandomAmount = () => {
-    const randomAmount = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000; // Random between 1000 and 100000
+    const randomAmount = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000; // Random between 1000 and 1000000
     return `₹${randomAmount.toLocaleString("en-IN")}`; // Format with Indian number system
 };
 

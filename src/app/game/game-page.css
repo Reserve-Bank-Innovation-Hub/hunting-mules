@@ -30,4 +30,8 @@
     #play-area .react-flow__renderer {
         border-radius : var(--global-border-radius);
     }
+
+    p, h6 {
+        font-size : 72%;
+    }
 }
