@@ -1,7 +1,7 @@
 "use client";
 
 // UI ==================================================================================================================
-import { Button, Modal, Header, Heading1, Heading6, Heading4, hideModal, Span } from "fictoan-react";
+import { Button, Modal, Header, Heading1, Heading6, Heading4, hideModal, Span, Div } from "fictoan-react";
 
 // ASSETS ==============================================================================================================
 import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
@@ -52,20 +52,22 @@ export const GameModals = ({
                         </Heading6>
                     </Header>
 
-                    <Heading4 weight="400" align="centre" marginBottom="micro">
+                    <Heading4 weight="400" align="centre" marginBottom="small">
                         You found <Span weight="700">{mulesFoundCount} of {actualMuleCount}</Span> mule accounts.
                     </Heading4>
 
-                    <Button
-                        kind="primary" horizontallyCentreThis
-                        size="large" marginBottom="micro"
-                        onClick={() => {
-                            hideModal("game-over-modal");
-                            handlePlayAgain();
-                        }}
-                    >
-                        PLAY AGAIN
-                    </Button>
+                    <Div horizontallyCentreThis>
+                        <Button
+                            className="eightbit-btn failure"
+                            size="large" marginBottom="micro"
+                            onClick={() => {
+                                hideModal("game-over-modal");
+                                handlePlayAgain();
+                            }}
+                        >
+                            PLAY AGAIN
+                        </Button>
+                    </Div>
                 </>
             </Modal>
 

@@ -105,21 +105,21 @@ export const useGameFlow = ({
         return () => clearInterval(interval);
     }, [ timeLeft, victoryModalShown, gameOverModalShown, setTimeLeft ]);
 
-    // Handle timer end - show victory modal with partial results
+    // Handle timer end - show game over modal
     useEffect(() => {
-        if (timeLeft === 0 && !victoryModalShown && !gameOverModalShown && actualMuleCount > 0) {
+        if (timeLeft === 0 && !victoryModalShown && !gameOverModalShown) {
             setTimeout(() => {
-                // Play victory sound
-                const audio = new Audio(VictorySound);
+                // Play lose sound
+                const audio = new Audio(LoseSound);
                 audio.play().catch((error) => {
                     console.log("Audio playback failed:", error);
                 });
 
-                showModal("victory-modal");
-                setVictoryModalShown(true);
+                showModal("game-over-modal");
+                setGameOverModalShown(true);
             }, 500);
         }
-    }, [ timeLeft, victoryModalShown, gameOverModalShown, actualMuleCount, setVictoryModalShown ]);
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, setGameOverModalShown ]);
 
     return {
         createRipple,

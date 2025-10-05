@@ -109,7 +109,7 @@ const HomePage = () => {
 
                         <Div horizontallyCentreThis>
                             <Link href="/game">
-                                <Button kind="primary" size="huge">START GAME</Button>
+                                <Button className="eightbit-btn">START GAME</Button>
                             </Link>
                         </Div>
                     </Portion>
