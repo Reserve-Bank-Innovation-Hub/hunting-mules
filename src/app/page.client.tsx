@@ -9,8 +9,9 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Heading4, Heading2,
 
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
-import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
 import IntroSound from "../assets/sounds/intro.wav";
+import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
+import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
@@ -40,7 +41,7 @@ const HomePage = () => {
             <Row horizontalPadding="large">
                 <Portion>
                     <Div horizontallyCentreThis marginBottom="small">
-                        <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
+                        <img id="mule-hunter-logo" src={MuleSweeperLogo.src} alt="Mule Hunter Logo" />
                     </Div>
                 </Portion>
 
@@ -79,7 +80,7 @@ const HomePage = () => {
                 <Portion>
                     <Div horizontallyCentreThis>
                         <Link href="/game">
-                            <Button kind="primary" size="large">START GAME</Button>
+                            <Button kind="primary" size="huge">START GAME</Button>
                         </Link>
                     </Div>
                 </Portion>
