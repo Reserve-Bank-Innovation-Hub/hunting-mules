@@ -37,11 +37,14 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Article id="page-home" verticalPadding="small">
+        <Article id="page-home" verticalPadding="tiny">
             <Row horizontalPadding="micro">
                 <Portion>
                     <Div horizontallyCentreThis marginBottom="small">
                         <img id="mule-hunter-logo" src={MuleSweeperLogo.src} alt="Mule Hunter Logo" />
+                        <Heading6 textColour="amber" align="centre" marginTop="nano" marginBottom="micro">
+                            ——A MULEHUNTER.AI GAME——
+                        </Heading6>
                     </Div>
                 </Portion>
 
