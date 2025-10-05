@@ -7,6 +7,9 @@ import { TRANSACTION_CONFIG } from "$lib/gameConfig";
 import { TransactionInstance, NodeRipple } from "$lib/gameTypes";
 import { generateRandomAmount, parseAmount, formatAmount } from "$lib/transactionUtils";
 
+// ASSETS ==============================================================================================================
+import TransactionSound from "../assets/sounds/transaction.wav";
+
 interface UseTransactionsProps {
         nodes                      : Node[];
         activeTransactions         : TransactionInstance[];
@@ -90,6 +93,12 @@ export const useTransactions = ({
             amount    : generateRandomAmount(),
             startTime : Date.now(),
         };
+
+        // Play transaction sound
+        const audio = new Audio(TransactionSound);
+        audio.play().catch((error) => {
+            console.log("Audio playback failed:", error);
+        });
 
         // Create ripples for both nodes
         createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, lockedNodes.has(fromNode.id));
@@ -337,6 +346,12 @@ export const useTransactions = ({
                         amount    : generateRandomAmount(),
                         startTime : Date.now(),
                     };
+
+                    // Play transaction sound
+                    const audio = new Audio(TransactionSound);
+                    audio.play().catch((error) => {
+                        console.log("Audio playback failed:", error);
+                    });
 
                     // Create ripples for both nodes
                     createRipple(

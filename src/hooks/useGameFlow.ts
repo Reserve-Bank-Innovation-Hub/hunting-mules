@@ -7,6 +7,10 @@ import { showModal } from "fictoan-react";
 // LIB =================================================================================================================
 import { NodeRipple } from "$lib/gameTypes";
 
+// ASSETS ==============================================================================================================
+import LoseSound from "../assets/sounds/lose.wav";
+import VictorySound from "../assets/sounds/victory.wav";
+
 interface UseGameFlowProps {
     totalMoneyInCirculation : number;
     mulesFoundCount         : number;
@@ -50,6 +54,12 @@ export const useGameFlow = ({
     useEffect(() => {
         if (totalMoneyInCirculation <= 0 && !gameOverModalShown) {
             setTimeout(() => {
+                // Play lose sound
+                const audio = new Audio(LoseSound);
+                audio.play().catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+
                 showModal("game-over-modal");
                 setGameOverModalShown(true);
             }, 1000); // Small delay to let the last transaction complete
@@ -60,6 +70,12 @@ export const useGameFlow = ({
     useEffect(() => {
         if (mulesFoundCount === actualMuleCount && actualMuleCount > 0 && !victoryModalShown) {
             setTimeout(() => {
+                // Play victory sound
+                const audio = new Audio(VictorySound);
+                audio.play().catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+
                 showModal("victory-modal");
                 setVictoryModalShown(true);
             }, 500); // Small delay for better UX

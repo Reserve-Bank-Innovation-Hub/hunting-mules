@@ -6,6 +6,7 @@
     --global-border-radius                : 0;
 
     --heading-text-colour                 : var(--black);
+    --heading-line-height                 : 1.4;
     --paragraph-line-height               : 1.6;
 
     --heading-font                        : "Minecraft", "Retro Gaming", sans-serif;

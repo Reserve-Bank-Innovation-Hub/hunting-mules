@@ -1,7 +1,7 @@
 "use client";
 
 // UI ==================================================================================================================
-import { Button, Modal, Header, Heading1, Heading6, Heading4, hideModal } from "fictoan-react";
+import { Button, Modal, Header, Heading1, Heading6, Heading4, hideModal, Span } from "fictoan-react";
 
 // ASSETS ==============================================================================================================
 import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
@@ -31,8 +31,7 @@ export const GameModals = ({
             <Modal
                 id="game-over-modal"
                 isDismissible={false}
-                showBackdrop
-                blurBackdrop
+                showBackdrop blurBackdrop padding="micro"
                 label="Game Over"
                 description="All money has been laundered by the mules"
             >
@@ -44,17 +43,17 @@ export const GameModals = ({
                             alt="Mules eliminated"
                         />
 
-                        <Heading1 weight="400" textColour="red" align="centre" verticalMargin="nano">
+                        <Heading4 textColour="red" align="centre" verticalMargin="micro">
                             GAME OVER!
-                        </Heading1>
+                        </Heading4>
 
                         <Heading6 weight="400" align="centre">
                             All money has been laundered!
                         </Heading6>
                     </Header>
 
-                    <Heading4 weight="400" align="centre" marginBottom="small">
-                        You found {mulesFoundCount} out of {actualMuleCount} mule accounts.
+                    <Heading4 weight="400" align="centre" marginBottom="micro">
+                        You found <Span weight="700">{mulesFoundCount} of {actualMuleCount}</Span> mule accounts.
                     </Heading4>
 
                     <Button

@@ -4,6 +4,10 @@ import { useCallback } from "react";
 // LIB =================================================================================================================
 import { TransactionInstance } from "$lib/gameTypes";
 
+// ASSETS ==============================================================================================================
+import UncoveredSound from "../assets/sounds/uncovered.wav";
+import WrongSound from "../assets/sounds/wrong.wav";
+
 interface UseNodeInteractionsProps {
     lockedNodes           : Set<string>;
     activeTransactions    : TransactionInstance[];
@@ -35,6 +39,12 @@ export const useNodeInteractions = ({
                 const newLockedNodes = new Set(prev).add(nodeId);
                 setMulesFoundCount(count => count + 1);
 
+                // Play uncovered sound
+                const audio = new Audio(UncoveredSound);
+                audio.play().catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+
                 // Check for and reverse any mid-flight transactions to this mule
                 setActiveTransactions(transactions =>
                     transactions.map(transaction => {
@@ -58,6 +68,12 @@ export const useNodeInteractions = ({
         } else {
             // Shake normal account
             setShakingNodes(prev => new Set(prev).add(nodeId));
+
+            // Play wrong sound
+            const audio = new Audio(WrongSound);
+            audio.play().catch((error) => {
+                console.log("Audio playback failed:", error);
+            });
 
             // Remove shake effect after animation
             setTimeout(() => {
