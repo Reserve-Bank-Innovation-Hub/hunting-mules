@@ -79,6 +79,13 @@ export const Scorecard = ({
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Div verticallyCentreItems pushItemsToEnds>
+                        <Text textColour="amber-dark60">Time left</Text>
+                        <Heading6 textColour={timeLeft <= 10 ? "red" : undefined}>
+                            {timeLeft}s
+                        </Heading6>
+                    </Div>
+
+                    <Div verticallyCentreItems pushItemsToEnds>
                         <Text>In circulation</Text>
                         <Heading6>
                             ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
