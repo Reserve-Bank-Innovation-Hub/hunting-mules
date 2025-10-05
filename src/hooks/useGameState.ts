@@ -22,6 +22,7 @@ export const useGameState = () : UseGameStateReturn => {
     const [ gridDimensions, setGridDimensions ] = useState<GridDimensions | null>(null);
     const [ gameOverModalShown, setGameOverModalShown ] = useState(false);
     const [ victoryModalShown, setVictoryModalShown ] = useState(false);
+    const [ timeLeft, setTimeLeft ] = useState(60);
 
     // Optimized setters using useCallback for stable references
     const stableSetters = {
@@ -40,6 +41,7 @@ export const useGameState = () : UseGameStateReturn => {
         setGridDimensions          : useCallback(setGridDimensions, []),
         setGameOverModalShown      : useCallback(setGameOverModalShown, []),
         setVictoryModalShown       : useCallback(setVictoryModalShown, []),
+        setTimeLeft                : useCallback(setTimeLeft, []),
     };
 
     return {
@@ -59,6 +61,7 @@ export const useGameState = () : UseGameStateReturn => {
         gridDimensions,
         gameOverModalShown,
         victoryModalShown,
+        timeLeft,
         // Stable setters
         ...stableSetters,
     };

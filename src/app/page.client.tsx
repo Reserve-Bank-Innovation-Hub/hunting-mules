@@ -18,14 +18,12 @@ import "$/app/home.css";
 
 const HomePage = () => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [ audioStarted, setAudioStarted ] = React.useState(false);
 
     useEffect(() => {
-        // Create audio element and play intro sound on loop
+        // Create audio element
         audioRef.current = new Audio(IntroSound);
         audioRef.current.loop = true;
-        audioRef.current.play().catch((error) => {
-            console.log("Audio playback failed:", error);
-        });
 
         // Cleanup function to stop audio when component unmounts
         return () => {
@@ -36,57 +34,88 @@ const HomePage = () => {
         };
     }, []);
 
+    const handleStartAudio = () => {
+        if (audioRef.current && !audioStarted) {
+            audioRef.current.play().catch((error) => {
+                console.log("Audio playback failed:", error);
+            });
+            setAudioStarted(true);
+        }
+    };
+
     return (
-        <Article id="page-home" verticalPadding="tiny">
-            <Row horizontalPadding="micro">
-                <Portion>
-                    <Div horizontallyCentreThis marginBottom="small">
-                        <img id="mule-hunter-logo" src={MuleSweeperLogo.src} alt="Mule Hunter Logo" />
-                        <Heading6 textColour="amber" align="centre" marginTop="nano" marginBottom="micro">
-                            ——A MULEHUNTER.AI GAME——
+        <>
+            {!audioStarted && (
+                <Div
+                    onClick={handleStartAudio}
+                    style={{
+                        position        : "fixed",
+                        top             : 0,
+                        left            : 0,
+                        width           : "100vw",
+                        height          : "100vh",
+                        backgroundColor : "rgba(0, 0, 0, 0.9)",
+                        display         : "flex",
+                        alignItems      : "center",
+                        justifyContent  : "center",
+                        cursor          : "pointer",
+                        zIndex          : 9999,
+                    }}
+                >
+                    <Text textColour="white" size="large">Click anywhere to start</Text>
+                </Div>
+            )}
+            <Article id="page-home" verticalPadding="tiny">
+                <Row horizontalPadding="micro">
+                    <Portion>
+                        <Div horizontallyCentreThis marginBottom="tiny">
+                            <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />s
+                        </Div>
+                    </Portion>
+
+                    <Portion desktopSpan="half">
+                        <video
+                            id="hero-background-video"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            src={HuntingMulesVideo}
+                        />
+                    </Portion>
+
+                    <Portion desktopSpan="half">
+                        <Heading6 textColour="amber" align="centre" marginBottom="tiny">
+                            HOW TO PLAY
                         </Heading6>
-                    </Div>
-                </Portion>
 
-                <Portion desktopSpan="half">
-                    <video
-                        id="hero-background-video"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        src={HuntingMulesVideo}
-                    />
-                </Portion>
+                        <Text textColour="white" align="centre" marginBottom="small">
+                            <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to
+                            multiple
+                            accounts at once.
+                        </Text>
 
-                <Portion desktopSpan="half">
-                    <Heading6 textColour="amber" align="centre" marginBottom="tiny">
-                        HOW TO PLAY
-                    </Heading6>
+                        <Text textColour="white" align="centre" marginBottom="small">
+                            <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them
+                            from
+                            transacting.
+                        </Text>
 
-                    <Text textColour="white" align="centre" marginBottom="small">
-                        <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to multiple
-                        accounts at once.
-                    </Text>
+                        <Text textColour="white" align="centre" marginBottom="small">
+                            <strong><Span textColour="red">FIND THEM QUICKLY</Span></strong><br /> to save as much money
+                            as
+                            you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
+                        </Text>
 
-                    <Text textColour="white" align="centre" marginBottom="small">
-                        <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them from
-                        transacting.
-                    </Text>
-
-                    <Text textColour="white" align="centre" marginBottom="small">
-                        <strong><Span textColour="red">FIND THEM QUICKLY</Span></strong><br /> to save as much money as
-                        you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
-                    </Text>
-
-                    <Div horizontallyCentreThis>
-                        <Link href="/game">
-                            <Button kind="primary" size="huge">START GAME</Button>
-                        </Link>
-                    </Div>
-                </Portion>
-            </Row>
-        </Article>
+                        <Div horizontallyCentreThis>
+                            <Link href="/game">
+                                <Button kind="primary" size="huge">START GAME</Button>
+                            </Link>
+                        </Div>
+                    </Portion>
+                </Row>
+            </Article>
+        </>
     );
 };
 

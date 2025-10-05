@@ -94,15 +94,15 @@ export const useTransactions = ({
             startTime : Date.now(),
         };
 
+        // Create ripples for both nodes
+        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, lockedNodes.has(fromNode.id));
+        createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id));
+
         // Play transaction sound
         const audio = new Audio(TransactionSound);
         audio.play().catch((error) => {
             console.log("Audio playback failed:", error);
         });
-
-        // Create ripples for both nodes
-        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, lockedNodes.has(fromNode.id));
-        createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id));
 
         setActiveTransactions(prev => [ ...prev, newTransaction ]);
     }, [ activeTransactions.length, getRandomNodes, createRipple, setActiveTransactions, lockedNodes ]);
@@ -347,12 +347,6 @@ export const useTransactions = ({
                         startTime : Date.now(),
                     };
 
-                    // Play transaction sound
-                    const audio = new Audio(TransactionSound);
-                    audio.play().catch((error) => {
-                        console.log("Audio playback failed:", error);
-                    });
-
                     // Create ripples for both nodes
                     createRipple(
                         fromNode.id,
@@ -360,6 +354,12 @@ export const useTransactions = ({
                         fromNode.position.y,
                         lockedNodes.has(fromNode.id));
                     createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id));
+
+                    // Play transaction sound
+                    const audio = new Audio(TransactionSound);
+                    audio.play().catch((error) => {
+                        console.log("Audio playback failed:", error);
+                    });
 
                     return [ ...current, newTransaction ];
                 });

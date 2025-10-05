@@ -72,6 +72,7 @@ export interface UseGameStateReturn {
     gridDimensions             : GridDimensions | null;
     gameOverModalShown         : boolean;
     victoryModalShown          : boolean;
+    timeLeft                   : number;
     setActiveTransactions      : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
     setIsGridReady             : (ready : boolean) => void;
     setTotalMoneyInCirculation : (updater : (prev : number) => number) => void;
@@ -87,4 +88,5 @@ export interface UseGameStateReturn {
     setGridDimensions          : (dimensions : GridDimensions | null) => void;
     setGameOverModalShown      : (shown : boolean) => void;
     setVictoryModalShown       : (shown : boolean) => void;
+    setTimeLeft                : (updater : (prev : number) => number) => void;
 }

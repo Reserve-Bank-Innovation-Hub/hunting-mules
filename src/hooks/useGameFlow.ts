@@ -17,9 +17,11 @@ interface UseGameFlowProps {
     actualMuleCount         : number;
     gameOverModalShown      : boolean;
     victoryModalShown       : boolean;
+    timeLeft                : number;
     setGameOverModalShown   : (shown : boolean) => void;
     setVictoryModalShown    : (shown : boolean) => void;
     setActiveRipples        : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
+    setTimeLeft             : (updater : (prev : number) => number) => void;
 }
 
 export const useGameFlow = ({
@@ -28,9 +30,11 @@ export const useGameFlow = ({
     actualMuleCount,
     gameOverModalShown,
     victoryModalShown,
+    timeLeft,
     setGameOverModalShown,
     setVictoryModalShown,
     setActiveRipples,
+    setTimeLeft,
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
@@ -81,6 +85,41 @@ export const useGameFlow = ({
             }, 500); // Small delay for better UX
         }
     }, [ mulesFoundCount, actualMuleCount, victoryModalShown, setVictoryModalShown ]);
+
+    // Countdown timer
+    useEffect(() => {
+        if (timeLeft <= 0 || victoryModalShown || gameOverModalShown) {
+            return; // Stop countdown if time is up or game ended
+        }
+
+        const interval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, setTimeLeft ]);
+
+    // Handle timer end - show victory modal with partial results
+    useEffect(() => {
+        if (timeLeft === 0 && !victoryModalShown && !gameOverModalShown && actualMuleCount > 0) {
+            setTimeout(() => {
+                // Play victory sound
+                const audio = new Audio(VictorySound);
+                audio.play().catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+
+                showModal("victory-modal");
+                setVictoryModalShown(true);
+            }, 500);
+        }
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, actualMuleCount, setVictoryModalShown ]);
 
     return {
         createRipple,

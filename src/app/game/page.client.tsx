@@ -43,9 +43,11 @@ const GamePage = () => {
         actualMuleCount         : gameState.actualMuleCount,
         gameOverModalShown      : gameState.gameOverModalShown,
         victoryModalShown       : gameState.victoryModalShown,
+        timeLeft                : gameState.timeLeft,
         setGameOverModalShown   : gameState.setGameOverModalShown,
         setVictoryModalShown    : gameState.setVictoryModalShown,
         setActiveRipples        : gameState.setActiveRipples,
+        setTimeLeft             : gameState.setTimeLeft,
     });
 
     const transactions = useTransactions({
@@ -102,6 +104,7 @@ const GamePage = () => {
                 moneyLostToMules={gameState.moneyLostToMules}
                 mulesFoundCount={gameState.mulesFoundCount}
                 actualMuleCount={gameState.actualMuleCount}
+                timeLeft={gameState.timeLeft}
             />
 
             {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
