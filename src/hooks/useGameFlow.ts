@@ -17,9 +17,12 @@ interface UseGameFlowProps {
     actualMuleCount         : number;
     gameOverModalShown      : boolean;
     victoryModalShown       : boolean;
+    timeLeft                : number;
     setGameOverModalShown   : (shown : boolean) => void;
     setVictoryModalShown    : (shown : boolean) => void;
     setActiveRipples        : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
+    setTimeLeft             : (updater : (prev : number) => number) => void;
+    setGameOverReason       : (reason : "money" | "time" | null) => void;
 }
 
 export const useGameFlow = ({
@@ -28,9 +31,12 @@ export const useGameFlow = ({
     actualMuleCount,
     gameOverModalShown,
     victoryModalShown,
+    timeLeft,
     setGameOverModalShown,
     setVictoryModalShown,
     setActiveRipples,
+    setTimeLeft,
+    setGameOverReason,
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
@@ -60,11 +66,12 @@ export const useGameFlow = ({
                     console.log("Audio playback failed:", error);
                 });
 
+                setGameOverReason("money");
                 showModal("game-over-modal");
                 setGameOverModalShown(true);
             }, 1000); // Small delay to let the last transaction complete
         }
-    }, [ totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown ]);
+    }, [ totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown, setGameOverReason ]);
 
     // Show victory modal when all mules are found
     useEffect(() => {
@@ -81,6 +88,42 @@ export const useGameFlow = ({
             }, 500); // Small delay for better UX
         }
     }, [ mulesFoundCount, actualMuleCount, victoryModalShown, setVictoryModalShown ]);
+
+    // Countdown timer
+    useEffect(() => {
+        if (timeLeft <= 0 || victoryModalShown || gameOverModalShown) {
+            return; // Stop countdown if time is up or game ended
+        }
+
+        const interval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, setTimeLeft ]);
+
+    // Handle timer end - show game over modal
+    useEffect(() => {
+        if (timeLeft === 0 && !victoryModalShown && !gameOverModalShown) {
+            setTimeout(() => {
+                // Play lose sound
+                const audio = new Audio(LoseSound);
+                audio.play().catch((error) => {
+                    console.log("Audio playback failed:", error);
+                });
+
+                setGameOverReason("time");
+                showModal("game-over-modal");
+                setGameOverModalShown(true);
+            }, 500);
+        }
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, setGameOverModalShown, setGameOverReason ]);
 
     return {
         createRipple,

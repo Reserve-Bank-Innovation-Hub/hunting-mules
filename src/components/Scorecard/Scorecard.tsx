@@ -1,7 +1,7 @@
 "use client";
 
 // UI ==================================================================================================================
-import { Card, Heading6, Text, Div, Row, Portion, Heading4 } from "fictoan-react";
+import { Card, Heading6, Text, Div, Row, Portion, Heading4, Heading5 } from "fictoan-react";
 
 // STYLES ==============================================================================================================
 import "./scorecard.css";
@@ -11,6 +11,7 @@ interface ScorecardProps {
     moneyLostToMules        : number;
     mulesFoundCount         : number;
     actualMuleCount         : number;
+    timeLeft                : number;
 }
 
 export const Scorecard = ({
@@ -18,43 +19,56 @@ export const Scorecard = ({
     moneyLostToMules,
     mulesFoundCount,
     actualMuleCount,
+    timeLeft,
 } : ScorecardProps) => {
     return (
         <Row id="scorecard" retainLayoutAlways marginBottom="none">
             {/* DESKTOP STYLES ===================================================================================== */}
-            <Portion desktopSpan="one-third" hideOnMobile>
+            <Portion desktopSpan="one-fourth" hideOnMobile>
+                <Card
+                    className="metric-card"
+                    padding="micro" bgColour="amber-light60" isFullHeight
+                >
+                    <Text textColour="amber-dark60">Time left</Text>
+                    <Heading5 textColour={timeLeft <= 10 ? "red" : undefined}>
+                        {timeLeft}s
+                    </Heading5>
+                </Card>
+            </Portion>
+
+            <Portion desktopSpan="one-fourth" hideOnMobile>
                 <Card
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">In circulation</Text>
-                    <Heading4>
+                    <Heading5>
                         ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
-                    </Heading4>
+                    </Heading5>
                 </Card>
             </Portion>
 
-            <Portion desktopSpan="one-third" hideOnMobile>
+            <Portion desktopSpan="one-fourth" hideOnMobile>
                 <Card
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">Stolen by mules</Text>
-                    <Heading4 textColour="red">
+                    <Heading5 textColour="red">
                         ₹{moneyLostToMules.toLocaleString("en-IN")}
-                    </Heading4>
+                    </Heading5>
                 </Card>
             </Portion>
 
-            <Portion desktopSpan="one-third" hideOnMobile>
+            <Portion desktopSpan="one-fourth" hideOnMobile>
                 <Card
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">Mules found</Text>
-                    <Heading4 textColour="green">
+                    <Heading5 textColour="green">
                         {mulesFoundCount}/{actualMuleCount}
-                    </Heading4>
+                    </Heading5>
                 </Card>
             </Portion>
 
@@ -64,6 +78,13 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
+                    <Div verticallyCentreItems pushItemsToEnds>
+                        <Text textColour="amber-dark60">Time left</Text>
+                        <Heading6 textColour={timeLeft <= 10 ? "red" : undefined}>
+                            {timeLeft}s
+                        </Heading6>
+                    </Div>
+
                     <Div verticallyCentreItems pushItemsToEnds>
                         <Text>In circulation</Text>
                         <Heading6>
