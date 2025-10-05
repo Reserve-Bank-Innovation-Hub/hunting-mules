@@ -91,20 +91,17 @@ const HomePage = () => {
 
                         <Text textColour="white" align="centre" marginBottom="small">
                             <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to
-                            multiple
-                            accounts at once.
+                            multiple accounts at once.
                         </Text>
 
                         <Text textColour="white" align="centre" marginBottom="small">
                             <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them
-                            from
-                            transacting.
+                            from transacting.
                         </Text>
 
                         <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">FIND THEM QUICKLY</Span></strong><br /> to save as much money
-                            as
-                            you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
+                            <strong><Span textColour="red">FIND ALL IN 60 SECONDS</Span></strong><br /> to save as much
+                            money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
                         </Text>
 
                         <Div horizontallyCentreThis>

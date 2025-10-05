@@ -14,12 +14,14 @@ interface GameModalsProps {
     mulesFoundCount         : number;
     actualMuleCount         : number;
     totalMoneyInCirculation : number;
+    gameOverReason          : "money" | "time" | null;
 }
 
 export const GameModals = ({
     mulesFoundCount,
     actualMuleCount,
     totalMoneyInCirculation,
+    gameOverReason,
 } : GameModalsProps) => {
     const handlePlayAgain = () => {
         window.location.reload();
@@ -44,11 +46,14 @@ export const GameModals = ({
                         />
 
                         <Heading4 textColour="red" align="centre" verticalMargin="micro">
-                            GAME OVER!
+                            {gameOverReason === "time" ? "TIME'S UP!" : "GAME OVER!"}
                         </Heading4>
 
                         <Heading6 weight="400" align="centre">
-                            All money has been laundered!
+                            {gameOverReason === "time"
+                                ? "You ran out of time!"
+                                : "All money has been laundered!"
+                            }
                         </Heading6>
                     </Header>
 

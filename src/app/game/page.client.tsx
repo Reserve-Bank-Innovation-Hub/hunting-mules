@@ -48,6 +48,7 @@ const GamePage = () => {
         setVictoryModalShown    : gameState.setVictoryModalShown,
         setActiveRipples        : gameState.setActiveRipples,
         setTimeLeft             : gameState.setTimeLeft,
+        setGameOverReason       : gameState.setGameOverReason,
     });
 
     const transactions = useTransactions({
@@ -156,6 +157,7 @@ const GamePage = () => {
                 mulesFoundCount={gameState.mulesFoundCount}
                 actualMuleCount={gameState.actualMuleCount}
                 totalMoneyInCirculation={gameState.totalMoneyInCirculation}
+                gameOverReason={gameState.gameOverReason}
             />
         </Article>
     );

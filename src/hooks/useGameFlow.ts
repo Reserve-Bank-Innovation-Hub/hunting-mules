@@ -22,6 +22,7 @@ interface UseGameFlowProps {
     setVictoryModalShown    : (shown : boolean) => void;
     setActiveRipples        : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
     setTimeLeft             : (updater : (prev : number) => number) => void;
+    setGameOverReason       : (reason : "money" | "time" | null) => void;
 }
 
 export const useGameFlow = ({
@@ -35,6 +36,7 @@ export const useGameFlow = ({
     setVictoryModalShown,
     setActiveRipples,
     setTimeLeft,
+    setGameOverReason,
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
@@ -64,11 +66,12 @@ export const useGameFlow = ({
                     console.log("Audio playback failed:", error);
                 });
 
+                setGameOverReason("money");
                 showModal("game-over-modal");
                 setGameOverModalShown(true);
             }, 1000); // Small delay to let the last transaction complete
         }
-    }, [ totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown ]);
+    }, [ totalMoneyInCirculation, gameOverModalShown, setGameOverModalShown, setGameOverReason ]);
 
     // Show victory modal when all mules are found
     useEffect(() => {
@@ -115,11 +118,12 @@ export const useGameFlow = ({
                     console.log("Audio playback failed:", error);
                 });
 
+                setGameOverReason("time");
                 showModal("game-over-modal");
                 setGameOverModalShown(true);
             }, 500);
         }
-    }, [ timeLeft, victoryModalShown, gameOverModalShown, setGameOverModalShown ]);
+    }, [ timeLeft, victoryModalShown, gameOverModalShown, setGameOverModalShown, setGameOverReason ]);
 
     return {
         createRipple,

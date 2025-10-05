@@ -73,6 +73,7 @@ export interface UseGameStateReturn {
     gameOverModalShown         : boolean;
     victoryModalShown          : boolean;
     timeLeft                   : number;
+    gameOverReason             : "money" | "time" | null;
     setActiveTransactions      : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
     setIsGridReady             : (ready : boolean) => void;
     setTotalMoneyInCirculation : (updater : (prev : number) => number) => void;
@@ -89,4 +90,5 @@ export interface UseGameStateReturn {
     setGameOverModalShown      : (shown : boolean) => void;
     setVictoryModalShown       : (shown : boolean) => void;
     setTimeLeft                : (updater : (prev : number) => number) => void;
+    setGameOverReason          : (reason : "money" | "time" | null) => void;
 }
