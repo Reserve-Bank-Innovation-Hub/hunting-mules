@@ -13,3 +13,38 @@ button,
 button p {
     text-shadow : 2px 1px 0 var(--amber-dark20);
 }
+
+[data-button].primary {
+    position       : relative;
+    display        : inline-block;
+    padding        : 24px 32px;
+    text-align     : center;
+    vertical-align : middle;
+    cursor         : pointer;
+    user-select    : none;
+    border         : 4px solid transparent;
+    box-shadow     : inset -8px -8px var(--amber-dark20);
+}
+
+[data-button].primary::after {
+    position   : absolute;
+    top        : -4px;
+    right      : -4px;
+    bottom     : -4px;
+    left       : -4px;
+    content    : "";
+    box-shadow : inset -4px -4px var(--amber-dark20);
+}
+
+[data-button].primary:hover {
+    opacity : 0.9;
+}
+
+[data-button].primary:focus {
+    outline    : 0;
+    box-shadow : inset -8px -8px var(--amber-dark20), 0 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-button].primary:active {
+    box-shadow : inset 4px 4px var(--amber-dark20);
+}

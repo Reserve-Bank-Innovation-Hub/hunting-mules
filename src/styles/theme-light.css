@@ -13,7 +13,7 @@
     --paragraph-font                      : "Minecraft", "Retro Gaming", sans-serif;
 
     --button-primary-bg-default           : var(--amber);
-    --button-primary-border-default       : var(--amber-dark20);
+    --button-primary-border-default       : var(--black);
     --button-primary-border-width-default : 4px;
     --button-primary-text-default         : var(--amber-light70);
 

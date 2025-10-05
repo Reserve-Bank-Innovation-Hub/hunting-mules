@@ -38,7 +38,7 @@ const HomePage = () => {
 
     return (
         <Article id="page-home" verticalPadding="small">
-            <Row horizontalPadding="large">
+            <Row horizontalPadding="micro">
                 <Portion>
                     <Div horizontallyCentreThis marginBottom="small">
                         <img id="mule-hunter-logo" src={MuleSweeperLogo.src} alt="Mule Hunter Logo" />
@@ -71,13 +71,11 @@ const HomePage = () => {
                         transacting.
                     </Text>
 
-                    <Text textColour="white" align="centre">
+                    <Text textColour="white" align="centre" marginBottom="small">
                         <strong><Span textColour="red">FIND THEM QUICKLY</Span></strong><br /> to save as much money as
                         you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
                     </Text>
-                </Portion>
 
-                <Portion>
                     <Div horizontallyCentreThis>
                         <Link href="/game">
                             <Button kind="primary" size="huge">START GAME</Button>
