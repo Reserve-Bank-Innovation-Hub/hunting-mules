@@ -2,7 +2,7 @@
 
 // REACT CORE ==========================================================================================================
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 // UI ==================================================================================================================
 import { Button, Portion, Row, Text, Article, Heading6, Div, Heading4, Heading2, Heading1, Span } from "fictoan-react";
@@ -10,11 +10,31 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Heading4, Heading2,
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
+import IntroSound from "../assets/sounds/intro.wav";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
 
 const HomePage = () => {
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        // Create audio element and play intro sound on loop
+        audioRef.current = new Audio(IntroSound);
+        audioRef.current.loop = true;
+        audioRef.current.play().catch((error) => {
+            console.log("Audio playback failed:", error);
+        });
+
+        // Cleanup function to stop audio when component unmounts
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
     return (
         <Article id="page-home" verticalPadding="small">
             <Row horizontalPadding="large">

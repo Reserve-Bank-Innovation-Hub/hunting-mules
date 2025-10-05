@@ -35,6 +35,17 @@ const nextConfig = {
             },
         });
 
+        config.module.rules.push({
+            test : /\.(wav|mp3|ogg)$/,
+            use  : {
+                loader  : "file-loader",
+                options : {
+                    publicPath : "/_next/static/sounds/",
+                    outputPath : "static/sounds/",
+                },
+            },
+        });
+
         return config;
     },
     pageExtensions : ["js", "jsx", "ts", "tsx", "mdx"],

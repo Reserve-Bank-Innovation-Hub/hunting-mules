@@ -282,7 +282,7 @@ export const useTransactions = ({
 
             setActiveTransactions(prev => prev.filter(t => t.id !== transactionId));
         },
-        [ activeTransactions, muleNodes, createRipple, pendingMoneyLoss, setActiveTransactions, setMoneyLostToMules, setTotalMoneyInCirculation, setPendingMoneyLoss ]);
+        [ activeTransactions, muleNodes, lockedNodes, createRipple, pendingMoneyLoss, setActiveTransactions, setMoneyLostToMules, setTotalMoneyInCirculation, setPendingMoneyLoss ]);
 
     // Start transaction spawning
     useEffect(() => {
