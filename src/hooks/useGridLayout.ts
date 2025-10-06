@@ -9,7 +9,7 @@ import { getGridConfig, MULE_ACCOUNTS } from "$lib/gameConfig";
 interface UseGridLayoutReturn {
         containerRef : React.RefObject<HTMLDivElement>;
         setupGrid    : (
-                setGridDimensions : (dimensions : any) => void, setIsGridReady : (ready : boolean) => void, setBaseNodes : (nodes : Node[]) => void, setMuleIndices : (indices : Set<number>) => void, setActualMuleCount : (count : number) => void, muleIndices : Set<number> | null,
+                setGridDimensions : (dimensions : any) => void, setIsGridReady : (ready : boolean) => void, setBaseNodes : (nodes : Node[]) => void, setMuleIndices : (indices : Set<number>) => void, setActualMuleCount : (count : number) => void, muleIndices : Set<number> | null, gameOverModalShown : boolean, victoryModalShown : boolean,
         ) => void;
 }
 
@@ -23,6 +23,8 @@ export const useGridLayout = () : UseGridLayoutReturn => {
         setMuleIndices : (indices : Set<number>) => void,
         setActualMuleCount : (count : number) => void,
         muleIndices : Set<number> | null,
+        gameOverModalShown : boolean,
+        victoryModalShown : boolean,
     ) => {
         const calculateGrid = () => {
             if (!containerRef.current) {
@@ -92,6 +94,10 @@ export const useGridLayout = () : UseGridLayoutReturn => {
 
         // Add resize listener for responsive updates
         const handleResize = () => {
+            // Don't recalculate grid if game has ended
+            if (gameOverModalShown || victoryModalShown) {
+                return;
+            }
             setIsGridReady(false);
             calculateGrid();
         };

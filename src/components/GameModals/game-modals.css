@@ -14,8 +14,6 @@
 }
 
 #game-over-modal {
-    width : 600px;
-
     .modal-image {
         width     : 100%;
         max-width : unset;
