@@ -1,6 +1,6 @@
 .account-node {
-    width           : 40px;
-    height          : 40px;
+    width           : 64px;
+    height          : 64px;
     border-radius   : 4px;
     display         : flex;
     align-items     : center;
@@ -15,8 +15,8 @@
     overflow        : hidden;
 
     img {
-        width  : 40px;
-        height : 40px;
+        width  : 64px;
+        height : 64px;
     }
 }
 
@@ -29,8 +29,8 @@
 }
 
 .account-node.locked {
-    width            : 48px;
-    height           : 48px;
+    width            : 64px;
+    height           : 64px;
     border-radius    : 50%;
     background-color : #ffffff;
     display          : flex;

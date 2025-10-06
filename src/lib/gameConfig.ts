@@ -1,7 +1,7 @@
 export const getGridConfig = () => {
     const isMobile = window.innerWidth < 768;
     return {
-        CIRCLE_SIZE            : isMobile ? 32 : 40,
+        CIRCLE_SIZE            : isMobile ? 48 : 64,
         MIN_SPACING            : isMobile ? 32 : 15,  // Minimum spacing, will scale up proportionally
         PADDING                : isMobile ? 32 : 50,
         MAX_CELLS              : 100,                 // Maximum total cells
