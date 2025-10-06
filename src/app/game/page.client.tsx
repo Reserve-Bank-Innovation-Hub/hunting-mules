@@ -79,8 +79,10 @@ const GamePage = () => {
             gameState.setMuleIndices,
             gameState.setActualMuleCount,
             gameState.muleIndices,
+            gameState.gameOverModalShown,
+            gameState.victoryModalShown,
         );
-    }, [ gameState.muleIndices ]);
+    }, [ gameState.muleIndices, gameState.gameOverModalShown, gameState.victoryModalShown ]);
 
 
     // Update nodes with dynamic state
