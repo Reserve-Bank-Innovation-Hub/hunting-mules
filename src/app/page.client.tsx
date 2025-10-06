@@ -5,12 +5,13 @@ import Link from "next/link";
 import React, { useEffect, useRef } from "react";
 
 // UI ==================================================================================================================
-import { Button, Portion, Row, Text, Article, Heading6, Div, Heading4, Heading2, Heading1, Span } from "fictoan-react";
+import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoan-react";
 
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 import IntroSound from "../assets/sounds/intro.wav";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
+import MuleHunterSplash from "../assets/images/mule-bg.png";
 import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
 
 // STYLES ==============================================================================================================
@@ -74,14 +75,15 @@ const HomePage = () => {
                     </Portion>
 
                     <Portion desktopSpan="half">
-                        <video
-                            id="hero-background-video"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            src={HuntingMulesVideo}
-                        />
+                        <img id="mule-hunter-logo" src={MuleHunterSplash.src} alt="Mule Hunter Logo" />s
+                        {/* <video */}
+                        {/*     id="hero-background-video" */}
+                        {/*     autoPlay */}
+                        {/*     loop */}
+                        {/*     muted */}
+                        {/*     playsInline */}
+                        {/*     src={HuntingMulesVideo} */}
+                        {/* /> */}
                     </Portion>
 
                     <Portion desktopSpan="half">
