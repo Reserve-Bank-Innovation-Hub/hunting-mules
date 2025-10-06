@@ -70,7 +70,7 @@ const HomePage = () => {
                 <Row horizontalPadding="micro">
                     <Portion>
                         <Div horizontallyCentreThis marginBottom="tiny">
-                            <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />s
+                            <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
                         </Div>
                     </Portion>
 
