@@ -123,16 +123,14 @@ export const GameModals = ({
                             Money saved: ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
                         </Heading4>
 
-                        <Button
-                            kind="primary" horizontallyCentreThis
-                            size="large"
-                            onClick={() => {
-                                hideModal("victory-modal");
-                                handlePlayAgain();
-                            }}
-                        >
-                            PLAY AGAIN
-                        </Button>
+                        <Link href="/">
+                            <Button
+                                kind="primary" horizontallyCentreThis
+                                size="large"
+                            >
+                                PLAY AGAIN
+                            </Button>
+                        </Link>
 
 
                         <Link
