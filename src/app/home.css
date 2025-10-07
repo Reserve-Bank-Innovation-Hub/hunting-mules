@@ -12,4 +12,10 @@
         object-fit : cover;
         clip-path  : inset(0 0 22% 0);
     }
+
+    .mule-behaviour-demo {
+        display     : flex;
+        gap         : 24px;
+        align-items : center;
+    }
 }

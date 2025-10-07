@@ -5,10 +5,11 @@ import Link from "next/link";
 import React, { useEffect, useRef } from "react";
 
 // UI ==================================================================================================================
-import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoan-react";
+import { Button, Portion, Row, Text, Article, Heading6, Div, Span, Card } from "fictoan-react";
 
 // LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
+import { DemoAnimFanOut } from "../components/DemoAnimFanOut/DemoAnimFanOut";
 
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
@@ -63,31 +64,64 @@ const HomePage = () => {
                     </Portion>
 
                     <Portion desktopSpan="half">
+                        <Card className="mule-behaviour-demo" padding="micro">
+                            <Div>
+                                <DemoAnimFanOut />
+                            </Div>
+
+                            <Div>
+                                <Text weight="700" marginBottom="nano">
+                                    MULE BEHAVIOUR 1
+                                </Text>
+
+                                <Text textColour="white">
+                                    Credited money is immediately split into smaller amounts, and sent off to other mule
+                                    accounts.
+                                </Text>
+                            </Div>
+                        </Card>
                     </Portion>
 
                     <Portion desktopSpan="half">
+                        <Card className="mule-behaviour-demo" padding="micro">
+                            <Div>
+                                <DemoAnimFanOut />
+                            </Div>
 
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to
-                            multiple accounts at once.
-                        </Text>
+                            <Div>
+                                <Text weight="700" marginBottom="nano">
+                                    MULE BEHAVIOUR 2
+                                </Text>
 
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them
-                            from transacting.
-                        </Text>
-
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">FIND ALL IN 60 SECONDS</Span></strong><br /> to save as much
-                            money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
-                        </Text>
-
-                        <Div horizontallyCentreThis>
-                            <Link href="/game">
-                                <Button className="eightbit-btn">START GAME</Button>
-                            </Link>
-                        </Div>
+                                <Text textColour="white">
+                                    Mule accounts also tend to receive multiple small sums.
+                                </Text>
+                            </Div>
+                        </Card>
                     </Portion>
+
+                    {/* <Portion desktopSpan="half"> */}
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to */}
+                    {/*         multiple accounts at once. */}
+                    {/*     </Text> */}
+
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them */}
+                    {/*         from transacting. */}
+                    {/*     </Text> */}
+
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">FIND ALL IN 60 SECONDS</Span></strong><br /> to save as much */}
+                    {/*         money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span> */}
+                    {/*     </Text> */}
+
+                    {/*     <Div horizontallyCentreThis> */}
+                    {/*         <Link href="/game"> */}
+                    {/*             <Button className="eightbit-btn">START GAME</Button> */}
+                    {/*         </Link> */}
+                    {/*     </Div> */}
+                    {/* </Portion> */}
                 </Row>
             </Article>
         </>
