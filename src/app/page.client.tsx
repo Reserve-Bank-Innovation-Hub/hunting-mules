@@ -7,7 +7,7 @@ import React, { useEffect, useRef } from "react";
 // UI ==================================================================================================================
 import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoan-react";
 
-// COMPONENTS ==========================================================================================================
+// LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
 
 // ASSETS ==============================================================================================================
@@ -57,24 +57,15 @@ const HomePage = () => {
                         <Div horizontallyCentreThis marginBottom="tiny">
                             <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
                         </Div>
-                    </Portion>
-
-                    <Portion desktopSpan="half">
-                        <img id="mule-hunter-logo" src={MuleHunterSplash.src} alt="Mule Hunter Logo" />s
-                        {/* <video */}
-                        {/*     id="hero-background-video" */}
-                        {/*     autoPlay */}
-                        {/*     loop */}
-                        {/*     muted */}
-                        {/*     playsInline */}
-                        {/*     src={HuntingMulesVideo} */}
-                        {/* /> */}
-                    </Portion>
-
-                    <Portion desktopSpan="half">
                         <Heading6 textColour="amber" align="centre" marginBottom="tiny">
                             HOW TO PLAY
                         </Heading6>
+                    </Portion>
+
+                    <Portion desktopSpan="half">
+                    </Portion>
+
+                    <Portion desktopSpan="half">
 
                         <Text textColour="white" align="centre" marginBottom="small">
                             <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to
