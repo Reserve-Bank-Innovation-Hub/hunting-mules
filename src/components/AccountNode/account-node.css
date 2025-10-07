@@ -1,6 +1,6 @@
 .account-node {
-    width           : 64px;
-    height          : 64px;
+    width           : var(--icon-size, 64px);
+    height          : var(--icon-size, 64px);
     border-radius   : 4px;
     display         : flex;
     align-items     : center;
@@ -15,8 +15,8 @@
     overflow        : hidden;
 
     img {
-        width  : 64px;
-        height : 64px;
+        width  : var(--icon-size, 64px);
+        height : var(--icon-size, 64px);
     }
 }
 
@@ -29,8 +29,8 @@
 }
 
 .account-node.locked {
-    width            : 64px;
-    height           : 64px;
+    width            : var(--icon-size, 64px);
+    height           : var(--icon-size, 64px);
     border-radius    : 50%;
     background-color : #ffffff;
     display          : flex;

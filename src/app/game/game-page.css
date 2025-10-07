@@ -1,7 +1,7 @@
 #game-page {
     display               : grid;
     grid-template-columns : 1fr;
-    grid-template-rows    : 120px 1fr;
+    grid-template-rows    : auto 1fr;
     height                : 100vh;
     gap                   : 24px;
     padding               : 24px;

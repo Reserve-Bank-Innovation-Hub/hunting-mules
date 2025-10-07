@@ -24,10 +24,10 @@ export const Scorecard = ({
     return (
         <Row id="scorecard" retainLayoutAlways marginBottom="none">
             {/* DESKTOP STYLES ===================================================================================== */}
-            <Portion desktopSpan="one-fourth" hideOnMobile>
+            <Portion desktopSpan="half" hideOnMobile>
                 <Card
                     className="metric-card"
-                    padding="micro" bgColour="amber-light60" isFullHeight
+                    padding="nano" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">Time left</Text>
                     <Heading5 textColour={timeLeft <= 10 ? "red" : undefined}>
@@ -36,10 +36,10 @@ export const Scorecard = ({
                 </Card>
             </Portion>
 
-            <Portion desktopSpan="one-fourth" hideOnMobile>
+            <Portion desktopSpan="half" hideOnMobile>
                 <Card
                     className="metric-card"
-                    padding="micro" bgColour="amber-light60" isFullHeight
+                    padding="nano" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">In circulation</Text>
                     <Heading5>
@@ -48,10 +48,10 @@ export const Scorecard = ({
                 </Card>
             </Portion>
 
-            <Portion desktopSpan="one-fourth" hideOnMobile>
+            <Portion desktopSpan="half" hideOnMobile>
                 <Card
                     className="metric-card"
-                    padding="micro" bgColour="amber-light60" isFullHeight
+                    padding="nano" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">Stolen by mules</Text>
                     <Heading5 textColour="red">
@@ -60,10 +60,10 @@ export const Scorecard = ({
                 </Card>
             </Portion>
 
-            <Portion desktopSpan="one-fourth" hideOnMobile>
+            <Portion desktopSpan="half" hideOnMobile>
                 <Card
                     className="metric-card"
-                    padding="micro" bgColour="amber-light60" isFullHeight
+                    padding="nano" bgColour="amber-light60" isFullHeight
                 >
                     <Text textColour="amber-dark60">Mules found</Text>
                     <Heading5 textColour="green">
