@@ -13,6 +13,7 @@ import IntroSound from "../assets/sounds/intro.wav";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
 import MuleHunterSplash from "../assets/images/mule-bg.png";
 import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
+import RBIHLogo from "../assets/images/rbih-logo.svg";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
@@ -63,9 +64,15 @@ const HomePage = () => {
                         zIndex          : 9999,
                     }}
                 >
-                    <Text textColour="white" size="large">Click anywhere to start</Text>
+                    <Div id="click-to-start">
+                        <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
+                        <Text textColour="white" size="large" opacity="60">by</Text>
+                        <RBIHLogo />
+                        <Text textColour="red" size="large">Click anywhere to start</Text>
+                    </Div>
                 </Div>
             )}
+
             <Article id="page-home" verticalPadding="tiny">
                 <Row horizontalPadding="micro">
                     <Portion>
