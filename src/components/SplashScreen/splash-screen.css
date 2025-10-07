@@ -1,0 +1,27 @@
+.splash-screen-overlay {
+    position         : fixed;
+    top              : 0;
+    left             : 0;
+    width            : 100vw;
+    height           : 100vh;
+    background-color : rgba(0, 0, 0, 0.9);
+    display          : flex;
+    align-items      : center;
+    justify-content  : center;
+    cursor           : pointer;
+    z-index          : 9999;
+
+    #click-to-start {
+        display         : flex;
+        flex-direction  : column;
+        justify-content : center;
+        align-items     : center;
+        max-width       : 600px;
+        gap             : 24px;
+
+        svg {
+            width         : 320px;
+            margin-bottom : 40px;
+        }
+    }
+}

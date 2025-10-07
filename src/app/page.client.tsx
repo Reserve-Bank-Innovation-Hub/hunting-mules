@@ -7,13 +7,15 @@ import React, { useEffect, useRef } from "react";
 // UI ==================================================================================================================
 import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoan-react";
 
+// COMPONENTS ==========================================================================================================
+import SplashScreen from "../components/SplashScreen/SplashScreen";
+
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 import IntroSound from "../assets/sounds/intro.wav";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
 import MuleHunterSplash from "../assets/images/mule-bg.png";
 import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
-import RBIHLogo from "../assets/images/rbih-logo.svg";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
@@ -47,31 +49,7 @@ const HomePage = () => {
 
     return (
         <>
-            {!audioStarted && (
-                <Div
-                    onClick={handleStartAudio}
-                    style={{
-                        position        : "fixed",
-                        top             : 0,
-                        left            : 0,
-                        width           : "100vw",
-                        height          : "100vh",
-                        backgroundColor : "rgba(0, 0, 0, 0.9)",
-                        display         : "flex",
-                        alignItems      : "center",
-                        justifyContent  : "center",
-                        cursor          : "pointer",
-                        zIndex          : 9999,
-                    }}
-                >
-                    <Div id="click-to-start">
-                        <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
-                        <Text textColour="white" size="large" opacity="60">by</Text>
-                        <RBIHLogo />
-                        <Text textColour="red" size="large">Click anywhere to start</Text>
-                    </Div>
-                </Div>
-            )}
+            {!audioStarted && <SplashScreen onStart={handleStartAudio} />}
 
             <Article id="page-home" verticalPadding="tiny">
                 <Row horizontalPadding="micro">
