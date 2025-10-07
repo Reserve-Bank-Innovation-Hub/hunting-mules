@@ -1,3 +1,17 @@
+#click-to-start {
+    display         : flex;
+    flex-direction  : column;
+    justify-content : center;
+    align-items     : center;
+    max-width       : 600px;
+    gap             : 24px;
+
+    svg {
+        width         : 320px;
+        margin-bottom : 40px;
+    }
+}
+
 #page-home {
     min-height : 100vh;
     background : #000810;
