@@ -10,6 +10,9 @@ import { Div } from "fictoan-react";
 import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
 
+// LIB =================================================================================================================
+import { getGridConfig } from "$lib/gameConfig";
+
 // STYLES ==============================================================================================================
 import "./account-node.css";
 
@@ -22,6 +25,8 @@ interface NodeData {
 }
 
 export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
+    const iconSize = getGridConfig().CIRCLE_SIZE;
+
     const handleClick = (event : React.MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
@@ -39,7 +44,12 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
 
     if (data.isMule && data.isLocked) {
         return (
-            <Div className={`account-node mule-account locked`} onClick={handleClick} onMouseDown={handleMouseDown}>
+            <Div
+                className={`account-node mule-account locked`}
+                onClick={handleClick}
+                onMouseDown={handleMouseDown}
+                style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
+            >
                 <img
                     src={MuleHeadImage.src}
                     alt="Locked Mule"
@@ -58,6 +68,7 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
             className={`account-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
+            style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
         >
             <img
                 src={BankIconImage.src}
