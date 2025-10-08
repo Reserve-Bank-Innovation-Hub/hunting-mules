@@ -4,4 +4,13 @@
     border-radius  : 50%;
     pointer-events : none;
     opacity        : 0.6;
+
+    &.mule-receiving {
+        border-color : var(--red);
+        opacity      : 0.8;
+    }
+
+    &.locked {
+        border-color : var(--amber);
+    }
 }

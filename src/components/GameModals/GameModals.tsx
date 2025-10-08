@@ -65,16 +65,11 @@ export const GameModals = ({
                         </Heading4>
 
                         <Div horizontallyCentreThis>
-                            <Button
-                                className="eightbit-btn failure"
-                                size="large" marginBottom="micro"
-                                onClick={() => {
-                                    hideModal("game-over-modal");
-                                    handlePlayAgain();
-                                }}
-                            >
-                                PLAY AGAIN
-                            </Button>
+                            <Link href="/">
+                                <Button className="eightbit-btn failure" horizontallyCentreThis>
+                                    PLAY AGAIN
+                                </Button>
+                            </Link>
 
                             <Link
                                 href="https://www.figma.com/proto/hU8AxWIfkTIrNKKkqWxhh7/GFF?page-id=11%3A77&node-id=465-1225&viewport=-5%2C286%2C0.22&t=0gqj5u5AkwJ3TkMZ-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=465%3A1225&hide-ui=1">
@@ -124,10 +119,7 @@ export const GameModals = ({
                         </Heading4>
 
                         <Link href="/">
-                            <Button
-                                kind="primary" horizontallyCentreThis
-                                size="large"
-                            >
+                            <Button kind="primary" horizontallyCentreThis>
                                 PLAY AGAIN
                             </Button>
                         </Link>
@@ -137,7 +129,7 @@ export const GameModals = ({
                             href="https://www.figma.com/proto/hU8AxWIfkTIrNKKkqWxhh7/GFF?page-id=11%3A77&node-id=465-1225&viewport=-5%2C286%2C0.22&t=0gqj5u5AkwJ3TkMZ-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=465%3A1225&hide-ui=1">
                             <Button
                                 className="eightbit-btn"
-                                size="large" marginBottom="micro"
+                                marginBottom="micro"
                             >
                                 LEARN MORE
                             </Button>

@@ -29,7 +29,7 @@ export const NodeRippleEffect = ({
 
     return (
         <motion.div
-            className="node-ripple"
+            className={`node-ripple ${ripple.isMuleReceiving ? 'mule-receiving' : ''} ${ripple.isLocked ? 'locked' : ''}`}
             style={{
                 left      : centerX,
                 top       : centerY,

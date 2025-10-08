@@ -9,6 +9,7 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Span, Card } from "
 
 // LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
+import { DemoAnimFanIn } from "../components/DemoAnimFanIn/DemoAnimFanIn";
 import { DemoAnimFanOut } from "../components/DemoAnimFanOut/DemoAnimFanOut";
 
 // ASSETS ==============================================================================================================
@@ -65,38 +66,30 @@ const HomePage = () => {
 
                     <Portion desktopSpan="half">
                         <Card className="mule-behaviour-demo" padding="micro">
-                            <Div>
-                                <DemoAnimFanOut />
-                            </Div>
+                            <DemoAnimFanOut />
 
-                            <Div>
-                                <Text weight="700" marginBottom="nano">
-                                    MULE BEHAVIOUR 1
-                                </Text>
+                            <Text align="centre" weight="700" marginBottom="nano">
+                                MULE BEHAVIOUR 1
+                            </Text>
 
-                                <Text textColour="white">
-                                    Credited money is immediately split into smaller amounts, and sent off to other mule
-                                    accounts.
-                                </Text>
-                            </Div>
+                            <Text align="centre" textColour="white">
+                                Credited money is immediately split into smaller amounts, and sent off to other mule
+                                accounts.
+                            </Text>
                         </Card>
                     </Portion>
 
                     <Portion desktopSpan="half">
                         <Card className="mule-behaviour-demo" padding="micro">
-                            <Div>
-                                <DemoAnimFanOut />
-                            </Div>
+                            <DemoAnimFanIn />
 
-                            <Div>
-                                <Text weight="700" marginBottom="nano">
-                                    MULE BEHAVIOUR 2
-                                </Text>
+                            <Text align="centre" weight="700" marginBottom="nano">
+                                MULE BEHAVIOUR 2
+                            </Text>
 
-                                <Text textColour="white">
-                                    Mule accounts also tend to receive multiple small sums.
-                                </Text>
-                            </Div>
+                            <Text align="centre" textColour="white">
+                                Mule accounts also tend to receive multiple small sums.
+                            </Text>
                         </Card>
                     </Portion>
 
@@ -116,12 +109,15 @@ const HomePage = () => {
                     {/*         money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span> */}
                     {/*     </Text> */}
 
-                    {/*     <Div horizontallyCentreThis> */}
-                    {/*         <Link href="/game"> */}
-                    {/*             <Button className="eightbit-btn">START GAME</Button> */}
-                    {/*         </Link> */}
-                    {/*     </Div> */}
-                    {/* </Portion> */}
+                    <Portion>
+                        <Div horizontallyCentreThis marginTop="micro">
+                            <Link href="/game">
+                                <Button className="eightbit-btn">
+                                    START GAME
+                                </Button>
+                            </Link>
+                        </Div>
+                    </Portion>
                 </Row>
             </Article>
         </>

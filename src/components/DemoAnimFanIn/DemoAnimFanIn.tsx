@@ -12,25 +12,25 @@ import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
 
 // STYLES ==============================================================================================================
-import "./demo-anim-fan-out.css";
+import "./demo-anim-fan-in.css";
 
-interface DemoAnimFanOutProps {
+interface DemoAnimFanInProps {
     className ? : string;
 }
 
-export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
+export const DemoAnimFanIn = ({className} : DemoAnimFanInProps) => {
     const [ activeTransactions, setActiveTransactions ] = useState<number[]>([]);
 
-    // Number of destination nodes
-    const destinationCount = 6;
+    // Number of source nodes
+    const sourceCount = 6;
     const viewBoxSize = 300;
     const centerX = 150;
     const centerY = 150;
     const radius = 100;
 
-    // Calculate positions for destination nodes in a circle
-    const destinations = Array.from({length : destinationCount}, (_, i) => {
-        const angle = (i * 2 * Math.PI) / destinationCount;
+    // Calculate positions for source nodes in a circle
+    const sources = Array.from({length : sourceCount}, (_, i) => {
+        const angle = (i * 2 * Math.PI) / sourceCount;
         return {
             x         : centerX + radius * Math.cos(angle),
             y         : centerY + radius * Math.sin(angle),
@@ -43,9 +43,9 @@ export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
     // Trigger animations periodically
     useEffect(() => {
         const interval = setInterval(() => {
-            // Pick 2-3 random destinations
+            // Pick 2-3 random sources
             const count = 2 + Math.floor(Math.random() * 2);
-            const indices = Array.from({length : destinationCount}, (_, i) => i)
+            const indices = Array.from({length : sourceCount}, (_, i) => i)
                 .sort(() => Math.random() - 0.5)
                 .slice(0, count);
 
@@ -58,25 +58,25 @@ export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [ destinationCount ]);
+    }, [ sourceCount ]);
 
     return (
-        <div className={`demo-anim-fan-out ${className || ""}`}>
+        <div className={`demo-anim-fan-in ${className || ""}`}>
             <svg width="300" height="300" viewBox="0 0 300 300">
                 {/* Connection lines (subtle) */}
-                {destinations.map((dest, i) => (
+                {sources.map((source, i) => (
                     <line
                         key={i}
-                        x1={centerX}
-                        y1={centerY}
-                        x2={dest.x}
-                        y2={dest.y}
+                        x1={source.x}
+                        y1={source.y}
+                        x2={centerX}
+                        y2={centerY}
                         className="connection-line"
                     />
                 ))}
             </svg>
 
-            {/* Center node */}
+            {/* Center node (mule) */}
             <img
                 src={MuleHeadImage.src}
                 alt="Mule Account"
@@ -87,18 +87,18 @@ export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
                 }}
             />
 
-            {/* Destination nodes */}
-            {destinations.map((dest, i) => {
+            {/* Source nodes */}
+            {sources.map((source, i) => {
                 const isActive = activeTransactions.includes(i);
                 return (
                     <img
                         key={i}
-                        src={isActive ? MuleHeadImage.src : BankIconImage.src}
-                        alt={isActive ? "Mule Account" : "Bank"}
-                        className={`destination-node ${isActive ? "active" : ""}`}
+                        src={BankIconImage.src}
+                        alt="Bank"
+                        className={`source-node ${isActive ? "active" : ""}`}
                         style={{
-                            left : `${dest.leftPct}%`,
-                            top  : `${dest.topPct}%`,
+                            left : `${source.leftPct}%`,
+                            top  : `${source.topPct}%`,
                         }}
                     />
                 );
@@ -106,19 +106,19 @@ export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
 
             {/* Animated transaction cards */}
             {activeTransactions.map((index) => {
-                const dest = destinations[index];
+                const source = sources[index];
                 return (
                     <motion.div
                         key={`transaction-${index}`}
                         className="demo-transaction"
                         initial={{
-                            left  : "50%",
-                            top   : "50%",
+                            left  : `${source.leftPct}%`,
+                            top   : `${source.topPct}%`,
                             scale : 0,
                         }}
                         animate={{
-                            left  : `${dest.leftPct}%`,
-                            top   : `${dest.topPct}%`,
+                            left  : "50%",
+                            top   : "50%",
                             scale : [ 0, 1, 1, 0 ],
                         }}
                         transition={{

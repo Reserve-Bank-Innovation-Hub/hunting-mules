@@ -1,4 +1,4 @@
-.demo-anim-fan-out {
+.demo-anim-fan-in {
     position         : relative;
     width            : 100%;
     max-width        : 300px;
@@ -21,12 +21,12 @@
         width       : 13.33%;
         height      : 13.33%;
         transform   : translate(-50%, -50%);
-        filter      : drop-shadow(0 2px 8px rgba(0, 100, 200, 0.3));
+        filter      : drop-shadow(0 2px 8px rgba(200, 0, 0, 0.3));
         transition  : all 0.3s ease;
         object-fit  : cover;
     }
 
-    .destination-node {
+    .source-node {
         position   : absolute;
         width      : 10%;
         height     : 10%;
@@ -37,7 +37,7 @@
 
         &.active {
             opacity : 1;
-            filter  : drop-shadow(0 2px 8px rgba(0, 150, 100, 0.3));
+            filter  : drop-shadow(0 2px 8px rgba(0, 100, 200, 0.3));
         }
     }
 

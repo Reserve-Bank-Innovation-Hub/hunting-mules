@@ -40,13 +40,14 @@ export const useGameFlow = ({
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
-    const createRipple = useCallback((nodeId : string, x : number, y : number, isLocked : boolean = false) => {
+    const createRipple = useCallback((nodeId : string, x : number, y : number, isLocked : boolean = false, isMuleReceiving : boolean = false) => {
         const newRipple : NodeRipple = {
             id : `ripple-${Date.now()}-${Math.random()}`,
             nodeId,
             x,
             y,
             isLocked,
+            isMuleReceiving,
         };
         setActiveRipples(prev => [ ...prev, newRipple ]);
     }, [ setActiveRipples ]);
