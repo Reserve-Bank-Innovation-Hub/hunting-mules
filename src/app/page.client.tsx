@@ -5,7 +5,12 @@ import Link from "next/link";
 import React, { useEffect, useRef } from "react";
 
 // UI ==================================================================================================================
-import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoan-react";
+import { Button, Portion, Row, Text, Article, Heading6, Div, Span, Card } from "fictoan-react";
+
+// LOCAL COMPONENTS ====================================================================================================
+import SplashScreen from "../components/SplashScreen/SplashScreen";
+import { DemoAnimFanIn } from "../components/DemoAnimFanIn/DemoAnimFanIn";
+import { DemoAnimFanOut } from "../components/DemoAnimFanOut/DemoAnimFanOut";
 
 // ASSETS ==============================================================================================================
 import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
@@ -13,7 +18,6 @@ import IntroSound from "../assets/sounds/intro.wav";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
 import MuleHunterSplash from "../assets/images/mule-bg.png";
 import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
-import RBIHLogo from "../assets/images/rbih-logo.svg";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";
@@ -47,31 +51,7 @@ const HomePage = () => {
 
     return (
         <>
-            {!audioStarted && (
-                <Div
-                    onClick={handleStartAudio}
-                    style={{
-                        position        : "fixed",
-                        top             : 0,
-                        left            : 0,
-                        width           : "100vw",
-                        height          : "100vh",
-                        backgroundColor : "rgba(0, 0, 0, 0.9)",
-                        display         : "flex",
-                        alignItems      : "center",
-                        justifyContent  : "center",
-                        cursor          : "pointer",
-                        zIndex          : 9999,
-                    }}
-                >
-                    <Div id="click-to-start">
-                        <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
-                        <Text textColour="white" size="large" opacity="60">by</Text>
-                        <RBIHLogo />
-                        <Text textColour="red" size="large">Click anywhere to start</Text>
-                    </Div>
-                </Div>
-            )}
+            {!audioStarted && <SplashScreen onStart={handleStartAudio} />}
 
             <Article id="page-home" verticalPadding="tiny">
                 <Row horizontalPadding="micro">
@@ -79,43 +59,62 @@ const HomePage = () => {
                         <Div horizontallyCentreThis marginBottom="tiny">
                             <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
                         </Div>
-                    </Portion>
-
-                    <Portion desktopSpan="half">
-                        <img id="mule-hunter-logo" src={MuleHunterSplash.src} alt="Mule Hunter Logo" />s
-                        {/* <video */}
-                        {/*     id="hero-background-video" */}
-                        {/*     autoPlay */}
-                        {/*     loop */}
-                        {/*     muted */}
-                        {/*     playsInline */}
-                        {/*     src={HuntingMulesVideo} */}
-                        {/* /> */}
-                    </Portion>
-
-                    <Portion desktopSpan="half">
                         <Heading6 textColour="amber" align="centre" marginBottom="tiny">
                             HOW TO PLAY
                         </Heading6>
+                    </Portion>
 
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to
-                            multiple accounts at once.
-                        </Text>
+                    <Portion desktopSpan="half">
+                        <Card className="mule-behaviour-demo" padding="micro">
+                            <DemoAnimFanOut />
 
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them
-                            from transacting.
-                        </Text>
+                            <Text align="centre" weight="700" marginBottom="nano">
+                                MULE BEHAVIOUR 1
+                            </Text>
 
-                        <Text textColour="white" align="centre" marginBottom="small">
-                            <strong><Span textColour="red">FIND ALL IN 60 SECONDS</Span></strong><br /> to save as much
-                            money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span>
-                        </Text>
+                            <Text align="centre" textColour="white">
+                                Credited money is immediately split into smaller amounts, and sent off to other mule
+                                accounts.
+                            </Text>
+                        </Card>
+                    </Portion>
 
-                        <Div horizontallyCentreThis>
+                    <Portion desktopSpan="half">
+                        <Card className="mule-behaviour-demo" padding="micro">
+                            <DemoAnimFanIn />
+
+                            <Text align="centre" weight="700" marginBottom="nano">
+                                MULE BEHAVIOUR 2
+                            </Text>
+
+                            <Text align="centre" textColour="white">
+                                Mule accounts also tend to receive multiple small sums.
+                            </Text>
+                        </Card>
+                    </Portion>
+
+                    {/* <Portion desktopSpan="half"> */}
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">SPOT ACCOUNTS</Span></strong><br /> that send money to */}
+                    {/*         multiple accounts at once. */}
+                    {/*     </Text> */}
+
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">CLICK TO LOCK THEM</Span></strong><br /> and prevent them */}
+                    {/*         from transacting. */}
+                    {/*     </Text> */}
+
+                    {/*     <Text textColour="white" align="centre" marginBottom="small"> */}
+                    {/*         <strong><Span textColour="red">FIND ALL IN 60 SECONDS</Span></strong><br /> to save as much */}
+                    {/*         money as you can—<br /><Span textColour="amber">you are the MULE HUNTER!</Span> */}
+                    {/*     </Text> */}
+
+                    <Portion>
+                        <Div horizontallyCentreThis marginTop="micro">
                             <Link href="/game">
-                                <Button className="eightbit-btn">START GAME</Button>
+                                <Button className="eightbit-btn">
+                                    START GAME
+                                </Button>
                             </Link>
                         </Div>
                     </Portion>

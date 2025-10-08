@@ -19,11 +19,12 @@ export interface TransactionInstance {
 }
 
 export interface NodeRipple {
-    id         : string;
-    nodeId     : string;
-    x          : number;
-    y          : number;
-    isLocked ? : boolean;
+    id                : string;
+    nodeId            : string;
+    x                 : number;
+    y                 : number;
+    isLocked        ? : boolean;
+    isMuleReceiving ? : boolean;
 }
 
 export interface GridDimensions {
@@ -49,7 +50,7 @@ export interface GameModalState {
 }
 
 export interface GameFlowCallbacks {
-    createRipple              : (nodeId : string, x : number, y : number, isLocked? : boolean) => void;
+    createRipple              : (nodeId : string, x : number, y : number, isLocked? : boolean, isMuleReceiving? : boolean) => void;
     handleRippleComplete      : (rippleId : string) => void;
     handleTransactionComplete : (transactionId : string) => void;
     handleNodeClick           : (nodeId : string, isMule : boolean) => void;

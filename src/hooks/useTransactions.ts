@@ -22,7 +22,7 @@ interface UseTransactionsProps {
         setMoneyLostToMules        : (updater : (prev : number) => number) => void;
         setTotalMoneyInCirculation : (updater : (prev : number) => number) => void;
         setPendingMoneyLoss        : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
-        createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean) => void;
+        createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean, isMuleReceiving? : boolean) => void;
 }
 
 export const useTransactions = ({
@@ -95,8 +95,8 @@ export const useTransactions = ({
         };
 
         // Create ripples for both nodes
-        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, lockedNodes.has(fromNode.id));
-        createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id));
+        createRipple(fromNode.id, fromNode.position.x, fromNode.position.y, lockedNodes.has(fromNode.id), false);
+        createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id), toNode.data.isMule || false);
 
         // Play transaction sound
         const audio = new Audio(TransactionSound);
@@ -134,12 +134,14 @@ export const useTransactions = ({
                     completedTransaction.toNode.id,
                     completedTransaction.toNode.position.x,
                     completedTransaction.toNode.position.y,
-                    lockedNodes.has(completedTransaction.toNode.id));
+                    lockedNodes.has(completedTransaction.toNode.id),
+                    false);
                 createRipple(
                     completedTransaction.fromNode.id,
                     completedTransaction.fromNode.position.x,
                     completedTransaction.fromNode.position.y,
-                    lockedNodes.has(completedTransaction.fromNode.id));
+                    lockedNodes.has(completedTransaction.fromNode.id),
+                    completedTransaction.fromNode.data.isMule || false);
 
                 // Add bounce transaction with delay
                 setTimeout(() => {
@@ -188,12 +190,14 @@ export const useTransactions = ({
                             completedTransaction.toNode.id,
                             completedTransaction.toNode.position.x,
                             completedTransaction.toNode.position.y,
-                            lockedNodes.has(completedTransaction.toNode.id));
+                            lockedNodes.has(completedTransaction.toNode.id),
+                            false);
                         createRipple(
                             randomMule.id,
                             randomMule.position.x,
                             randomMule.position.y,
-                            lockedNodes.has(randomMule.id));
+                            lockedNodes.has(randomMule.id),
+                            true);
 
                         setTimeout(() => {
                             setActiveTransactions(prev => [ ...prev, newTransaction ]);
@@ -254,12 +258,14 @@ export const useTransactions = ({
                             completedTransaction.toNode.id,
                             completedTransaction.toNode.position.x,
                             completedTransaction.toNode.position.y,
-                            lockedNodes.has(completedTransaction.toNode.id));
+                            lockedNodes.has(completedTransaction.toNode.id),
+                            false);
                         createRipple(
                             randomMule.id,
                             randomMule.position.x,
                             randomMule.position.y,
-                            lockedNodes.has(randomMule.id));
+                            lockedNodes.has(randomMule.id),
+                            true);
 
                         // Add the new transaction with a slight delay
                         setTimeout(() => {
@@ -352,8 +358,9 @@ export const useTransactions = ({
                         fromNode.id,
                         fromNode.position.x,
                         fromNode.position.y,
-                        lockedNodes.has(fromNode.id));
-                    createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id));
+                        lockedNodes.has(fromNode.id),
+                        false);
+                    createRipple(toNode.id, toNode.position.x, toNode.position.y, lockedNodes.has(toNode.id), toNode.data.isMule || false);
 
                     // Play transaction sound
                     const audio = new Audio(TransactionSound);
