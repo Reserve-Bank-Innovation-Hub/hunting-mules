@@ -22,7 +22,7 @@ interface UseTransactionsProps {
         setMoneyLostToMules        : (updater : (prev : number) => number) => void;
         setTotalMoneyInCirculation : (updater : (prev : number) => number) => void;
         setPendingMoneyLoss        : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
-        createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean) => void;
+        createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean, isMuleReceiving? : boolean) => void;
 }
 
 export const useTransactions = ({
