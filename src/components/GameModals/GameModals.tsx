@@ -66,7 +66,7 @@ export const GameModals = ({
 
                         <Div horizontallyCentreThis>
                             <Link href="/">
-                                <Button className="eightbit-btn failure" horizontallyCentreThis>
+                                <Button className="eightbit-btn failure">
                                     PLAY AGAIN
                                 </Button>
                             </Link>
@@ -74,8 +74,7 @@ export const GameModals = ({
                             <Link
                                 href="https://www.figma.com/proto/hU8AxWIfkTIrNKKkqWxhh7/GFF?page-id=11%3A77&node-id=465-1225&viewport=-5%2C286%2C0.22&t=0gqj5u5AkwJ3TkMZ-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=465%3A1225&hide-ui=1">
                                 <Button
-                                    className="eightbit-btn"
-                                    size="large" marginBottom="micro"
+                                    className="eightbit-btn" marginBottom="micro"
                                 >
                                     LEARN MORE
                                 </Button>
