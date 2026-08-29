@@ -13,3 +13,20 @@
         clip-path  : inset(0 0 22% 0);
     }
 }
+
+/* CONTEXT SETTING /////////////////////////////////////////////////////////// */
+/* Deliberately sparse — this is a kiosk, the player should be moving in seconds */
+#page-home #context-setting {
+    max-width : 640px;
+    margin    : 0 auto;
+}
+
+#page-home #context-setting h6 {
+    line-height : 1.5;
+}
+
+@media screen and (max-width : 768px) {
+    #page-home #mule-hunter-logo {
+        width : 88%;
+    }
+}

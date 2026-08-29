@@ -1,5 +1,5 @@
 // REACT CORE ==========================================================================================================
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 // LIB =================================================================================================================
 import { TransactionInstance } from "$lib/gameTypes";
@@ -25,46 +25,49 @@ export const useNodeInteractions = ({
     setMulesFoundCount,
     setActiveTransactions,
 } : UseNodeInteractionsProps) => {
+    // Mules already counted towards the score. Held in a ref so the de-dupe check happens
+    // in the click handler itself, never inside a state updater — React may call an updater
+    // more than once for the same click, which would count the same mule twice.
+    const countedMules = useRef<Set<string>>(new Set());
 
     // Handle node clicks
     const handleNodeClick = useCallback((nodeId : string, isMule : boolean) => {
         if (isMule) {
-            // Check if already locked before making any changes
-            setLockedNodes(prev => {
-                if (prev.has(nodeId)) {
-                    return prev; // Already locked, no changes
-                }
+            // Already found, so nothing to do
+            if (countedMules.current.has(nodeId)) {
+                return;
+            }
+            countedMules.current.add(nodeId);
 
-                // Not locked yet - increment counter and lock
-                const newLockedNodes = new Set(prev).add(nodeId);
-                setMulesFoundCount(count => count + 1);
+            // Lock the node and score it — both updaters stay pure
+            setLockedNodes(prev => new Set(prev).add(nodeId));
+            setMulesFoundCount(count => count + 1);
 
-                // Play uncovered sound
-                const audio = new Audio(UncoveredSound);
-                audio.play().catch((error) => {
-                    console.log("Audio playback failed:", error);
-                });
-
-                // Check for and reverse any mid-flight transactions to this mule
-                setActiveTransactions(transactions =>
-                    transactions.map(transaction => {
-                        // If transaction is heading to this mule and not already bounced, reverse it
-                        if (transaction.toNode.id === nodeId && !transaction.isBounced) {
-                            return {
-                                ...transaction,
-                                isBounced: true,
-                                // Swap the from and to nodes to reverse direction
-                                fromNode: transaction.toNode,
-                                toNode: transaction.fromNode,
-                                startTime: Date.now(), // Reset animation start time
-                            };
-                        }
-                        return transaction;
-                    })
-                );
-
-                return newLockedNodes;
+            // Play uncovered sound
+            const audio = new Audio(UncoveredSound);
+            audio.play().catch((error) => {
+                console.log("Audio playback failed:", error);
             });
+
+            // Check for and reverse any mid-flight transactions to this mule
+            const bouncedAt = Date.now();
+
+            setActiveTransactions(transactions =>
+                transactions.map(transaction => {
+                    // If transaction is heading to this mule and not already bounced, reverse it
+                    if (transaction.toNode.id === nodeId && !transaction.isBounced) {
+                        return {
+                            ...transaction,
+                            isBounced: true,
+                            // Swap the from and to nodes to reverse direction
+                            fromNode: transaction.toNode,
+                            toNode: transaction.fromNode,
+                            startTime: bouncedAt, // Reset animation start time
+                        };
+                    }
+                    return transaction;
+                })
+            );
         } else {
             // Shake normal account
             setShakingNodes(prev => new Set(prev).add(nodeId));

@@ -1,0 +1,109 @@
+/* Sits in the bottom row of the game grid during play, and is promoted to a
+   full-screen overlay when the last pattern ends. */
+.score-bar {
+    position         : relative;
+    display          : flex;
+    align-items      : center;
+    justify-content  : center;
+    width            : 100%;
+    height           : 100%;
+    border-radius    : var(--global-border-radius);
+    background-color : var(--slate-dark80);
+    border           : 1px solid var(--slate-dark60);
+    overflow         : hidden;
+    transition       : none;
+}
+
+/* DURING PLAY /////////////////////////////////////////////////////////////// */
+.score-bar-live {
+    display     : flex;
+    align-items : baseline;
+    gap         : 12px;
+}
+
+.score-bar-label {
+    font-size      : 12px;
+    font-weight    : 700;
+    letter-spacing : 0.14em;
+    color          : var(--slate-light40);
+}
+
+.score-bar-count {
+    font-family : "Minecraft", sans-serif;
+    font-size   : 40px;
+    line-height : 1;
+    color       : var(--amber);
+}
+
+.score-bar-of {
+    font-size : 20px;
+    color     : var(--slate-light40);
+}
+
+/* THE RESULT //////////////////////////////////////////////////////////////// */
+/* Grows out of the bottom strip to take over the screen */
+.score-bar.is-result {
+    position         : fixed;
+    left             : 0;
+    bottom           : 0;
+    width            : 100vw;
+    height           : 100vh;
+    border-radius    : 0;
+    border           : none;
+    background-color : #000810;
+    z-index          : 9500;
+    animation        : score-bar-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes score-bar-rise {
+    from { height : 15vh; }
+    to   { height : 100vh; }
+}
+
+.score-bar-result {
+    display         : flex;
+    flex-direction  : column;
+    align-items     : center;
+    justify-content : center;
+    gap             : 14px;
+    padding         : 24px;
+    text-align      : center;
+    animation       : score-bar-fade-in 0.5s ease-out 0.55s both;
+}
+
+@keyframes score-bar-fade-in {
+    from { opacity : 0; transform : translateY(16px); }
+    to   { opacity : 1; transform : translateY(0); }
+}
+
+.score-bar-result-lead {
+    font-size      : 14px;
+    font-weight    : 700;
+    letter-spacing : 0.18em;
+    color          : var(--red);
+}
+
+.score-bar-result-headline {
+    margin      : 0;
+    font-family : "Minecraft", sans-serif;
+    font-size   : 56px;
+    line-height : 1.15;
+    color       : var(--amber);
+}
+
+.score-bar-result-sub {
+    font-size : 15px;
+    color     : var(--slate-light40);
+}
+
+.score-bar-result-actions {
+    margin-top : 16px;
+}
+
+@media screen and (max-width : 768px) {
+    .score-bar-count            { font-size : 28px; }
+    .score-bar-label            { font-size : 10px; letter-spacing : 0.1em; }
+    .score-bar-result-headline  { font-size : 30px; }
+    .score-bar-result-sub       { font-size : 13px; }
+    .score-bar .eightbit-btn    { font-size : 18px !important; padding : 16px 24px !important; }
+}

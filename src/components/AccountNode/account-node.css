@@ -69,3 +69,53 @@
         transform : translateX(3px);
     }
 }
+/* LOW BALANCE ROUND ///////////////////////////////////////////////////////// */
+/* The node box stays the grid cell size, so the balance chip hangs below it
+   without pushing anything around. The round reserves extra spacing for it. */
+.account-node.with-balance {
+    overflow : visible;
+}
+
+.account-node .account-balance {
+    position         : absolute;
+    top              : calc(100% + 4px);
+    left             : 50%;
+    transform        : translateX(-50%);
+    padding          : 2px 7px;
+    border-radius    : 4px;
+    background-color : var(--white);
+    border           : 1px solid var(--slate-light60);
+    color            : var(--slate-dark60);
+    font-size        : 13px;
+    font-weight      : 700;
+    line-height      : 1.3;
+    white-space      : nowrap;
+    pointer-events   : none;
+    font-variant-numeric : tabular-nums;
+    z-index          : 12;
+}
+
+/* A balance well above its resting few hundred — this is the tell */
+.account-node .account-balance.surging {
+    background-color : var(--red);
+    border-color     : var(--red-dark20);
+    color            : var(--white);
+    animation        : balance-pop 0.35s ease-out;
+}
+
+.account-node.surging img {
+    filter : drop-shadow(0 0 8px var(--red));
+}
+
+@keyframes balance-pop {
+    0%   { transform : translateX(-50%) scale(1); }
+    50%  { transform : translateX(-50%) scale(1.18); }
+    100% { transform : translateX(-50%) scale(1); }
+}
+
+@media screen and (max-width : 768px) {
+    .account-node .account-balance {
+        font-size : 11px;
+        padding   : 1px 5px;
+    }
+}

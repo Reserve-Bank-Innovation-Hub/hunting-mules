@@ -1,0 +1,34 @@
+.round-intro-overlay {
+    position         : fixed;
+    top              : 0;
+    left             : 0;
+    width            : 100vw;
+    height           : 100vh;
+    background-color : rgba(0, 8, 16, 0.94);
+    display          : flex;
+    align-items      : center;
+    justify-content  : center;
+    z-index          : 9000;
+    overflow-y       : auto;
+    padding          : 24px;
+
+    .round-intro-content {
+        width     : 100%;
+        max-width : 520px;
+        margin    : auto;
+    }
+
+    /* Sits on the same Card base as the home-page behaviour boxes, so the two match */
+    .round-intro-card {
+        margin-bottom : 8px;
+    }
+
+    @media screen and (max-width : 768px) {
+        padding : 16px;
+
+        .eightbit-btn {
+            font-size : 18px !important;
+            padding   : 16px 24px !important;
+        }
+    }
+}

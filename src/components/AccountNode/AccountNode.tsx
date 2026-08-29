@@ -21,6 +21,9 @@ interface NodeData {
         isMule      ? : boolean;
         isLocked    ? : boolean;
         isShaking   ? : boolean;
+        balance     ? : number;
+        showBalance ? : boolean;
+        isSurging   ? : boolean;
         onNodeClick ? : (nodeId : string, isMule : boolean) => void;
 }
 
@@ -42,42 +45,44 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
         return false;
     };
 
-    if (data.isMule && data.isLocked) {
-        return (
-            <Div
-                className={`account-node mule-account locked`}
-                onClick={handleClick}
-                onMouseDown={handleMouseDown}
-                style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
-            >
-                <img
-                    src={MuleHeadImage.src}
-                    alt="Locked Mule"
-                    style={{
-                        borderRadius : "50%",
-                        objectFit    : "cover",
-                        maxWidth     : "unset",
-                    }}
-                />
-            </Div>
-        );
-    }
+    // Only the low-balance round asks for this, where watching a balance spike and
+    // collapse is the whole point of the exercise
+    const balanceLabel = data.showBalance && data.balance !== undefined ? (
+        <span className={`account-balance ${data.isSurging ? "surging" : ""}`}>
+            ₹{data.balance.toLocaleString("en-IN")}
+        </span>
+    ) : null;
+
+    const isLockedMule = data.isMule && data.isLocked;
 
     return (
         <Div
-            className={`account-node ${data.isMule ? "mule-account" : ""} ${data.isShaking ? "shaking" : ""}`}
+            className={[
+                "account-node",
+                data.isMule ? "mule-account" : "",
+                isLockedMule ? "locked" : "",
+                data.isShaking ? "shaking" : "",
+                data.showBalance ? "with-balance" : "",
+                data.isSurging ? "surging" : "",
+            ].filter(Boolean).join(" ")}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
             style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
         >
             <img
-                src={BankIconImage.src}
-                alt="Bank Account"
-                style={{
+                src={isLockedMule ? MuleHeadImage.src : BankIconImage.src}
+                alt={isLockedMule ? "Locked Mule" : "Bank Account"}
+                style={isLockedMule ? {
+                    borderRadius : "50%",
+                    objectFit    : "cover",
+                    maxWidth     : "unset",
+                } : {
                     objectFit : "cover",
                     maxWidth  : "unset",
                 }}
             />
+
+            {balanceLabel}
         </Div>
     );
 };

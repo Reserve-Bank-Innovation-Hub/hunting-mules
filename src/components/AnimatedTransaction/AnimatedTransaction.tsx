@@ -58,7 +58,7 @@ export const AnimatedTransaction = ({
 
     return (
         <motion.div
-            className={`transaction-card ${transaction.isBounced ? 'bounced' : ''}`}
+            className={`transaction-card ${transaction.isBounced || transaction.isReturnLeg ? 'bounced' : ''}`}
             style={{
                 position        : "absolute",
                 left            : 0,
@@ -88,7 +88,7 @@ export const AnimatedTransaction = ({
             onAnimationComplete={() => !transaction.isBounced && onComplete(transaction.id)}
         >
             <Text weight="400">
-                {transaction.isBounced && (
+                {(transaction.isBounced || transaction.isReturnLeg) && (
                     <span style={{
                         marginRight: '4px',
                         fontSize: '1.2em',

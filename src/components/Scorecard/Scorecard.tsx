@@ -9,17 +9,21 @@ import "./scorecard.css";
 interface ScorecardProps {
     totalMoneyInCirculation : number;
     moneyLostToMules        : number;
-    mulesFoundCount         : number;
-    actualMuleCount         : number;
-    timeLeft                : number;
+    mulesFoundCount         : number;   // Cumulative across every round played
+    totalMuleCount          : number;   // Mules dealt in so far, also cumulative
+    roundTimeLeft           : number;
+    patternNumber           : number;
+    totalPatterns           : number;
 }
 
 export const Scorecard = ({
     totalMoneyInCirculation,
     moneyLostToMules,
     mulesFoundCount,
-    actualMuleCount,
-    timeLeft,
+    totalMuleCount,
+    roundTimeLeft,
+    patternNumber,
+    totalPatterns,
 } : ScorecardProps) => {
     return (
         <Row id="scorecard" retainLayoutAlways marginBottom="none">
@@ -29,9 +33,9 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="nano" bgColour="amber-light60" isFullHeight
                 >
-                    <Text textColour="amber-dark60">Time left</Text>
-                    <Heading5 textColour={timeLeft <= 10 ? "red" : undefined}>
-                        {timeLeft}s
+                    <Text textColour="amber-dark60">Pattern {patternNumber}/{totalPatterns}</Text>
+                    <Heading5 textColour={roundTimeLeft <= 10 ? "red" : undefined}>
+                        {roundTimeLeft}s
                     </Heading5>
                 </Card>
             </Portion>
@@ -65,9 +69,9 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="nano" bgColour="amber-light60" isFullHeight
                 >
-                    <Text textColour="amber-dark60">Mules found</Text>
+                    <Text textColour="amber-dark60">Caught</Text>
                     <Heading5 textColour="green">
-                        {mulesFoundCount}/{actualMuleCount}
+                        {mulesFoundCount}/{totalMuleCount}
                     </Heading5>
                 </Card>
             </Portion>
@@ -79,9 +83,9 @@ export const Scorecard = ({
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text textColour="amber-dark60">Time left</Text>
-                        <Heading6 textColour={timeLeft <= 10 ? "red" : undefined}>
-                            {timeLeft}s
+                        <Text textColour="amber-dark60">Pattern {patternNumber}/{totalPatterns}</Text>
+                        <Heading6 textColour={roundTimeLeft <= 10 ? "red" : undefined}>
+                            {roundTimeLeft}s
                         </Heading6>
                     </Div>
 
@@ -100,9 +104,9 @@ export const Scorecard = ({
                     </Div>
 
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text>Mules found</Text>
+                        <Text>Caught</Text>
                         <Heading6 textColour="green">
-                            {mulesFoundCount}/{actualMuleCount}
+                            {mulesFoundCount}/{totalMuleCount}
                         </Heading6>
                     </Div>
                 </Card>

@@ -15,16 +15,20 @@ import "./game-modals.css";
 
 interface GameModalsProps {
     mulesFoundCount         : number;
-    actualMuleCount         : number;
+    totalMuleCount          : number;
     totalMoneyInCirculation : number;
     gameOverReason          : "money" | "time" | null;
+    roundsPlayed            : number;
+    totalRounds             : number;
 }
 
 export const GameModals = ({
     mulesFoundCount,
-    actualMuleCount,
+    totalMuleCount,
     totalMoneyInCirculation,
     gameOverReason,
+    roundsPlayed,
+    totalRounds,
 } : GameModalsProps) => {
     const handlePlayAgain = () => {
         window.location.reload();
@@ -58,10 +62,14 @@ export const GameModals = ({
                                     : "All money has been laundered!"
                                 }
                             </Heading6>
+
+                            <Heading6 weight="400" align="centre" marginTop="nano">
+                                You got through {roundsPlayed} of {totalRounds} rounds.
+                            </Heading6>
                         </Header>
 
                         <Heading4 weight="400" align="centre" marginBottom="small">
-                            You found <Span weight="700">{mulesFoundCount} of {actualMuleCount}</Span> mule accounts.
+                            You found <Span weight="700">{mulesFoundCount} of {totalMuleCount}</Span> mule accounts.
                         </Heading4>
 
                         <Div horizontallyCentreThis>
@@ -105,13 +113,17 @@ export const GameModals = ({
                                 weight="400" textColour="green" align="centre" marginBottom="nano"
                                 marginTop="micro"
                             >
-                                VICTORY!
+                                {mulesFoundCount === totalMuleCount ? "PERFECT!" : "TIME UP!"}
                             </Heading1>
 
                             <Heading6 weight="400" align="centre">
-                                You got all {actualMuleCount} mule accounts
+                                You made it through all {totalRounds} rounds
                             </Heading6>
                         </Header>
+
+                        <Heading4 weight="400" align="centre" marginBottom="nano">
+                            You found <Span weight="700">{mulesFoundCount} of {totalMuleCount}</Span> mule accounts
+                        </Heading4>
 
                         <Heading4 weight="400" align="centre" marginBottom="small">
                             Money saved: ₹{totalMoneyInCirculation.toLocaleString("en-IN")}

@@ -1,15 +1,21 @@
 #game-page {
     display               : grid;
     grid-template-columns : 1fr;
-    grid-template-rows    : auto 1fr;
+    /* scorecard · network · score area pinned to the bottom 15% */
+    grid-template-rows    : auto 1fr 15vh;
     height                : 100vh;
-    gap                   : 24px;
+    gap                   : 16px;
     padding               : 24px;
     background-color      : var(--grey-dark80);
 
     @media screen and (max-width : 768px) {
         gap     : 8px;
         padding : 8px;
+    }
+
+    /* SCORE AREA //////////////////////////////////////////////////////////// */
+    #score-area {
+        min-height : 0;   /* Never let the score strip squeeze the network */
     }
 
     #play-area .card {

@@ -4,7 +4,9 @@ import { useState, useCallback } from "react";
 
 // LIB =================================================================================================================
 import { TRANSACTION_CONFIG } from "$lib/gameConfig";
-import { TransactionInstance, NodeRipple, GridDimensions, UseGameStateReturn } from "$lib/gameTypes";
+import { ROUNDS } from "$lib/roundConfig";
+import { TransactionInstance, NodeRipple, GridDimensions, GamePhase, UseGameStateReturn } from "$lib/gameTypes";
+import { Network } from "$lib/network";
 
 export const useGameState = () : UseGameStateReturn => {
     const [ activeTransactions, setActiveTransactions ] = useState<TransactionInstance[]>([]);
@@ -22,8 +24,24 @@ export const useGameState = () : UseGameStateReturn => {
     const [ gridDimensions, setGridDimensions ] = useState<GridDimensions | null>(null);
     const [ gameOverModalShown, setGameOverModalShown ] = useState(false);
     const [ victoryModalShown, setVictoryModalShown ] = useState(false);
-    const [ timeLeft, setTimeLeft ] = useState(60);
     const [ gameOverReason, setGameOverReason ] = useState<"money" | "time" | null>(null);
+
+    // ROUNDS ==========================================================================================================
+    // The game opens on the first round's intro card, which is not on the clock
+    const [ phase, setPhase ] = useState<GamePhase>("intro");
+    const [ roundIndex, setRoundIndex ] = useState(0);
+    const [ roundTimeLeft, setRoundTimeLeft ] = useState(ROUNDS[0].duration);
+    // Mules planted so far across every round played, so the scorecard can span the whole game
+    const [ totalMuleCount, setTotalMuleCount ] = useState(0);
+
+    // LOW BALANCE =====================================================================================================
+    const [ nodeBalances, setNodeBalances ] = useState<Map<string, number>>(new Map());
+    const [ surgingNodes, setSurgingNodes ] = useState<Set<string>>(new Set());
+
+    // NETWORK =========================================================================================================
+    // Which accounts are joined to which, and which of those paths are lit right now
+    const [ network, setNetwork ] = useState<Network | null>(null);
+    const [ activeEdges, setActiveEdges ] = useState<Map<string, number>>(new Map());
 
     // Optimized setters using useCallback for stable references
     const stableSetters = {
@@ -42,8 +60,15 @@ export const useGameState = () : UseGameStateReturn => {
         setGridDimensions          : useCallback(setGridDimensions, []),
         setGameOverModalShown      : useCallback(setGameOverModalShown, []),
         setVictoryModalShown       : useCallback(setVictoryModalShown, []),
-        setTimeLeft                : useCallback(setTimeLeft, []),
+        setRoundTimeLeft           : useCallback(setRoundTimeLeft, []),
         setGameOverReason          : useCallback(setGameOverReason, []),
+        setPhase                   : useCallback(setPhase, []),
+        setRoundIndex              : useCallback(setRoundIndex, []),
+        setTotalMuleCount          : useCallback(setTotalMuleCount, []),
+        setNodeBalances            : useCallback(setNodeBalances, []),
+        setSurgingNodes            : useCallback(setSurgingNodes, []),
+        setNetwork                 : useCallback(setNetwork, []),
+        setActiveEdges             : useCallback(setActiveEdges, []),
     };
 
     return {
@@ -63,8 +88,15 @@ export const useGameState = () : UseGameStateReturn => {
         gridDimensions,
         gameOverModalShown,
         victoryModalShown,
-        timeLeft,
+        roundTimeLeft,
         gameOverReason,
+        phase,
+        roundIndex,
+        totalMuleCount,
+        nodeBalances,
+        surgingNodes,
+        network,
+        activeEdges,
         // Stable setters
         ...stableSetters,
     };

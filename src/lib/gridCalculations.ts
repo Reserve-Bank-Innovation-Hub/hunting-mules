@@ -13,41 +13,76 @@ export const calculateGridDimensions = (containerRect : DOMRect) : GridDimension
     const maxPossibleRows = Math.floor((availableHeight + gridConfig.MIN_SPACING) /
         (gridConfig.CIRCLE_SIZE + gridConfig.MIN_SPACING));
 
-    // Start with the ideal square grid for MAX_CELLS
-    let targetCells = gridConfig.MAX_CELLS;
-    let bestConfig = {rows : 0, columns : 0, totalCells : 0};
+    // How many accounts this screen could hold if it were packed full
+    const fullCapacity = Math.min(
+        gridConfig.MAX_CELLS,
+        Math.max(0, maxPossibleRows) * Math.max(0, maxPossibleCols),
+    );
 
-    // Try to find the best configuration that maximizes cells while fitting the space
+    // ...then either thin that out to the configured density, or honour a flat
+    // number of accounts if the round asked for one. Never below a playable grid.
+    const targetCells = Math.max(
+        gridConfig.MIN_CELLS,
+        gridConfig.TARGET_CELLS !== undefined
+            ? Math.min(gridConfig.TARGET_CELLS, fullCapacity)
+            : Math.round(fullCapacity * gridConfig.ACCOUNT_DENSITY),
+    );
+
+    // A grid slightly under the target is fine if it sits better on the screen
+    const minAcceptableCells = Math.max(
+        gridConfig.MIN_CELLS,
+        Math.ceil(targetCells * gridConfig.SHAPE_TOLERANCE),
+    );
+
+    let bestConfig = {rows : 0, columns : 0, totalCells : 0};
+    let bestEvenness = Infinity;
+    // Fullest grid seen, used only if nothing lands inside the acceptable range
+    let fullestConfig = {rows : 0, columns : 0, totalCells : 0};
+
+    // Find the configuration that spreads the circles most evenly across the space
     for (let testRows = maxPossibleRows; testRows >= 3; testRows--) {
         for (let testCols = maxPossibleCols; testCols >= 3; testCols--) {
             const totalCells = testRows * testCols;
 
-            // Skip if this exceeds our maximum
+            // Skip if this exceeds the number of accounts we want on screen
             if (totalCells > targetCells) continue;
 
             // Check if this configuration would fit with proportional spacing
-            const testSpacingX = (availableWidth - (testCols * gridConfig.CIRCLE_SIZE)) / (testCols - 1);
-            const testSpacingY = (availableHeight - (testRows * gridConfig.CIRCLE_SIZE)) / (testRows - 1);
+            const testSpacingX = (availableWidth - (testCols * gridConfig.CIRCLE_SIZE)) / Math.max(1, testCols - 1);
+            const testSpacingY = (availableHeight - (testRows * gridConfig.CIRCLE_SIZE)) / Math.max(1, testRows - 1);
 
             // Ensure minimum spacing is maintained
-            if (testSpacingX >= gridConfig.MIN_SPACING && testSpacingY >= gridConfig.MIN_SPACING) {
-                // Prefer configurations closer to our target
-                if (totalCells > bestConfig.totalCells) {
-                    bestConfig = {
-                        rows       : testRows,
-                        columns    : testCols,
-                        totalCells : totalCells,
-                    };
-                }
+            if (testSpacingX < gridConfig.MIN_SPACING || testSpacingY < gridConfig.MIN_SPACING) continue;
+
+            if (totalCells > fullestConfig.totalCells) {
+                fullestConfig = {rows : testRows, columns : testCols, totalCells : totalCells};
+            }
+
+            // Too sparse to be worth considering on its shape alone
+            if (totalCells < minAcceptableCells) continue;
+
+            // How lopsided the gaps are — 1 means the horizontal and vertical gaps match
+            const evenness = Math.max(testSpacingX, testSpacingY) / Math.min(testSpacingX, testSpacingY);
+
+            // Prefer the most even spread, and among equals the fuller grid
+            if (evenness < bestEvenness ||
+                (evenness === bestEvenness && totalCells > bestConfig.totalCells)) {
+                bestConfig = {rows : testRows, columns : testCols, totalCells : totalCells};
+                bestEvenness = evenness;
             }
         }
+    }
+
+    // Nothing hit the acceptable range, so take the fullest grid that fits at all
+    if (bestConfig.totalCells === 0) {
+        bestConfig = fullestConfig;
     }
 
     // If we didn't find a valid configuration, use a fallback
     if (bestConfig.totalCells === 0) {
         // Fallback to a minimal grid that definitely fits
-        bestConfig.rows = Math.min(5, maxPossibleRows);
-        bestConfig.columns = Math.min(5, maxPossibleCols);
+        bestConfig.rows = Math.max(1, Math.min(3, maxPossibleRows));
+        bestConfig.columns = Math.max(1, Math.min(3, maxPossibleCols));
         bestConfig.totalCells = bestConfig.rows * bestConfig.columns;
     }
 
@@ -69,7 +104,7 @@ export const calculateGridDimensions = (containerRect : DOMRect) : GridDimension
     const startX = gridConfig.PADDING + (availableWidth - totalGridWidth) / 2;
     const startY = gridConfig.PADDING + (availableHeight - totalGridHeight) / 2;
 
-    console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells), Spacing: ${spacingX.toFixed(
+    console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells, target ${targetCells}), Spacing: ${spacingX.toFixed(
         1)}x${spacingY.toFixed(1)}px`);
 
     return {

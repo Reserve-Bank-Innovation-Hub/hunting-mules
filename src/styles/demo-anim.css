@@ -1,0 +1,128 @@
+/* Shared skeleton for the round-intro animations. Deliberately mirrors the
+   look of the how-to-play cards on the home page. */
+.demo-anim {
+    position        : relative;
+    width           : 100%;
+    max-width       : 300px;
+    aspect-ratio    : 1 / 1;
+    margin          : 0 auto;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+
+    svg {
+        position : absolute;
+        width    : 100%;
+        height   : 100%;
+        left     : 0;
+        top      : 0;
+    }
+
+    .center-node {
+        position   : absolute;
+        width      : 13.33%;
+        height     : 13.33%;
+        transform  : translate(-50%, -50%);
+        filter     : drop-shadow(0 2px 8px rgba(200, 0, 0, 0.3));
+        transition : all 0.3s ease;
+        object-fit : cover;
+    }
+
+    .satellite-node {
+        position   : absolute;
+        width      : 10%;
+        height     : 10%;
+        transform  : translate(-50%, -50%);
+        opacity    : 0.5;
+        transition : all 0.3s ease;
+        object-fit : cover;
+
+        &.active {
+            opacity : 1;
+            filter  : drop-shadow(0 2px 8px rgba(0, 100, 200, 0.3));
+        }
+    }
+
+    .connection-line {
+        stroke           : var(--slate-light70);
+        stroke-width     : 1;
+        stroke-dasharray : 4 4;
+        opacity          : 0.3;
+    }
+
+    .demo-transaction {
+        position         : absolute;
+        left             : 0;
+        top              : 0;
+        width            : fit-content;
+        padding          : 4px 10px;
+        border-radius    : 6px;
+        background-color : white;
+        border           : 1px solid var(--slate-light60);
+        box-shadow       : 0 2px 8px rgba(0, 0, 0, 0.15);
+        transform        : translate(-50%, -50%);
+        pointer-events   : none;
+        z-index          : 10;
+
+        p {
+            font-size   : 12px;
+            font-weight : 700;
+            margin      : 0;
+            color       : var(--blue);
+        }
+    }
+
+    /* Caption that names the step being shown right now */
+    .demo-phase-label {
+        position    : absolute;
+        bottom      : 0;
+        left        : 50%;
+        transform   : translateX(-50%);
+        font-size   : 12px;
+        font-weight : 700;
+        letter-spacing : 0.04em;
+        white-space : nowrap;
+        color       : var(--amber);
+    }
+
+    /* Balance chip for the low-balance demo */
+    .demo-balance {
+        position         : absolute;
+        left             : 50%;
+        top              : 64%;
+        transform        : translateX(-50%);
+        padding          : 3px 9px;
+        border-radius    : 4px;
+        background-color : var(--white);
+        border           : 1px solid var(--slate-light60);
+        color            : var(--slate-dark60);
+        font-size        : 14px;
+        font-weight      : 700;
+        white-space      : nowrap;
+        font-variant-numeric : tabular-nums;
+        z-index          : 11;
+        transition       : background-color 0.2s ease, color 0.2s ease;
+
+        &.surging {
+            background-color : var(--red);
+            border-color     : var(--red);
+            color            : var(--white);
+        }
+    }
+
+    @media screen and (max-width : 768px) {
+        max-width : 220px;
+
+        .demo-transaction p { font-size : 10px; }
+        .demo-balance       { font-size : 12px; }
+        .demo-phase-label   { font-size : 11px; }
+    }
+}
+
+/* The single consolidated transfer that closes a fan-in */
+.demo-anim .demo-transaction.is-consolidated {
+    border-color : var(--amber-dark20);
+    box-shadow   : 0 2px 12px rgba(0, 0, 0, 0.25);
+
+    p { color : var(--amber-dark40); }
+}
