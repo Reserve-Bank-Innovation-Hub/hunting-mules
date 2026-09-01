@@ -57,21 +57,14 @@ export const buildNetwork = (nodes : Node[], neighboursPerNode = 5) : Network =>
     return {edges : Array.from(edgeMap.values()), adjacency};
 };
 
-// Nudge accounts off their grid positions so the board reads as a network rather
-// than a spreadsheet, while keeping them far enough apart to stay legible.
-export const scatterPosition = (
+// Accounts sit on the lattice exactly, in clean rows and columns. This only keeps
+// them inside the board, in case rounding at an awkward viewport pushes the last
+// row or column a pixel over the edge.
+export const clampToBoard = (
     x : number,
     y : number,
-    spacingX : number,
-    spacingY : number,
     bounds : { width : number; height : number; nodeSize : number },
-    jitter = 0.26,
-) => {
-    const offsetX = (Math.random() - 0.5) * 2 * spacingX * jitter;
-    const offsetY = (Math.random() - 0.5) * 2 * spacingY * jitter;
-
-    return {
-        x : Math.min(Math.max(x + offsetX, 4), bounds.width - bounds.nodeSize - 4),
-        y : Math.min(Math.max(y + offsetY, 4), bounds.height - bounds.nodeSize - 4),
-    };
-};
+) => ({
+    x : Math.min(Math.max(x, 4), bounds.width - bounds.nodeSize - 4),
+    y : Math.min(Math.max(y, 4), bounds.height - bounds.nodeSize - 4),
+});

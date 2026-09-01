@@ -12,7 +12,7 @@
     pointer-events  : auto;
     z-index         : 10;
     position        : relative;
-    overflow        : hidden;
+    overflow        : visible;
 
     img {
         width  : var(--icon-size, 64px);
@@ -28,6 +28,10 @@
     animation : shake 0.6s ease-in-out;
 }
 
+/* A CAUGHT ACCOUNT ////////////////////////////////////////////////////////// */
+/* Stamped, frozen, and out of play for the rest of the round. Same treatment as
+   the mule at the centre of the tutorial animations, so what the player was shown
+   before the round is exactly what they get when they catch one. */
 .account-node.locked {
     width            : var(--icon-size, 64px);
     height           : var(--icon-size, 64px);
@@ -37,11 +41,13 @@
     align-items      : center;
     justify-content  : center;
     cursor           : default;
-    transition       : transform 0.1s ease;
     pointer-events   : auto;
-    z-index          : 10;
+    z-index          : 11;   /* Sits above its untouched neighbours */
     position         : relative;
-    overflow         : hidden;
+    overflow         : visible;
+    filter           : drop-shadow(0 2px 8px rgba(200, 0, 0, 0.34));
+    /* Comes down like a stamp, then stays put */
+    animation        : mule-stamp 0.42s cubic-bezier(0.2, 1.5, 0.4, 1) both;
 
     img {
         width  : 100%;
@@ -51,6 +57,13 @@
 
 .account-node.locked:hover {
     transform : none;
+}
+
+/* Down hard and slightly askew, the way a stamp lands */
+@keyframes mule-stamp {
+    0%   { transform : scale(1.85) rotate(-14deg); opacity : 0; }
+    55%  { transform : scale(0.92) rotate(3deg);   opacity : 1; }
+    100% { transform : scale(1) rotate(0deg);      opacity : 1; }
 }
 
 .mule-account {
@@ -69,24 +82,21 @@
         transform : translateX(3px);
     }
 }
-/* LOW BALANCE ROUND ///////////////////////////////////////////////////////// */
-/* The node box stays the grid cell size, so the balance chip hangs below it
-   without pushing anything around. The round reserves extra spacing for it. */
-.account-node.with-balance {
-    overflow : visible;
-}
-
+/* BALANCES ////////////////////////////////////////////////////////////////// */
+/* The node box stays the grid cell size, so the chip hangs below it without
+   pushing anything around. The grid reserves vertical spacing for it. */
 .account-node .account-balance {
     position         : absolute;
     top              : calc(100% + 4px);
     left             : 50%;
     transform        : translateX(-50%);
-    padding          : 2px 7px;
+    padding          : clamp(2px, 0.28vw, 4px) clamp(6px, 0.85vw, 11px);
     border-radius    : 4px;
-    background-color : var(--white);
-    border           : 1px solid var(--slate-light60);
+    background-color : var(--amber);
+    border           : 1px solid var(--amber-dark20);
     color            : var(--slate-dark60);
-    font-size        : 13px;
+    /* Sized against the viewport rather than pinned, so it grows with the board */
+    font-size        : clamp(11px, 1.35vw, 16px);
     font-weight      : 700;
     line-height      : 1.3;
     white-space      : nowrap;
@@ -95,27 +105,8 @@
     z-index          : 12;
 }
 
-/* A balance well above its resting few hundred — this is the tell */
-.account-node .account-balance.surging {
-    background-color : var(--red);
-    border-color     : var(--red-dark20);
-    color            : var(--white);
-    animation        : balance-pop 0.35s ease-out;
-}
-
-.account-node.surging img {
-    filter : drop-shadow(0 0 8px var(--red));
-}
-
-@keyframes balance-pop {
-    0%   { transform : translateX(-50%) scale(1); }
-    50%  { transform : translateX(-50%) scale(1.18); }
-    100% { transform : translateX(-50%) scale(1); }
-}
-
 @media screen and (max-width : 768px) {
     .account-node .account-balance {
-        font-size : 11px;
-        padding   : 1px 5px;
+        padding : 1px 5px;
     }
 }

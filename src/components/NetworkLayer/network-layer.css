@@ -9,24 +9,77 @@
     overflow       : visible;
 }
 
-/* A relationship between two accounts, quiet by default */
+/* A relationship between two accounts. Always quiet — nothing on this layer is
+   ever lit up for longer than a pattern cue takes to play.
+
+   Sixty-odd of these are drawn at once, so each one has to sit well back: the web
+   is there to say the accounts are connected, not to be read edge by edge. The
+   accounts are the anchors, and they need to sit clearly on top of it. */
 .network-edge {
-    stroke         : var(--slate-light40);
-    stroke-width   : 1;
-    opacity        : 0.28;
-    transition     : opacity 0.25s ease;
+    stroke       : var(--slate-light40);
+    stroke-width : 1;
+    opacity      : 0.15;
 }
 
-/* Only the paths the live pattern is using */
-.network-edge.is-active {
-    stroke         : var(--amber-dark20);
-    stroke-width   : 2.5;
-    opacity        : 0.9;
-    stroke-linecap : round;
-    animation      : path-wake 0.35s ease-out;
+/* PATTERN CUE /////////////////////////////////////////////////////////////// */
+/* Traces the route a pattern transaction is taking, starting once the money is
+   halfway across and finishing just before it lands. Length, delay and duration
+   are all handed down from the component, so gameConfig stays the single place
+   the timing is set.
+
+   Deliberately gentle: it is a hint that two accounts are part of something, not
+   an alert. It eases in and out rather than snapping on, tops out well short of
+   full strength, and is drawn thin enough to read as a thread following the money
+   rather than a bar laid across the board. */
+/* A trace of where the money is going, not a route drawn between two banks. Kept
+   low in opacity so it never competes with the amount travelling along it, but in
+   the game's red — the same one the stolen figure and TIME'S UP use — so it reads
+   as something to look at rather than more of the amber furniture. */
+.pattern-flash {
+    stroke           : var(--red);
+    stroke-width     : 3.4;
+    stroke-linecap   : round;
+    stroke-dasharray : var(--flash-length);
+    opacity          : 0;
+    animation        : pattern-flash var(--flash-duration, 520ms) cubic-bezier(0.4, 0, 0.2, 1)
+                       var(--flash-delay, 0ms) both;
 }
 
-@keyframes path-wake {
-    from { opacity : 0.28; stroke-width : 1; }
-    to   { opacity : 0.9;  stroke-width : 2.5; }
+/* The drawing itself now occupies most of the cue's life rather than a third of it,
+   which is the other half of why it used to move too fast to follow */
+@keyframes pattern-flash {
+    0%   { stroke-dashoffset : var(--flash-length); opacity : 0; }
+    12%  { opacity : 0.42; }
+    85%  { stroke-dashoffset : 0; opacity : 0.42; }
+    100% { stroke-dashoffset : 0; opacity : 0; }
+}
+
+/* The direction, at the far end. Deliberately tiny: it says which way, and nothing
+   more. Same colour and the same fade as the line, so the two read as one mark —
+   and no glow or pulse of its own. */
+.pattern-flash-arrow {
+    fill      : var(--red);
+    opacity   : 0;
+    animation : pattern-flash-arrow var(--flash-duration, 520ms) ease-out
+                var(--flash-delay, 0ms) both;
+}
+
+@keyframes pattern-flash-arrow {
+    0%   { opacity : 0; }
+    60%  { opacity : 0; }
+    82%  { opacity : 0.42; }
+    100% { opacity : 0; }
+}
+
+/* The middle head arrives earlier — as the line reaches it, rather than as the line
+   finishes — so the two appear in the order the money is travelling */
+.pattern-flash-arrow.is-mid {
+    animation-name : pattern-flash-arrow-mid;
+}
+
+@keyframes pattern-flash-arrow-mid {
+    0%   { opacity : 0; }
+    30%  { opacity : 0; }
+    52%  { opacity : 0.42; }
+    100% { opacity : 0; }
 }

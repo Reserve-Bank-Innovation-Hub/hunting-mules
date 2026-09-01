@@ -11,6 +11,9 @@ import { motion } from "framer-motion";
 import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
 
+// LIB =================================================================================================================
+import { formatBalance } from "$lib/transactionUtils";
+
 // STYLES ==============================================================================================================
 import "$/styles/demo-anim.css";
 
@@ -84,7 +87,7 @@ export const DemoAnimLowBalance = () => {
             )}
 
             <span className={`demo-balance ${isHoldingSurge ? "surging" : ""}`}>
-                ₹{balance.toLocaleString("en-IN")}
+                {formatBalance(balance)}
             </span>
 
             <span className="demo-phase-label">{label}</span>

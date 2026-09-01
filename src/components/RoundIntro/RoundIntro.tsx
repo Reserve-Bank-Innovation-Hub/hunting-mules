@@ -13,15 +13,15 @@ import { DemoAnimGatherScatter } from "$components/DemoAnimGatherScatter/DemoAni
 import { DemoAnimLowBalance } from "$components/DemoAnimLowBalance/DemoAnimLowBalance";
 
 // LIB =================================================================================================================
-import { RoundConfig, PatternBehaviour, TOTAL_PATTERNS } from "$lib/roundConfig";
+import { PatternConfig, PatternBehaviour, TOTAL_PATTERNS } from "$lib/roundConfig";
 
 // STYLES ==============================================================================================================
 import "./round-intro.css";
 
 interface RoundIntroProps {
-    round      : RoundConfig;
-    roundIndex : number;
-    onStart    : () => void;
+    pattern      : PatternConfig;
+    patternIndex : number;
+    onStart      : () => void;
 }
 
 const DEMO_BY_BEHAVIOUR : Record<PatternBehaviour, React.ComponentType> = {
@@ -31,41 +31,54 @@ const DEMO_BY_BEHAVIOUR : Record<PatternBehaviour, React.ComponentType> = {
     "low-balance"    : DemoAnimLowBalance,
 };
 
-export const RoundIntro = ({round, roundIndex, onStart} : RoundIntroProps) => {
-    const Demo = DEMO_BY_BEHAVIOUR[round.behaviour];
+/**
+ * Shown each time a new pattern joins the round. The clock is stopped the whole
+ * time this is up, so learning a pattern never costs the player any of their 80
+ * seconds — the game simply picks up where it left off.
+ */
+export const RoundIntro = ({pattern, patternIndex, onStart} : RoundIntroProps) => {
+    const Demo = DEMO_BY_BEHAVIOUR[pattern.behaviour];
+    const isOpening = patternIndex === 0;
 
     return (
         <Div className="round-intro-overlay">
             <Div className="round-intro-content">
                 <Heading6 textColour="amber" align="centre" marginBottom="nano">
-                    PATTERN {roundIndex + 1} OF {TOTAL_PATTERNS}
+                    <span className="round-intro-detective" role="img" aria-label="Detective">🕵️</span>
+                    {" "}NEW PATTERN DETECTED
                 </Heading6>
+
+                <Text align="centre" textColour="white" opacity="40" marginBottom="nano">
+                    PATTERN {patternIndex + 1} OF {TOTAL_PATTERNS}
+                </Text>
 
                 {/* Same card treatment as the how-to-play boxes on the home screen */}
                 <Card className="mule-behaviour-demo round-intro-card" padding="micro">
                     <Demo />
 
                     <Text align="centre" weight="700" marginBottom="nano">
-                        {round.title}
+                        {pattern.title}
                     </Text>
 
                     <Text align="centre" textColour="amber" weight="700" marginBottom="nano">
-                        {round.reminder}
+                        {pattern.reminder}
                     </Text>
 
                     <Text align="centre" textColour="white">
-                        {round.description}
+                        {pattern.description}
                     </Text>
                 </Card>
 
                 <Div horizontallyCentreThis marginTop="micro">
                     <Button className="eightbit-btn" onClick={onStart}>
-                        {roundIndex === 0 ? "START" : "NEXT PATTERN"}
+                        {isOpening ? "START" : "GOT IT"}
                     </Button>
                 </Div>
 
                 <Text align="centre" textColour="white" opacity="40" marginTop="nano">
-                    {round.duration} seconds · tap the accounts doing this
+                    {isOpening
+                        ? "80 seconds · tap the accounts doing this"
+                        : "The clock is paused · it starts again when you carry on"}
                 </Text>
             </Div>
         </Div>

@@ -2,59 +2,52 @@
 import { useEffect, useCallback } from "react";
 
 // LIB =================================================================================================================
-import { NodeRipple, TransactionInstance, GamePhase } from "$lib/gameTypes";
-import { ROUNDS, TOTAL_ROUNDS } from "$lib/roundConfig";
+import { NodeRipple, PatternFlash, GamePhase } from "$lib/gameTypes";
+import { PatternBehaviour, PATTERNS, TOTAL_PATTERNS } from "$lib/roundConfig";
+import { ROUND_DURATION } from "$lib/gameConfig";
+import { TransactionInstance } from "$lib/gameTypes";
 
 // ASSETS ==============================================================================================================
-import LoseSound from "../assets/sounds/lose.wav";
 import VictorySound from "../assets/sounds/victory.wav";
 
 interface UseGameFlowProps {
-    totalMoneyInCirculation : number;
-    actualMuleCount         : number;
-    lockedNodes             : Set<string>;
-    gameOverModalShown      : boolean;
-    victoryModalShown       : boolean;
-    roundTimeLeft           : number;
-    phase                   : GamePhase;
-    roundIndex              : number;
-    setGameOverModalShown   : (shown : boolean) => void;
-    setVictoryModalShown    : (shown : boolean) => void;
-    setActiveRipples        : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
-    setRoundTimeLeft        : (updater : (prev : number) => number) => void;
-    setGameOverReason       : (reason : "money" | "time" | null) => void;
-    setPhase                : (phase : GamePhase) => void;
-    setRoundIndex           : (updater : (prev : number) => number) => void;
-    setLockedNodes          : (updater : (prev : Set<string>) => Set<string>) => void;
-    setShakingNodes         : (updater : (prev : Set<string>) => Set<string>) => void;
-    setActiveTransactions   : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
-    setMuleIndices          : (indices : Set<number> | null) => void;
-    setSurgingNodes         : (updater : (prev : Set<string>) => Set<string>) => void;
-    setIsGridReady          : (ready : boolean) => void;
+    timeLeft             : number;
+    phase                : GamePhase;
+    unlockedPatterns      : number;
+    introPatternIndex     : number | null;
+    isGridReady           : boolean;
+    setActiveRipples      : (updater : (prev : NodeRipple[]) => NodeRipple[]) => void;
+    setPatternFlashes     : (updater : (prev : PatternFlash[]) => PatternFlash[]) => void;
+    setActiveTransactions : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
+    setLockedNodes        : (updater : (prev : Set<string>) => Set<string>) => void;
+    setShakingNodes       : (updater : (prev : Set<string>) => Set<string>) => void;
+    setMuleRoles          : (updater : (prev : Map<string, PatternBehaviour>) => Map<string, PatternBehaviour>) => void;
+    setNodeBalances       : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
+    setIsGridReady        : (ready : boolean) => void;
+    setTimeLeft           : (updater : (prev : number) => number) => void;
+    setPhase              : (phase : GamePhase) => void;
+    setUnlockedPatterns   : (updater : (prev : number) => number) => void;
+    setIntroPatternIndex  : (index : number | null) => void;
 }
 
 export const useGameFlow = ({
-    totalMoneyInCirculation,
-    actualMuleCount,
-    lockedNodes,
-    gameOverModalShown,
-    victoryModalShown,
-    roundTimeLeft,
+    timeLeft,
     phase,
-    roundIndex,
-    setGameOverModalShown,
-    setVictoryModalShown,
+    unlockedPatterns,
+    introPatternIndex,
+    isGridReady,
     setActiveRipples,
-    setRoundTimeLeft,
-    setGameOverReason,
-    setPhase,
-    setRoundIndex,
+    setPatternFlashes,
+    setActiveTransactions,
     setLockedNodes,
     setShakingNodes,
-    setActiveTransactions,
-    setMuleIndices,
-    setSurgingNodes,
+    setMuleRoles,
+    setNodeBalances,
     setIsGridReady,
+    setTimeLeft,
+    setPhase,
+    setUnlockedPatterns,
+    setIntroPatternIndex,
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
@@ -75,96 +68,104 @@ export const useGameFlow = ({
         setActiveRipples(prev => prev.filter(r => r.id !== rippleId));
     }, [ setActiveRipples ]);
 
-    // Wipe the board so the next round starts clean. Node ids are round-scoped, so
-    // this is about clearing visuals rather than correctness.
-    const clearBoard = useCallback(() => {
-        setLockedNodes(() => new Set());
-        setShakingNodes(() => new Set());
-        setSurgingNodes(() => new Set());
-        setActiveTransactions(() => []);
-        setActiveRipples(() => []);
-        setMuleIndices(null);
-        setIsGridReady(false);
-    }, [ setLockedNodes, setShakingNodes, setSurgingNodes, setActiveTransactions, setActiveRipples, setMuleIndices, setIsGridReady ]);
+    // A flash line clears itself the moment its animation ends, so none of them
+    // outlive the transaction they were drawn for
+    const handleFlashComplete = useCallback((flashId : string) => {
+        setPatternFlashes(prev => prev.filter(flash => flash.id !== flashId));
+    }, [ setPatternFlashes ]);
 
-    // Player has read the intro card and wants to play
-    const startRound = useCallback(() => {
-        setRoundTimeLeft(() => ROUNDS[roundIndex].duration);
+    /**
+     * The player has read a pattern's intro and wants to carry on.
+     *
+     * Every pattern is its own round and gets a board of its own: the accounts are
+     * dealt again from scratch, so the stamps from the last twenty seconds are
+     * cleared along with them. Nothing else resets — the clock picks up where it
+     * paused, and the caught count carries straight through to the end.
+     */
+    const dismissIntro = useCallback(() => {
+        if (introPatternIndex === null) {
+            return;
+        }
+
+        // The opening pattern plays on the board built while its intro was up; every
+        // one after that clears the table first. The grid rebuilds itself off the
+        // round index, and deals fresh mules and balances as it goes.
+        if (introPatternIndex > 0) {
+            setIsGridReady(false);
+            setLockedNodes(() => new Set());
+            setShakingNodes(() => new Set());
+            setActiveTransactions(() => []);
+            setActiveRipples(() => []);
+            setPatternFlashes(() => []);
+            setMuleRoles(() => new Map());
+            setNodeBalances(() => new Map());
+        }
+
+        setUnlockedPatterns(() => introPatternIndex + 1);
+        setIntroPatternIndex(null);
         setPhase("playing");
-    }, [ roundIndex, setRoundTimeLeft, setPhase ]);
+    }, [
+        introPatternIndex, setIsGridReady, setLockedNodes, setShakingNodes,
+        setActiveTransactions, setActiveRipples, setPatternFlashes, setMuleRoles,
+        setNodeBalances, setUnlockedPatterns, setIntroPatternIndex, setPhase,
+    ]);
 
-    // Count down the current round. One interval per round, so it never drifts.
+    // THE CLOCK =======================================================================================================
+    // One continuous 80 seconds across all four patterns. A pattern intro takes the
+    // phase out of "playing", which stops the clock, so reading an intro never costs
+    // the player time — and neither does the moment it takes to deal the next board.
     useEffect(() => {
-        if (phase !== "playing") {
+        if (phase !== "playing" || !isGridReady) {
             return;
         }
 
         const interval = setInterval(() => {
-            setRoundTimeLeft(prev => Math.max(0, prev - 1));
+            setTimeLeft(prev => Math.max(0, prev - 1));
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [ phase, roundIndex, setRoundTimeLeft ]);
+    }, [ phase, isGridReady, setTimeLeft ]);
 
-    // A round ends when its time runs out, or when every mule in it has been caught
+    // PATTERN UNLOCKS =================================================================================================
+    // Each pattern joins at its own point in the round, announced by its intro
     useEffect(() => {
-        if (phase !== "playing" || gameOverModalShown) {
+        if (phase !== "playing" || unlockedPatterns >= TOTAL_PATTERNS) {
             return;
         }
 
-        const roundCleared = actualMuleCount > 0 && lockedNodes.size >= actualMuleCount;
-        if (roundTimeLeft > 0 && !roundCleared) {
-            return;
+        const elapsed = ROUND_DURATION - timeLeft;
+        const next = PATTERNS[unlockedPatterns];
+
+        if (elapsed >= next.unlockAt) {
+            setIntroPatternIndex(unlockedPatterns);
+            setPhase("intro");
         }
+    }, [ phase, timeLeft, unlockedPatterns, setIntroPatternIndex, setPhase ]);
 
-        // Let the last transaction land before moving on
-        const timeoutId = setTimeout(() => {
-            if (roundIndex + 1 < TOTAL_ROUNDS) {
-                clearBoard();
-                setRoundIndex(prev => prev + 1);
-                setPhase("intro");
-            } else {
-                // Last pattern done — hand over to the result panel
-                setPhase("finished");
-
-                const audio = new Audio(VictorySound);
-                audio.play().catch((error) => {
-                    console.log("Audio playback failed:", error);
-                });
-
-                setVictoryModalShown(true);
-            }
-        }, roundCleared ? 700 : 400);
-
-        return () => clearTimeout(timeoutId);
-    }, [
-        phase, roundTimeLeft, actualMuleCount, lockedNodes.size, roundIndex, gameOverModalShown,
-        clearBoard, setRoundIndex, setPhase, setVictoryModalShown,
-    ]);
-
-    // Losing the whole pot ends the game outright, whichever round we are in
+    // THE END =========================================================================================================
+    // The round ends when the clock does, and only then
     useEffect(() => {
-        if (totalMoneyInCirculation > 0 || gameOverModalShown || victoryModalShown) {
+        if (phase !== "playing" || timeLeft > 0) {
             return;
         }
 
+        // Let whatever is mid-flight land before the result takes over the screen
         const timeoutId = setTimeout(() => {
-            const audio = new Audio(LoseSound);
+            setPhase("finished");
+
+            const audio = new Audio(VictorySound);
             audio.play().catch((error) => {
                 console.log("Audio playback failed:", error);
             });
-
-            setGameOverReason("money");
-            setPhase("finished");
-            setGameOverModalShown(true);
-        }, 1000); // Small delay to let the last transaction complete
+        }, 700);
 
         return () => clearTimeout(timeoutId);
-    }, [ totalMoneyInCirculation, gameOverModalShown, victoryModalShown, setGameOverModalShown, setGameOverReason, setPhase ]);
+    }, [ phase, timeLeft, setPhase ]);
 
     return {
         createRipple,
         handleRippleComplete,
-        startRound,
+        handleFlashComplete,
+        dismissIntro,
     };
 };

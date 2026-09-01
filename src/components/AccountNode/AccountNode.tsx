@@ -12,6 +12,7 @@ import MuleHeadImage from "../../assets/images/mule-head.png";
 
 // LIB =================================================================================================================
 import { getGridConfig } from "$lib/gameConfig";
+import { formatBalance } from "$lib/transactionUtils";
 
 // STYLES ==============================================================================================================
 import "./account-node.css";
@@ -22,8 +23,6 @@ interface NodeData {
         isLocked    ? : boolean;
         isShaking   ? : boolean;
         balance     ? : number;
-        showBalance ? : boolean;
-        isSurging   ? : boolean;
         onNodeClick ? : (nodeId : string, isMule : boolean) => void;
 }
 
@@ -45,34 +44,37 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
         return false;
     };
 
-    // Only the low-balance round asks for this, where watching a balance spike and
-    // collapse is the whole point of the exercise
-    const balanceLabel = data.showBalance && data.balance !== undefined ? (
-        <span className={`account-balance ${data.isSurging ? "surging" : ""}`}>
-            ₹{data.balance.toLocaleString("en-IN")}
+    // Every account carries its balance for the whole round. It is what the low
+    // balance pattern is read against, and it stays deliberately quiet — the number
+    // itself is the tell, so it is never coloured in to give a mule away.
+    const balanceLabel = data.balance !== undefined ? (
+        <span className="account-balance">
+            {formatBalance(data.balance)}
         </span>
     ) : null;
 
-    const isLockedMule = data.isMule && data.isLocked;
+    // A locked account is a caught one — nothing else in the game locks a node. This
+    // deliberately does NOT also test isMule: the account stops being a mule the
+    // moment it is caught (its pattern is handed to a fresh recruit elsewhere), so
+    // requiring both would mean the stamp never appeared at all.
+    const isCaught = !!data.isLocked;
 
     return (
         <Div
             className={[
                 "account-node",
                 data.isMule ? "mule-account" : "",
-                isLockedMule ? "locked" : "",
+                isCaught ? "locked" : "",
                 data.isShaking ? "shaking" : "",
-                data.showBalance ? "with-balance" : "",
-                data.isSurging ? "surging" : "",
             ].filter(Boolean).join(" ")}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
             style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
         >
             <img
-                src={isLockedMule ? MuleHeadImage.src : BankIconImage.src}
-                alt={isLockedMule ? "Locked Mule" : "Bank Account"}
-                style={isLockedMule ? {
+                src={isCaught ? MuleHeadImage.src : BankIconImage.src}
+                alt={isCaught ? "Caught mule account" : "Bank Account"}
+                style={isCaught ? {
                     borderRadius : "50%",
                     objectFit    : "cover",
                     maxWidth     : "unset",

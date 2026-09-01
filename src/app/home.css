@@ -1,6 +1,20 @@
+/* The whole composition is centred in the viewport rather than stacked at the top,
+   which is what left the lower two thirds of a tall kiosk screen empty. It sits a
+   little above true centre — optically centred reads as deliberate where a block
+   pinned dead in the middle reads as slightly low. */
 #page-home {
-    min-height : 100vh;
-    background : #000810;
+    display        : flex;
+    min-height     : 100vh;
+    padding-bottom : 6vh;
+    background     : #000810;
+
+    /* Centred with auto margins rather than align-items, so that on a window too
+       short to hold the block it overflows downwards and stays reachable instead of
+       being clipped off the top */
+    > * {
+        width  : 100%;
+        margin : auto;
+    }
 
     #mule-hunter-logo {
         width : 600px;
@@ -17,16 +31,113 @@
 /* CONTEXT SETTING /////////////////////////////////////////////////////////// */
 /* Deliberately sparse — this is a kiosk, the player should be moving in seconds */
 #page-home #context-setting {
-    max-width : 640px;
+    max-width : 680px;
     margin    : 0 auto;
 }
 
+/* One rhythm down the block. The three lines used to sit almost touching, which is
+   what made a short piece of copy feel like a wall of text. */
+#page-home #context-setting > * + * {
+    margin-top : 32px;
+}
+
+#page-home #context-setting p,
 #page-home #context-setting h6 {
-    line-height : 1.5;
+    line-height   : 1.6;
+    margin-bottom : 0;
+}
+
+#page-home #logo-holder {
+    margin-bottom : 48px;
+}
+
+/* NAME ////////////////////////////////////////////////////////////////////// */
+/* Typed once, at the start, and never stored — see the note in lib/leaderboard.ts */
+#page-home #name-holder {
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : 10px;
+    /* Wider than it was, so the "already on the board" line has room to sit on one
+       or two lines rather than three */
+    max-width      : 420px;
+    margin         : 40px auto 0;
+}
+
+#page-home #name-holder label {
+    font-size      : clamp(14px, 1.5vw, 20px);
+    font-weight    : 700;
+    letter-spacing : 0.14em;
+    line-height    : 1.6;
+    text-align     : center;
+    color          : var(--slate-light40);
+    opacity        : 0.85;
+}
+
+#page-home #name-holder input {
+    width            : 100%;
+    /* Roomy enough for the parts of letters that hang below the baseline — a
+       j or a y was being clipped by the line box at the old height */
+    padding          : 18px 16px;
+    line-height      : 1.7;
+    text-align       : center;
+    font-family      : "Minecraft", sans-serif;
+    font-size        : 22px;
+    color            : var(--amber);
+    background-color : rgba(255, 255, 255, 0.05);
+    border           : 2px solid var(--slate-dark60);
+    border-radius    : 0;   /* Squared off, in keeping with the arcade type */
+    outline          : none;
+    transition       : border-color 0.2s ease, background-color 0.2s ease;
+}
+
+#page-home #name-holder input::placeholder {
+    color       : var(--slate-light40);
+    opacity     : 0.45;
+    font-size   : 18px;
+}
+
+#page-home #name-taken {
+    font-size      : clamp(13px, 1.35vw, 18px);
+    font-weight    : 700;
+    letter-spacing : 0.06em;
+    line-height    : 1.45;
+    text-align     : center;
+    color          : var(--red);
+}
+
+/* The field itself says so too, so the message is not the only signal */
+#page-home #name-holder input[aria-invalid="true"] {
+    border-color : var(--red);
+}
+
+#page-home #name-holder input:focus {
+    border-color     : var(--amber);
+    background-color : rgba(250, 176, 5, 0.07);
+}
+
+#page-home #start-holder {
+    margin-top : 32px;
+}
+
+/* Nothing to start until there is a name to put on the board */
+#page-home .eightbit-btn.is-waiting {
+    opacity        : 0.4;
+    cursor         : not-allowed;
+    pointer-events : none;
 }
 
 @media screen and (max-width : 768px) {
+    #page-home {
+        padding-bottom : 4vh;
+    }
+
     #page-home #mule-hunter-logo {
         width : 88%;
     }
+
+    #page-home #logo-holder      { margin-bottom : 32px; }
+    #page-home #name-holder      { margin-top    : 28px; }
+    #page-home #start-holder     { margin-top    : 24px; }
+    #page-home #context-setting > * + * { margin-top : 24px; }
 }

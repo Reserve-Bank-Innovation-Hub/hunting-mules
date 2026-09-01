@@ -1,47 +1,92 @@
-.pattern-reminder {
-    position         : absolute;
-    top              : 12px;
-    left             : 12px;
-    z-index          : 20;
+/* A thin full-width strip between the numbers and the board. Deliberately short:
+   every pixel of height here is a pixel the play area loses, and the play area is
+   what decides how many accounts fit on screen. */
+.pattern-strip {
     display          : flex;
-    flex-direction   : column;
-    gap              : 2px;
-    padding          : 8px 12px;
-    border-radius    : 6px;
-    background-color : rgba(255, 255, 255, 0.72);
-    border           : 1px solid var(--slate-light60);
-    backdrop-filter  : blur(3px);
-    pointer-events   : none;   /* Never steals a click meant for an account */
-    max-width        : 40%;
+    align-items      : center;
+    /* Roomier gap so the pattern's name and the instruction read as two things */
+    gap              : clamp(18px, 2.4vw, 36px);
+    width            : 100%;
+    padding          : clamp(8px, 1.02vh, 14px) clamp(12px, 1.5vw, 22px);
+    background-color : var(--amber-light20);
+    overflow         : hidden;
 }
 
-.pattern-reminder-index {
-    font-size      : 10px;
-    font-weight    : 700;
-    letter-spacing : 0.08em;
-    color          : var(--slate-light20);
+/* THE NUDGE ///////////////////////////////////////////////////////////////// */
+/* The strip and everything in it move as one piece, rather than the text pulsing
+   inside a box that stays still. Kept to a slight lift in scale and brightness —
+   at full width, anything more would read as the whole screen jolting. */
+.pattern-strip.is-pulsing {
+    animation : pattern-strip-pulse 620ms ease-out;
 }
 
-.pattern-reminder-title {
-    font-size      : 13px;
-    font-weight    : 700;
+@keyframes pattern-strip-pulse {
+    0%   { transform : scale(1);     filter : brightness(1); }
+    28%  { transform : scale(1.015); filter : brightness(1.14); }
+    100% { transform : scale(1);     filter : brightness(1); }
+}
+
+/* THE PATTERN'S NAME //////////////////////////////////////////////////////// */
+/* A compact category label, not a heading — it says which pattern, and the
+   instruction beside it says what to do about it. */
+.pattern-strip-pill {
+    flex-shrink      : 0;
+    padding          : calc(clamp(6px, 0.75vh, 11px) * var(--strip-scale, 1))
+                       calc(clamp(14px, 1.9vw, 28px) * var(--strip-scale, 1));
+    border-radius    : 999px;
+    /* The red the rest of the game uses — the pattern cue lines, TIME'S UP, the
+       stolen figure — so the pattern's name reads as the thing to watch for */
+    background-color : var(--red);
+    /* White on red, the same as the game's red button — and it clears the contrast
+       bar on this fill where the cream did not quite */
+    color            : var(--white);
+    font-family      : "Minecraft", sans-serif;
+    font-size        : max(11px, calc(clamp(11px, 2.1vw, 24px) * var(--strip-scale, 1)));
+    font-weight      : 400;
+    letter-spacing   : 0.04em;
+    white-space      : nowrap;
+    line-height      : 1.4;
+}
+
+/* THE INSTRUCTION /////////////////////////////////////////////////////////// */
+/* Read as one phrase — "LOOK OUT FOR MANY → ONE" — so the two halves are close in
+   size. The shape carries a little more weight, not several times more. */
+.pattern-strip-instruction {
+    display     : flex;
+    align-items : baseline;
+    gap         : clamp(12px, 1.7vw, 28px);
+    min-width   : 0;
+    white-space : nowrap;
+    overflow    : hidden;
+    text-overflow : ellipsis;
+}
+
+.pattern-strip-lead {
+    flex-shrink    : 0;
+    /* A step under the shape beside it — still clearly part of the same phrase, but
+       the shape is the thing being taught, so it leads */
+    font-family    : "Minecraft", sans-serif;
+    font-size      : max(10px, calc(clamp(11px, 2.2vw, 24px) * var(--strip-scale, 1)));
+    font-weight    : 400;
+    letter-spacing : 0.02em;
+    /* The same label colour the stat tiles use on this same beige */
+    color          : var(--amber-dark60);
+}
+
+.pattern-strip-shape {
+    font-family    : "Minecraft", sans-serif;
+    font-size      : max(12px, calc(clamp(13px, 2.75vw, 30px) * var(--strip-scale, 1)));
     letter-spacing : 0.04em;
     color          : var(--slate-dark60);
 }
 
-.pattern-reminder-shape {
-    font-size      : 16px;
-    font-weight    : 700;
-    letter-spacing : 0.06em;
-    color          : var(--amber-dark40);
-}
-
+/* The pill and the lead give way before the shape does on a narrow screen */
 @media screen and (max-width : 768px) {
-    .pattern-reminder {
-        top     : 8px;
-        left    : 8px;
-        padding : 6px 9px;
-    }
-    .pattern-reminder-title { font-size : 11px; }
-    .pattern-reminder-shape { font-size : 13px; }
+    .pattern-strip             { gap : 12px; padding : 8px 10px; }
+    .pattern-strip-pill        { letter-spacing : 0.06em; }
+
+    /* Too narrow to hold the longest reminder on one line at a size worth reading,
+       so it wraps instead of shrinking away */
+    .pattern-strip-instruction { flex-wrap : wrap; white-space : normal; }
+    .pattern-strip             { align-items : center; }
 }

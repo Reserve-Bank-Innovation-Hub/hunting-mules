@@ -15,34 +15,72 @@
 }
 
 /* DURING PLAY /////////////////////////////////////////////////////////////// */
-.score-bar-live {
-    display     : flex;
-    align-items : baseline;
-    gap         : 12px;
+/* The standings have the band to themselves now. */
+.score-bar-playing {
+    display        : flex;
+    flex-direction : column;
+    gap            : 3px;
+    width          : 100%;
+    height         : 100%;
+    padding        : 4px clamp(10px, 1.5vw, 20px);
+    overflow       : hidden;
 }
 
-.score-bar-label {
-    font-size      : 12px;
+.score-bar-playing-title {
+    flex-shrink    : 0;
+    font-size      : clamp(8px, 0.9vh, 13px);
     font-weight    : 700;
-    letter-spacing : 0.14em;
+    letter-spacing : 0.2em;
     color          : var(--slate-light40);
+    opacity        : 0.7;
 }
 
-.score-bar-count {
-    font-family : "Minecraft", sans-serif;
-    font-size   : 40px;
-    line-height : 1;
-    color       : var(--amber);
+/* The band is only 15vh, so the tiles run tighter here than on the results screen
+   while keeping the same treatment */
+.score-bar-playing .leaderboard.is-blocks .leaderboard-headings {
+    padding : 0 clamp(8px, 1vw, 14px) 2px;
 }
 
-.score-bar-of {
-    font-size : 20px;
-    color     : var(--slate-light40);
+/* Needs to out-specify the row sizing below, which shares these class names */
+.score-bar-playing .leaderboard.is-blocks .leaderboard-headings span {
+    font-size      : clamp(7px, 0.72vh, 10px);
+    letter-spacing : 0.14em;
+}
+
+.score-bar-playing .leaderboard.is-blocks .leaderboard-rows {
+    gap : 3px;
+}
+
+.score-bar-playing .leaderboard.is-blocks .leaderboard-row {
+    padding : clamp(2px, 0.38vh, 7px) clamp(8px, 1vw, 14px);
+}
+
+.score-bar-playing .leaderboard.is-blocks .leaderboard-position { font-size : clamp(12px, 1.25vh, 18px); }
+.score-bar-playing .leaderboard.is-blocks .leaderboard-name     { font-size : clamp(11px, 1.15vh, 16px); }
+.score-bar-playing .leaderboard.is-blocks .leaderboard-score    { font-size : clamp(13px, 1.4vh, 20px); }
+.score-bar-playing .leaderboard.is-blocks .leaderboard-you      { font-size : clamp(8px, 0.85vh, 12px); }
+
+/* The "more above / more below" marks are hairline here — the band has no height
+   to spare, and they only need to say the window is not the whole board */
+.score-bar-playing .leaderboard.is-blocks .leaderboard-gap {
+    font-size   : 8px;
+    line-height : 0.9;
+    padding     : 0;
+}
+
+
+
+.score-bar-playing .leaderboard {
+    min-height : 0;
+    overflow   : hidden;
 }
 
 /* THE RESULT //////////////////////////////////////////////////////////////// */
-/* Grows out of the bottom strip to take over the screen */
+/* Grows out of the bottom strip to take over the screen. Everything is sized against
+   viewport height so the portrait kiosk fills out without the composition simply
+   being scaled up on smaller screens. */
 .score-bar.is-result {
+    align-items      : flex-start;
     position         : fixed;
     left             : 0;
     bottom           : 0;
@@ -52,6 +90,7 @@
     border           : none;
     background-color : #000810;
     z-index          : 9500;
+    overflow-y       : auto;
     animation        : score-bar-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -63,10 +102,13 @@
 .score-bar-result {
     display         : flex;
     flex-direction  : column;
-    align-items     : center;
-    justify-content : center;
-    gap             : 14px;
-    padding         : 24px;
+    align-items     : stretch;
+    justify-content : flex-start;
+    gap             : clamp(8px, 1.3vh, 22px);
+    width           : 100%;
+    max-width       : 1000px;
+    margin          : 0 auto;
+    padding         : clamp(16px, 2.4vh, 44px) clamp(16px, 3.5vw, 44px);
     text-align      : center;
     animation       : score-bar-fade-in 0.5s ease-out 0.55s both;
 }
@@ -76,34 +118,252 @@
     to   { opacity : 1; transform : translateY(0); }
 }
 
+/* THE REWARD //////////////////////////////////////////////////////////////// */
+.score-bar-result-graphic {
+    align-self      : center;
+    width           : clamp(84px, 9.5vh, 158px);
+    height          : auto;
+    image-rendering : pixelated;
+    animation       : score-bar-stamp 0.5s cubic-bezier(0.2, 1.5, 0.4, 1) 0.5s both;
+}
+
+@keyframes score-bar-stamp {
+    0%   { transform : scale(1.6) rotate(-10deg); opacity : 0; }
+    60%  { transform : scale(0.94) rotate(2deg);  opacity : 1; }
+    100% { transform : scale(1) rotate(0deg);     opacity : 1; }
+}
+
+/* WHOSE SCORE THIS IS /////////////////////////////////////////////////////// */
 .score-bar-result-lead {
-    font-size      : 14px;
-    font-weight    : 700;
-    letter-spacing : 0.18em;
+    font-family    : "Minecraft", sans-serif;
+    font-size      : clamp(14px, 1.55vh, 24px);
+    letter-spacing : 0.2em;
     color          : var(--red);
 }
 
-.score-bar-result-headline {
-    margin      : 0;
-    font-family : "Minecraft", sans-serif;
-    font-size   : 56px;
-    line-height : 1.15;
-    color       : var(--amber);
+.score-bar-result-name {
+    margin         : 0;
+    font-family    : "Minecraft", sans-serif;
+    font-size      : calc(clamp(32px, 4.2vh, 68px) * var(--name-scale, 1));
+    line-height    : 1.05;
+    letter-spacing : 0.02em;
+    color          : var(--amber);
+    text-shadow    : 3px 3px 0 var(--amber-dark60);
+    text-transform : uppercase;
+    white-space    : nowrap;
+    overflow       : hidden;
+    text-overflow  : ellipsis;
 }
 
 .score-bar-result-sub {
-    font-size : 15px;
-    color     : var(--slate-light40);
+    font-size      : clamp(11px, 1.2vh, 17px);
+    font-weight    : 700;
+    letter-spacing : 0.22em;
+    color          : var(--amber-light60);
+    opacity        : 0.85;
 }
 
+/* THE FIGURES /////////////////////////////////////////////////////////////// */
+/* Cream blocks with the hard pixel bevel the buttons already use — the game's own
+   furniture, not dashboard cards. */
+.score-bar-result-figures {
+    display               : grid;
+    grid-template-columns : 1fr 1fr;
+    gap                   : clamp(10px, 1.4vw, 20px);
+    width                 : 100%;
+    margin-top            : clamp(2px, 0.6vh, 10px);
+}
+
+.score-bar-figure {
+    display          : flex;
+    flex-direction   : column;
+    align-items      : center;
+    justify-content  : center;
+    gap              : clamp(4px, 0.7vh, 10px);
+    padding          : clamp(8px, 1.15vh, 17px) 10px;
+    background-color : var(--amber-light90);
+    box-shadow       : inset -3px -3px 0 0 var(--amber-light70);
+}
+
+.score-bar-figure-label {
+    font-size      : clamp(9px, 1vh, 14px);
+    font-weight    : 700;
+    letter-spacing : 0.12em;
+    line-height    : 1.3;
+    text-align     : center;
+    color          : var(--amber-dark40);
+}
+
+.score-bar-figure-row {
+    display     : flex;
+    align-items : center;
+    gap         : clamp(8px, 1.2vw, 18px);
+}
+
+/* The game's own pixel icons, sized off the number beside them so the two read as
+   one line. Pixel art, so it must not be smoothed on the way up. */
+.score-bar-figure-icon {
+    height          : clamp(34px, 4.4vh, 74px);
+    width           : auto;
+    flex-shrink     : 0;
+    image-rendering : pixelated;
+}
+
+.score-bar-figure-value {
+    font-family : "Minecraft", sans-serif;
+    font-size   : clamp(26px, 3.2vh, 52px);
+    line-height : 1;
+    color       : var(--slate-dark60);
+}
+
+/* THE ACTIONS /////////////////////////////////////////////////////////////// */
+/* No frame of any kind — the pixel buttons carry their own edge */
 .score-bar-result-actions {
-    margin-top : 16px;
+    display         : flex;
+    flex-wrap       : wrap;
+    align-items     : center;
+    justify-content : center;
+    gap             : clamp(18px, 3vw, 40px);
+    margin          : clamp(6px, 1.2vh, 20px) 0;
+    background      : none;
+    border          : none;
+}
+
+.score-bar-result-actions .eightbit-btn {
+    font-size : clamp(14px, 1.65vh, 22px) !important;
+    padding   : clamp(10px, 1.35vh, 18px) clamp(18px, 2.6vw, 34px) !important;
+}
+
+/* THE PODIUM //////////////////////////////////////////////////////////////// */
+/* The top three, stood side by side with the winner in the middle. Bottom-aligned,
+   so first place stands taller than the two either side of it rather than simply
+   being drawn bigger in the same box. */
+.score-bar-podium {
+    display         : flex;
+    align-items     : flex-end;
+    justify-content : center;
+    gap             : clamp(6px, 1vw, 14px);
+    width           : 100%;
+    margin          : 0 0 clamp(6px, 0.9vh, 14px);
+    padding         : 0;
+    list-style      : none;
+}
+
+.score-bar-podium-slot {
+    flex             : 1 1 0;
+    max-width        : 32%;
+    display          : flex;
+    flex-direction   : column;
+    align-items      : center;
+    gap              : clamp(3px, 0.5vh, 7px);
+    padding          : clamp(10px, 1.3vh, 20px) clamp(6px, 0.9vw, 14px);
+    background-color : var(--amber-light90);
+    box-shadow       : inset -3px -3px 0 0 var(--amber-light70);
+}
+
+/* First place stands taller and heavier than the two beside it */
+.score-bar-podium-slot.is-first {
+    padding : clamp(14px, 1.9vh, 28px) clamp(6px, 1vw, 14px);
+}
+
+.score-bar-podium-rank {
+    font-family : "Minecraft", sans-serif;
+    /* The layout already says who came where, so the figure only has to confirm it
+       — at its old size it swamped the name, which is the part worth reading */
+    font-size   : clamp(18px, 2.1vh, 34px);
+    line-height : 1.15;
+    color       : var(--amber-dark40);
+}
+
+.score-bar-podium-slot.is-first .score-bar-podium-rank {
+    font-size : clamp(24px, 2.9vh, 48px);
+}
+
+/* The word above the number, so the figure is not mistaken for a score */
+.score-bar-podium-label {
+    font-size      : clamp(8px, 0.85vh, 12px);
+    font-weight    : 700;
+    letter-spacing : 0.2em;
+    color          : var(--amber-dark40);
+    opacity        : 0.75;
+}
+
+.score-bar-podium-slot.is-first .score-bar-podium-label {
+    font-size : clamp(9px, 1vh, 15px);
+}
+
+/* The person, given room of its own — it was being crowded by the figure above it */
+.score-bar-podium-name {
+    max-width      : 100%;
+    margin-top     : clamp(2px, 0.4vh, 6px);
+    font-size      : clamp(11px, 1.3vh, 19px);
+    font-weight    : 700;
+    letter-spacing : 0.06em;
+    line-height    : 1.3;
+    text-transform : uppercase;
+    color          : var(--slate-dark60);
+    white-space    : nowrap;
+    overflow       : hidden;
+    text-overflow  : ellipsis;
+}
+
+.score-bar-podium-slot.is-first .score-bar-podium-name {
+    font-size : clamp(14px, 1.7vh, 26px);
+}
+
+.score-bar-podium-score {
+    font-family : "Minecraft", sans-serif;
+    font-size   : clamp(16px, 1.9vh, 30px);
+    line-height : 1.15;
+    color       : var(--amber-dark20);
+}
+
+.score-bar-podium-slot.is-first .score-bar-podium-score {
+    font-size : clamp(21px, 2.6vh, 42px);
+}
+
+/* A place that belongs to the player, in the amber the rest of the game uses for
+   anything of theirs */
+.score-bar-podium-slot.is-mine {
+    background-color : var(--amber);
+    box-shadow       : inset -3px -3px 0 0 var(--amber-dark20);
+
+    .score-bar-podium-label { color : var(--amber-dark60); opacity : 0.85; }
+    .score-bar-podium-rank  { color : var(--amber-dark60); }
+    .score-bar-podium-name  { color : #000810; }
+    .score-bar-podium-score { color : #000810; }
+}
+
+/* THE STANDINGS ///////////////////////////////////////////////////////////// */
+/* No frame around it. The rows are already blocks with their own edges, so a border
+   drawn round the lot of them was one box too many — and it made the rows sit
+   narrower than the result blocks above, which broke the column. */
+.score-bar-board {
+    width      : 100%;
+    margin-top : clamp(4px, 0.8vh, 14px);
+}
+
+.score-bar-board-head {
+    display         : flex;
+    justify-content : center;
+    margin-bottom   : clamp(8px, 1.2vh, 18px);
+}
+
+.score-bar-board-title {
+    font-family    : "Minecraft", sans-serif;
+    font-size      : clamp(15px, 1.75vh, 26px);
+    letter-spacing : 0.14em;
+    color          : var(--amber);
+}
+
+/* A short screen cannot hold a panel title and a row of column headings above four
+   tiles. The column headings say what the panel is, so the title gives way first. */
+@media screen and (max-height : 940px) {
+    .score-bar-playing-title { display : none; }
 }
 
 @media screen and (max-width : 768px) {
-    .score-bar-count            { font-size : 28px; }
-    .score-bar-label            { font-size : 10px; letter-spacing : 0.1em; }
-    .score-bar-result-headline  { font-size : 30px; }
-    .score-bar-result-sub       { font-size : 13px; }
-    .score-bar .eightbit-btn    { font-size : 18px !important; padding : 16px 24px !important; }
+    .score-bar-playing        { padding : 5px 8px; }
+    .score-bar-result         { padding : 16px 14px; gap : 8px; }
+    .score-bar-result-lead    { font-size : 14px; letter-spacing : 0.16em; }
 }

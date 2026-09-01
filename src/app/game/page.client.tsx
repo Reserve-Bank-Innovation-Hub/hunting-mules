@@ -1,7 +1,7 @@
 "use client";
 
 // REACT CORE ==========================================================================================================
-import React, { useMemo, useEffect, useRef } from "react";
+import React, { useMemo, useEffect, useRef, useState } from "react";
 import ReactFlow, { Background, BackgroundVariant, NodeTypes } from "reactflow";
 
 // UI ==================================================================================================================
@@ -20,11 +20,13 @@ import { ScoreBar } from "$components/ScoreBar/ScoreBar";
 import { useGameFlow } from "$hooks/useGameFlow";
 import { useGameState } from "$hooks/useGameState";
 import { useGridLayout } from "$hooks/useGridLayout";
+import { useLeaderboard } from "$hooks/useLeaderboard";
 import { useNodeInteractions } from "$hooks/useNodeInteractions";
 import { useTransactions } from "$hooks/useTransactions";
 
 // LIB =================================================================================================================
-import { ROUNDS, TOTAL_PATTERNS } from "$lib/roundConfig";
+import { PATTERNS, TOTAL_PATTERNS } from "$lib/roundConfig";
+import { cleanName } from "$lib/leaderboard";
 
 // STYLES ==============================================================================================================
 import "./game-page.css";
@@ -34,65 +36,131 @@ const GamePage = () => {
     const gameState = useGameState();
     const gridLayout = useGridLayout();
 
-    const round = ROUNDS[gameState.roundIndex];
-    const isLowBalanceRound = round?.behaviour === "low-balance";
+    // The name is carried from the home screen in the URL and lives only in this
+    // component's state. Nothing is written to the device — the kiosk is shared, and
+    // the next player must start from an empty field rather than inherit this one.
+    const [ playerName, setPlayerName ] = useState("");
 
-    // The resize handler needs the phase as it is when the user resizes, not as it
-    // was when the grid was last built
+    // Jump straight to the results without playing a round, for checking the end
+    // screen: /game?preview=end  (optionally &score=24&player=NAME).
+    //
+    // The board is read and ranked for real, so the screen shows genuine standings —
+    // but the run is never written, so looking at the layout cannot leave a score on
+    // the kiosk's leaderboard.
+    const [ isPreview, setIsPreview ] = useState(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        const fromUrl = params.get("player");
+        if (fromUrl) {
+            setPlayerName(cleanName(fromUrl));
+        }
+
+        if (params.get("preview") !== "end") {
+            return;
+        }
+
+        setIsPreview(true);
+        if (!fromUrl) {
+            setPlayerName("PREVIEW");
+        }
+
+        // The score is the number of accounts caught, so a previewed score is that
+        // many stand-in ids. They are never anything but a count on this screen.
+        const previewScore = Math.max(0, Math.min(99, Number(params.get("score") ?? 24)));
+        gameState.setCaughtNodeIds(() => new Set(
+            Array.from({length : previewScore}, (_, index) => `preview-${index}`),
+        ));
+        gameState.setPhase("finished");
+    }, []);
+
+    const leaderboard = useLeaderboard({
+        playerName,
+        score      : gameState.mulesFoundCount,
+        isFinished : gameState.phase === "finished",
+        isPreview,
+    });
+
+    const introPattern = gameState.introPatternIndex !== null
+        ? PATTERNS[gameState.introPatternIndex]
+        : null;
+
+    // Each pattern is played on a board of its own. This lags unlockedPatterns by
+    // one so the opening round uses the board built at mount, and every pattern
+    // after that triggers a rebuild the moment its intro is dismissed.
+    const roundIndex = Math.max(0, gameState.unlockedPatterns - 1);
+
+    // Balances belong to the low-balance pattern, so the chips stay off the board
+    // until it is unlocked. Keyed off the pattern itself rather than a count, so
+    // reordering the patterns cannot quietly separate the two. The grid always
+    // reserves the room for them, so nothing on the board shifts when they appear.
+    const showBalances = PATTERNS
+        .slice(0, gameState.unlockedPatterns)
+        .some(pattern => pattern.behaviour === "low-balance");
+
+    // The board is built once and only rebuilt on a resize, so these are read live
+    // rather than closed over at the moment the grid was last measured
     const phaseRef = useRef(gameState.phase);
+    const rolesRef = useRef(gameState.muleRoles);
+    const balancesRef = useRef(gameState.nodeBalances);
+    const unlockedRef = useRef(gameState.unlockedPatterns);
     phaseRef.current = gameState.phase;
+    rolesRef.current = gameState.muleRoles;
+    balancesRef.current = gameState.nodeBalances;
+    unlockedRef.current = gameState.unlockedPatterns;
 
     const nodeInteractions = useNodeInteractions({
+        nodes                 : gameState.baseNodes,
         lockedNodes           : gameState.lockedNodes,
-        activeTransactions    : gameState.activeTransactions,
+        unlockedPatterns      : gameState.unlockedPatterns,
+        muleRoles             : gameState.muleRoles,
+        nodeBalances          : gameState.nodeBalances,
         setLockedNodes        : gameState.setLockedNodes,
         setShakingNodes       : gameState.setShakingNodes,
-        setMulesFoundCount    : gameState.setMulesFoundCount,
+        setCaughtNodeIds      : gameState.setCaughtNodeIds,
+        setMuleRoles          : gameState.setMuleRoles,
+        setNodeBalances       : gameState.setNodeBalances,
         setActiveTransactions : gameState.setActiveTransactions,
     });
 
     const gameFlow = useGameFlow({
-        totalMoneyInCirculation : gameState.totalMoneyInCirculation,
-        actualMuleCount         : gameState.actualMuleCount,
-        lockedNodes             : gameState.lockedNodes,
-        gameOverModalShown      : gameState.gameOverModalShown,
-        victoryModalShown       : gameState.victoryModalShown,
-        roundTimeLeft           : gameState.roundTimeLeft,
-        phase                   : gameState.phase,
-        roundIndex              : gameState.roundIndex,
-        setGameOverModalShown   : gameState.setGameOverModalShown,
-        setVictoryModalShown    : gameState.setVictoryModalShown,
-        setActiveRipples        : gameState.setActiveRipples,
-        setRoundTimeLeft        : gameState.setRoundTimeLeft,
-        setGameOverReason       : gameState.setGameOverReason,
-        setPhase                : gameState.setPhase,
-        setRoundIndex           : gameState.setRoundIndex,
-        setLockedNodes          : gameState.setLockedNodes,
-        setShakingNodes         : gameState.setShakingNodes,
-        setActiveTransactions   : gameState.setActiveTransactions,
-        setMuleIndices          : gameState.setMuleIndices,
-        setSurgingNodes         : gameState.setSurgingNodes,
-        setIsGridReady          : gameState.setIsGridReady,
+        timeLeft             : gameState.timeLeft,
+        phase                : gameState.phase,
+        unlockedPatterns      : gameState.unlockedPatterns,
+        introPatternIndex     : gameState.introPatternIndex,
+        isGridReady           : gameState.isGridReady,
+        setActiveRipples      : gameState.setActiveRipples,
+        setPatternFlashes     : gameState.setPatternFlashes,
+        setActiveTransactions : gameState.setActiveTransactions,
+        setLockedNodes        : gameState.setLockedNodes,
+        setShakingNodes       : gameState.setShakingNodes,
+        setMuleRoles          : gameState.setMuleRoles,
+        setNodeBalances       : gameState.setNodeBalances,
+        setIsGridReady        : gameState.setIsGridReady,
+        setTimeLeft           : gameState.setTimeLeft,
+        setPhase              : gameState.setPhase,
+        setUnlockedPatterns   : gameState.setUnlockedPatterns,
+        setIntroPatternIndex  : gameState.setIntroPatternIndex,
     });
 
-    // Update nodes with dynamic state
+    // Update nodes with dynamic state. Which accounts are mules is decided by the
+    // roles map, so a caught mule's replacement takes over without rebuilding the board.
     const nodes = useMemo(() => {
         return gameState.baseNodes.map(node => ({
             ...node,
             data : {
                 ...node.data,
                 onNodeClick : nodeInteractions.handleNodeClick,
-                isLocked    : gameState.lockedNodes?.has(node.id) || false,
-                isShaking   : gameState.shakingNodes?.has(node.id) || false,
-                // Balances are only part of the low-balance round
-                showBalance : isLowBalanceRound,
-                balance     : isLowBalanceRound ? gameState.nodeBalances.get(node.id) : undefined,
-                isSurging   : isLowBalanceRound && gameState.surgingNodes.has(node.id),
+                isMule      : gameState.muleRoles.has(node.id),
+                isLocked    : gameState.lockedNodes.has(node.id),
+                isShaking   : gameState.shakingNodes.has(node.id),
+                balance     : showBalances ? gameState.nodeBalances.get(node.id) : undefined,
             },
         }));
     }, [
-        gameState.baseNodes, nodeInteractions.handleNodeClick, gameState.lockedNodes,
-        gameState.shakingNodes, gameState.nodeBalances, gameState.surgingNodes, isLowBalanceRound,
+        gameState.baseNodes, nodeInteractions.handleNodeClick, gameState.muleRoles,
+        gameState.lockedNodes, gameState.shakingNodes, gameState.nodeBalances, showBalances,
     ]);
 
     const transactions = useTransactions({
@@ -100,15 +168,15 @@ const GamePage = () => {
         network                    : gameState.network,
         activeTransactions         : gameState.activeTransactions,
         lockedNodes                : gameState.lockedNodes,
-        totalMoneyInCirculation    : gameState.totalMoneyInCirculation,
         phase                      : gameState.phase,
-        roundIndex                 : gameState.roundIndex,
+        unlockedPatterns           : gameState.unlockedPatterns,
+        muleRoles                  : gameState.muleRoles,
+        nodeBalances               : gameState.nodeBalances,
         setActiveTransactions      : gameState.setActiveTransactions,
+        setPatternFlashes          : gameState.setPatternFlashes,
         setMoneyLostToMules        : gameState.setMoneyLostToMules,
         setTotalMoneyInCirculation : gameState.setTotalMoneyInCirculation,
         setNodeBalances            : gameState.setNodeBalances,
-        setSurgingNodes            : gameState.setSurgingNodes,
-        setActiveEdges             : gameState.setActiveEdges,
         createRipple               : gameFlow.createRipple,
     });
 
@@ -116,36 +184,42 @@ const GamePage = () => {
         circle : AccountNode,
     }), []);
 
-    // Build the board for the current round. This runs while the intro card is still
-    // up, so play begins the moment the player dismisses it.
+    // Deal a board for this round. On mount this runs while the first intro card is
+    // still up, so play begins the moment the player dismisses it; afterwards it runs
+    // again each time a new pattern starts, dealing fresh accounts and clearing the
+    // stamps along with them.
     useEffect(() => {
         return gridLayout.setupGrid({
-            roundIndex                : gameState.roundIndex,
-            muleIndices               : gameState.muleIndices,
-            shouldRecalculateOnResize : () => phaseRef.current === "playing",
+            roundIndex,
+            shouldRecalculateOnResize : () => phaseRef.current !== "finished",
+            currentRoles              : () => rolesRef.current,
+            currentBalances           : () => balancesRef.current,
+            unlockedBehaviours        : () => PATTERNS
+                .slice(0, Math.max(1, unlockedRef.current))
+                .map(pattern => pattern.behaviour),
             setGridDimensions         : gameState.setGridDimensions,
             setIsGridReady            : gameState.setIsGridReady,
             setBaseNodes              : gameState.setBaseNodes,
-            setMuleIndices            : gameState.setMuleIndices,
-            setActualMuleCount        : gameState.setActualMuleCount,
-            setTotalMuleCount         : gameState.setTotalMuleCount,
+            setMuleRoles              : gameState.setMuleRoles,
             setNodeBalances           : gameState.setNodeBalances,
             setNetwork                : gameState.setNetwork,
         });
-    }, [ gameState.roundIndex, gameState.muleIndices ]);
+    }, [ roundIndex ]);
 
     return (
         <Article id="game-page">
             {/* SCORECARD ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Scorecard
-                totalMoneyInCirculation={gameState.totalMoneyInCirculation}
                 moneyLostToMules={gameState.moneyLostToMules}
                 mulesFoundCount={gameState.mulesFoundCount}
-                totalMuleCount={gameState.totalMuleCount}
-                roundTimeLeft={gameState.roundTimeLeft}
-                patternNumber={gameState.roundIndex + 1}
+                timeLeft={gameState.timeLeft}
+                unlockedPatterns={gameState.unlockedPatterns}
                 totalPatterns={TOTAL_PATTERNS}
             />
+
+            {/* PATTERN REMINDER /////////////////////////////////////////////////////////////////////////////////// */}
+            {/* A thin strip between the numbers and the board, there the whole round */}
+            <PatternReminder unlockedPatterns={gameState.unlockedPatterns} />
 
             {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Main id="play-area">
@@ -161,7 +235,8 @@ const GamePage = () => {
                                 <NetworkLayer
                                     nodes={nodes}
                                     network={gameState.network}
-                                    activeEdges={gameState.activeEdges}
+                                    flashes={gameState.patternFlashes}
+                                    onFlashComplete={gameFlow.handleFlashComplete}
                                 />
 
                                 <ReactFlow
@@ -183,7 +258,16 @@ const GamePage = () => {
                                     nodesFocusable={false}
                                     edgesFocusable={false}
                                 >
-                                    <Background color="#000" variant={BackgroundVariant.Dots} gap={12} size={1} />
+                                    {/* The dot grid is texture, not information. Black dots
+                                        every 12px read as a speckle over the whole board and
+                                        competed with the accounts sitting on it — this is the
+                                        same grid, pitched down to a whisper. */}
+                                    <Background
+                                        color="#e2d7c2"
+                                        variant={BackgroundVariant.Dots}
+                                        gap={20}
+                                        size={1}
+                                    />
                                 </ReactFlow>
 
                                 <AnimationOverlay
@@ -192,27 +276,19 @@ const GamePage = () => {
                                     onTransactionComplete={transactions.handleTransactionComplete}
                                     onRippleComplete={gameFlow.handleRippleComplete}
                                 />
-
-                                {gameState.phase === "playing" && round && (
-                                    <PatternReminder
-                                        patternNumber={gameState.roundIndex + 1}
-                                        totalPatterns={TOTAL_PATTERNS}
-                                        title={round.title}
-                                        reminder={round.reminder}
-                                    />
-                                )}
                             </>
                         )}
                     </div>
                 </Card>
             </Main>
 
-            {/* ROUND INTRO //////////////////////////////////////////////////////////////////////////////////////// */}
-            {gameState.phase === "intro" && round && (
+            {/* PATTERN INTRO ////////////////////////////////////////////////////////////////////////////////////// */}
+            {/* The clock stops while this is up, so learning costs no play time */}
+            {gameState.phase === "intro" && introPattern && gameState.introPatternIndex !== null && (
                 <RoundIntro
-                    round={round}
-                    roundIndex={gameState.roundIndex}
-                    onStart={gameFlow.startRound}
+                    pattern={introPattern}
+                    patternIndex={gameState.introPatternIndex}
+                    onStart={gameFlow.dismissIntro}
                 />
             )}
 
@@ -220,10 +296,11 @@ const GamePage = () => {
             <Div id="score-area">
                 <ScoreBar
                     mulesFoundCount={gameState.mulesFoundCount}
-                    totalMuleCount={gameState.totalMuleCount}
-                    totalMoneyInCirculation={gameState.totalMoneyInCirculation}
                     isFinished={gameState.phase === "finished"}
-                    ranOutOfMoney={gameState.gameOverReason === "money"}
+                    playerName={playerName}
+                    rows={leaderboard.rows}
+                    position={leaderboard.position}
+                    isConnected={leaderboard.isConnected}
                 />
             </Div>
 

@@ -1,28 +1,24 @@
 "use client";
 
 // UI ==================================================================================================================
-import { Card, Heading6, Text, Div, Row, Portion, Heading4, Heading5 } from "fictoan-react";
+import { Card, Heading6, Text, Div, Row, Portion, Heading5 } from "fictoan-react";
 
 // STYLES ==============================================================================================================
 import "./scorecard.css";
 
 interface ScorecardProps {
-    totalMoneyInCirculation : number;
     moneyLostToMules        : number;
-    mulesFoundCount         : number;   // Cumulative across every round played
-    totalMuleCount          : number;   // Mules dealt in so far, also cumulative
-    roundTimeLeft           : number;
-    patternNumber           : number;
+    mulesFoundCount         : number;   // Simply how many have been caught. There is no target.
+    timeLeft                : number;
+    unlockedPatterns        : number;
     totalPatterns           : number;
 }
 
 export const Scorecard = ({
-    totalMoneyInCirculation,
     moneyLostToMules,
     mulesFoundCount,
-    totalMuleCount,
-    roundTimeLeft,
-    patternNumber,
+    timeLeft,
+    unlockedPatterns,
     totalPatterns,
 } : ScorecardProps) => {
     return (
@@ -33,9 +29,9 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="nano" bgColour="amber-light60" isFullHeight
                 >
-                    <Text textColour="amber-dark60">Pattern {patternNumber}/{totalPatterns}</Text>
-                    <Heading5 textColour={roundTimeLeft <= 10 ? "red" : undefined}>
-                        {roundTimeLeft}s
+                    <Text textColour="amber-dark60">Time left</Text>
+                    <Heading5 textColour={timeLeft <= 10 ? "red" : undefined}>
+                        {timeLeft}s
                     </Heading5>
                 </Card>
             </Portion>
@@ -45,9 +41,9 @@ export const Scorecard = ({
                     className="metric-card"
                     padding="nano" bgColour="amber-light60" isFullHeight
                 >
-                    <Text textColour="amber-dark60">In circulation</Text>
+                    <Text textColour="amber-dark60">Patterns live</Text>
                     <Heading5>
-                        ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                        {unlockedPatterns}/{totalPatterns}
                     </Heading5>
                 </Card>
             </Portion>
@@ -71,7 +67,7 @@ export const Scorecard = ({
                 >
                     <Text textColour="amber-dark60">Caught</Text>
                     <Heading5 textColour="green">
-                        {mulesFoundCount}/{totalMuleCount}
+                        {mulesFoundCount}
                     </Heading5>
                 </Card>
             </Portion>
@@ -83,30 +79,30 @@ export const Scorecard = ({
                     padding="micro" bgColour="amber-light60" isFullHeight
                 >
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text textColour="amber-dark60">Pattern {patternNumber}/{totalPatterns}</Text>
-                        <Heading6 textColour={roundTimeLeft <= 10 ? "red" : undefined}>
-                            {roundTimeLeft}s
+                        <Text textColour="amber-dark60">Time left</Text>
+                        <Heading6 textColour={timeLeft <= 10 ? "red" : undefined}>
+                            {timeLeft}s
                         </Heading6>
                     </Div>
 
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text>In circulation</Text>
+                        <Text textColour="amber-dark60">Patterns live</Text>
                         <Heading6>
-                            ₹{totalMoneyInCirculation.toLocaleString("en-IN")}
+                            {unlockedPatterns}/{totalPatterns}
                         </Heading6>
                     </Div>
 
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text>Stolen by mules</Text>
+                        <Text textColour="amber-dark60">Stolen by mules</Text>
                         <Heading6 textColour="red">
                             ₹{moneyLostToMules.toLocaleString("en-IN")}
                         </Heading6>
                     </Div>
 
                     <Div verticallyCentreItems pushItemsToEnds>
-                        <Text>Caught</Text>
+                        <Text textColour="amber-dark60">Caught</Text>
                         <Heading6 textColour="green">
-                            {mulesFoundCount}/{totalMuleCount}
+                            {mulesFoundCount}
                         </Heading6>
                     </Div>
                 </Card>

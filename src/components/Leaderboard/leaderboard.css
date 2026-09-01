@@ -1,0 +1,215 @@
+/* Shares the bottom band with the catch count. Same quiet dark treatment as the
+   rest of the supporting chrome, so it never competes with the board above it. */
+.leaderboard {
+    display        : flex;
+    flex-direction : column;
+    gap            : 4px;
+    min-width      : 0;
+    height         : 100%;
+    padding        : 2px 0;
+    overflow       : hidden;
+}
+
+.leaderboard-title {
+    flex-shrink    : 0;
+    font-size      : 10px;
+    font-weight    : 700;
+    letter-spacing : 0.16em;
+    color          : var(--slate-light40);
+    opacity        : 0.7;
+}
+
+.leaderboard-empty {
+    font-size : 12px;
+    color     : var(--slate-light40);
+    opacity   : 0.6;
+}
+
+.leaderboard-rows {
+    display        : flex;
+    flex-direction : column;
+    gap            : 2px;
+    margin         : 0;
+    padding        : 0;
+    list-style     : none;
+    min-height     : 0;
+    overflow       : hidden;
+}
+
+.leaderboard-row {
+    display        : grid;
+    grid-template-columns : 22px 1fr auto;
+    align-items    : baseline;
+    gap            : 8px;
+    padding        : 2px 6px;
+    border-radius  : 3px;
+    /* Rows are keyed on the run, so overtaking slides one past the other */
+    transition     : background-color 0.25s ease, color 0.25s ease;
+}
+
+.leaderboard-position {
+    font-size            : 11px;
+    font-weight          : 700;
+    color                : var(--slate-light40);
+    opacity              : 0.65;
+    font-variant-numeric : tabular-nums;
+}
+
+.leaderboard-name {
+    font-size     : 13px;
+    color         : var(--slate-light40);
+    white-space   : nowrap;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+}
+
+.leaderboard-score {
+    font-size            : 13px;
+    font-weight          : 700;
+    color                : var(--slate-light40);
+    font-variant-numeric : tabular-nums;
+}
+
+/* THE PLAYER'S OWN ROW ////////////////////////////////////////////////////// */
+/* The only row that is picked out, so the player can find themselves at a glance
+   while the rest of the board stays deliberately flat. */
+.leaderboard.is-strip .leaderboard-row.is-mine {
+    background-color : rgba(250, 176, 5, 0.14);
+
+    .leaderboard-position,
+    .leaderboard-name,
+    .leaderboard-score {
+        color   : var(--amber);
+        opacity : 1;
+    }
+
+    .leaderboard-name  { font-weight : 700; }
+    .leaderboard-score { font-size   : 15px; }
+}
+
+/* Marks the jump between the places shown and the player pinned below them */
+.leaderboard-gap {
+    padding        : 0 6px;
+    font-size      : 10px;
+    letter-spacing : 0.2em;
+    color          : var(--slate-light40);
+    opacity        : 0.4;
+}
+
+@media screen and (max-width : 768px) {
+    .leaderboard-title    { font-size : 9px; }
+    .leaderboard-name     { font-size : 11px; }
+    .leaderboard-score    { font-size : 11px; }
+    .leaderboard-position { font-size : 10px; }
+    .leaderboard-row      { grid-template-columns : 18px 1fr auto; gap : 6px; padding : 1px 4px; }
+}
+
+
+/* BLOCKS //////////////////////////////////////////////////////////////////// */
+/* The result screen shows the same rows full width, in the game's own cream, with
+   the player's own row in the amber it uses for anything belonging to the player.
+   Squared off — the border radius is 0 everywhere in this theme. */
+.leaderboard.is-blocks {
+    gap : 0;
+}
+
+/* RANK / PLAYER / SCORE, sitting above the rows inside the panel */
+.leaderboard.is-blocks .leaderboard-headings {
+    display               : grid;
+    grid-template-columns : clamp(46px, 6vw, 74px) 1fr auto;
+    gap                   : clamp(10px, 1.6vw, 20px);
+    align-items           : center;
+    padding               : 0 clamp(10px, 1.3vw, 16px) clamp(4px, 0.6vh, 9px);
+}
+
+.leaderboard.is-blocks .leaderboard-headings span {
+    font-size      : clamp(9px, 0.95vh, 13px);
+    font-weight    : 700;
+    letter-spacing : 0.18em;
+    color          : var(--amber-dark10);
+    opacity        : 0.85;
+}
+
+.leaderboard.is-blocks .leaderboard-rows {
+    gap : clamp(4px, 0.5vh, 7px);
+}
+
+.leaderboard.is-blocks .leaderboard-row {
+    grid-template-columns : clamp(46px, 6vw, 74px) 1fr auto;
+    gap              : clamp(10px, 1.6vw, 20px);
+    align-items      : center;
+    padding          : clamp(6px, 0.78vh, 11px) clamp(10px, 1.3vw, 16px);
+    border-radius    : 0;
+    background-color : var(--amber-light90);
+    box-shadow       : inset -2px -2px 0 0 var(--amber-light70);
+}
+
+.leaderboard.is-blocks .leaderboard-position {
+    font-family : "Minecraft", sans-serif;
+    font-size   : clamp(15px, 1.7vh, 24px);
+    color       : var(--amber-dark40);
+    opacity     : 1;
+    text-align  : center;
+}
+
+.leaderboard.is-blocks .leaderboard-name {
+    display        : flex;
+    align-items    : baseline;
+    gap            : 10px;
+    font-size      : clamp(13px, 1.45vh, 20px);
+    font-weight    : 700;
+    letter-spacing : 0.04em;
+    color          : var(--slate-dark60);
+    text-transform : uppercase;
+    opacity        : 1;
+}
+
+.leaderboard.is-blocks .leaderboard-score {
+    font-family : "Minecraft", sans-serif;
+    font-size   : clamp(17px, 1.9vh, 27px);
+    color       : var(--slate-dark60);
+    opacity     : 1;
+}
+
+/* Marks the player's own row in the middle of the name, where the eye already is */
+.leaderboard-you {
+    flex-shrink    : 0;
+    font-family    : "Minecraft", sans-serif;
+    font-size      : clamp(9px, 1vh, 13px);
+    letter-spacing : 0.06em;
+    color          : var(--red-dark20);
+}
+
+/* Everyone else's row sits back a little, so the player's own comes forward without
+   the board having to shout. Applied wherever these tiles are used — the band during
+   play and the results screen both — and never to the player's own row, which is the
+   one they are scanning for. */
+.leaderboard.is-blocks .leaderboard-row:not(.is-mine) {
+    opacity : 0.72;
+}
+
+/* THIS IS YOUR SCORE. Same palette, turned up: the row fills with the amber the
+   game already uses for anything that belongs to the player. */
+.leaderboard.is-blocks .leaderboard-row.is-mine {
+    background-color : var(--amber);
+    box-shadow       : inset -2px -2px 0 0 var(--amber-dark20);
+
+    .leaderboard-position { color : var(--amber-dark60); }
+    .leaderboard-name     { color : #000810; }
+    .leaderboard-score    { color : #000810; }
+    .leaderboard-you      { color : var(--red-dark40); }
+}
+
+.leaderboard.is-blocks .leaderboard-gap {
+    align-self : center;
+    padding    : 2px 0;
+    opacity    : 0.5;
+    color      : var(--amber-dark10);
+}
+
+.leaderboard.is-blocks .leaderboard-empty {
+    align-self : center;
+    font-size  : clamp(13px, 1.5vh, 20px);
+    color      : var(--amber-light60);
+    opacity    : 0.75;
+}

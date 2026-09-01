@@ -23,6 +23,12 @@
         margin-bottom : 8px;
     }
 
+    .round-intro-detective {
+        display   : inline-block;
+        font-size : 1.4em;
+        animation : round-intro-peek 1.6s ease-in-out infinite;
+    }
+
     @media screen and (max-width : 768px) {
         padding : 16px;
 
@@ -31,4 +37,9 @@
             padding   : 16px 24px !important;
         }
     }
+}
+
+@keyframes round-intro-peek {
+    0%, 100% { transform : translateY(0) rotate(-6deg); }
+    50%      { transform : translateY(-3px) rotate(6deg); }
 }

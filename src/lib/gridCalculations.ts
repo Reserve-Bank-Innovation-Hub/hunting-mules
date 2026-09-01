@@ -19,13 +19,10 @@ export const calculateGridDimensions = (containerRect : DOMRect) : GridDimension
         Math.max(0, maxPossibleRows) * Math.max(0, maxPossibleCols),
     );
 
-    // ...then either thin that out to the configured density, or honour a flat
-    // number of accounts if the round asked for one. Never below a playable grid.
+    // ...then aim for the configured account count, capped by what actually fits.
     const targetCells = Math.max(
         gridConfig.MIN_CELLS,
-        gridConfig.TARGET_CELLS !== undefined
-            ? Math.min(gridConfig.TARGET_CELLS, fullCapacity)
-            : Math.round(fullCapacity * gridConfig.ACCOUNT_DENSITY),
+        Math.min(gridConfig.TARGET_CELLS, fullCapacity),
     );
 
     // A grid slightly under the target is fine if it sits better on the screen
@@ -103,9 +100,6 @@ export const calculateGridDimensions = (containerRect : DOMRect) : GridDimension
     // Center the grid in the available space
     const startX = gridConfig.PADDING + (availableWidth - totalGridWidth) / 2;
     const startY = gridConfig.PADDING + (availableHeight - totalGridHeight) / 2;
-
-    console.log(`Grid: ${bestConfig.rows}x${bestConfig.columns} (${bestConfig.totalCells} cells, target ${targetCells}), Spacing: ${spacingX.toFixed(
-        1)}x${spacingY.toFixed(1)}px`);
 
     return {
         rows     : bestConfig.rows,

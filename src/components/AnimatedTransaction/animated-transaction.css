@@ -7,7 +7,11 @@
     will-change      : transform;
     pointer-events   : none;
     padding          : 6px 12px !important;
-    box-shadow       : 0 4px 12px 0 rgba(0, 0, 0, 0.3), 0 6px 24px 0 rgba(0, 0, 0, 0.25);
+    /* One soft shadow, not two heavy ones. A dozen of these cross the board at a
+       time; at the old weight each cast a card-sized halo and every ordinary payment
+       read as something worth reacting to. The label keeps its size and its lift —
+       it just stops announcing itself. */
+    box-shadow       : 0 1px 4px 0 rgba(0, 0, 0, 0.16);
     transform-origin : center center;
     transition       : background-color 0.3s ease, border-color 0.3s ease;
 
