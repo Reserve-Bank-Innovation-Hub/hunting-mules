@@ -32,7 +32,7 @@ export interface Burst {
     transactions : PlannedTransaction[];
 }
 
-export const randomBetween = (min : number, max : number) =>
+const randomBetween = (min : number, max : number) =>
     Math.floor(min + Math.random() * (max - min + 1));
 
 const shuffle = <T,>(items : T[]) : T[] => [ ...items ].sort(() => Math.random() - 0.5);
@@ -98,18 +98,6 @@ export const dealOpeningBalances = (nodeIds : string[]) : Map<string, number> =>
     });
 
     return dealt;
-};
-
-// A single opening balance in the same shape, for an account joining an existing board
-export const randomOpeningBalance = () => {
-    const roll = Math.random();
-    const band = roll < BALANCE_PROFILE.LOW.share
-        ? BALANCE_PROFILE.LOW
-        : roll < BALANCE_PROFILE.LOW.share + BALANCE_PROFILE.MID.share
-            ? BALANCE_PROFILE.MID
-            : BALANCE_PROFILE.HIGH;
-
-    return randomBetween(band.min, band.max);
 };
 
 // A low-balance mule has to actually be sitting on a few hundred rupees, or the

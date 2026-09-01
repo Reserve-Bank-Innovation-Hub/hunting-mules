@@ -61,13 +61,6 @@ export interface GridDimensions {
     startY   : number;
 }
 
-export interface GameFlowCallbacks {
-    createRipple              : (nodeId : string, x : number, y : number, isLocked? : boolean, isMuleReceiving? : boolean) => void;
-    handleRippleComplete      : (rippleId : string) => void;
-    handleTransactionComplete : (transactionId : string) => void;
-    handleNodeClick           : (nodeId : string, isMule : boolean) => void;
-}
-
 // Hook Return Types
 export interface UseGameStateReturn {
     activeTransactions         : TransactionInstance[];

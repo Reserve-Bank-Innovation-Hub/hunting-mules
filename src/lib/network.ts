@@ -9,8 +9,6 @@ export interface NetworkEdge {
     to   : string;
 }
 
-export const edgeKey = (a : string, b : string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
-
 export interface Network {
     edges     : NetworkEdge[];
     adjacency : Map<string, string[]>;
@@ -41,7 +39,7 @@ export const buildNetwork = (nodes : Node[], neighboursPerNode = 5) : Network =>
             .slice(0, neighboursPerNode);
 
         nearest.forEach(({other}) => {
-            const key = edgeKey(node.id, other.id);
+            const key = node.id < other.id ? `${node.id}|${other.id}` : `${other.id}|${node.id}`;
             if (!edgeMap.has(key)) {
                 edgeMap.set(key, {id : key, from : node.id, to : other.id});
             }

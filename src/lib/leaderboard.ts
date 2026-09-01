@@ -81,7 +81,7 @@ export const cleanName = (value : string) =>
  * that a player reads as identical, and none of them would tell them which was
  * theirs — which is the whole point of putting a name on a score.
  */
-export const nameKey = (name : string) =>
+const nameKey = (name : string) =>
     cleanName(name).toLowerCase().split(" ").filter(Boolean).join(" ");
 
 export const isNameTaken = (entries : LeaderboardEntry[], name : string) => {

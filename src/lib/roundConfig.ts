@@ -58,6 +58,3 @@ export const PATTERNS : PatternConfig[] = [
 ];
 
 export const TOTAL_PATTERNS = PATTERNS.length;
-
-// Seconds into the round at which each pattern joins in
-export const PATTERN_UNLOCK_TIMES = PATTERNS.map(pattern => pattern.unlockAt);
