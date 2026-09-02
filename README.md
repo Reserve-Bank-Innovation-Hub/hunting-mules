@@ -20,6 +20,9 @@ mules, just like real money laundering. This creates a complex web that makes th
 3. **Click to freeze mules**: Click suspected mule accounts to lock them
 4. **Race against time**: Find all mules before they launder all the money
 5. **Win or lose**: Stop all mules to win, or watch your money disappear
+6. **Verify your catches**: When time is up, visit three frozen accounts the way a bank branch would and decide which freezes stand
+
+The field visits are optional. A player can skip them from the brief card. A kiosk can run without them by being opened at `/?edd=off` (the setting is carried from screen to screen), or permanently by setting `EDD_ENABLED` to `false` in `src/lib/gameConfig.ts`.
 
 ### Game features
 
@@ -40,6 +43,7 @@ src/
 │   ├── AccountNode/          # Individual bank account circles
 │   ├── AnimatedTransaction/  # Flying transaction cards
 │   ├── AnimationOverlay/     # Container for all animations
+│   ├── EddVisit/             # The field visits after the round (enhanced due diligence)
 │   ├── GameModals/          # Victory and game over screens
 │   ├── NodeRippleEffect/    # Ripple animations on accounts
 │   └── Scorecard/           # Money tracking display
@@ -50,6 +54,7 @@ src/
 │   ├── useNodeInteractions.ts # Click handling and mule detection
 │   └── useTransactions.ts   # Transaction creation and completion
 ├── lib/                     # Utilities and configuration
+│   ├── eddCases.ts          # Field-verification cases, drawn three at a time after the round
 │   ├── gameConfig.ts        # Game settings and constants
 │   ├── gameTypes.ts         # TypeScript type definitions
 │   ├── gridCalculations.ts  # Grid layout algorithms

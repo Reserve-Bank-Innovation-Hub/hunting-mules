@@ -19,7 +19,7 @@ interface UseNodeInteractionsProps {
     nodeBalances          : Map<string, number>;
     setLockedNodes        : (updater : (prev : Set<string>) => Set<string>) => void;
     setShakingNodes       : (updater : (prev : Set<string>) => Set<string>) => void;
-    setCaughtNodeIds      : (updater : (prev : Set<string>) => Set<string>) => void;
+    setCaughtMules        : (updater : (prev : Map<string, PatternBehaviour>) => Map<string, PatternBehaviour>) => void;
     setMuleRoles          : (updater : (prev : Map<string, PatternBehaviour>) => Map<string, PatternBehaviour>) => void;
     setNodeBalances       : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
     setActiveTransactions : (updater : (prev : TransactionInstance[]) => TransactionInstance[]) => void;
@@ -33,7 +33,7 @@ export const useNodeInteractions = ({
     nodeBalances,
     setLockedNodes,
     setShakingNodes,
-    setCaughtNodeIds,
+    setCaughtMules,
     setMuleRoles,
     setNodeBalances,
     setActiveTransactions,
@@ -93,10 +93,13 @@ export const useNodeInteractions = ({
 
         setLockedNodes(prev => new Set(prev).add(nodeId));
 
-        // Recording which account was caught, rather than adding one to a tally. Run
-        // this twice for the same account and the set is unchanged, so the score is
-        // unchanged — which is what stops a catch ever counting as two.
-        setCaughtNodeIds(prev => prev.has(nodeId) ? prev : new Set(prev).add(nodeId));
+        // Recording which account was caught, and what it was doing, rather than adding
+        // one to a tally. Run this twice for the same account and the map is unchanged,
+        // so the score is unchanged — which is what stops a catch ever counting as two.
+        // The pattern is read now because the role is about to pass to a replacement,
+        // and the field visits after the round need to know what this was frozen for.
+        const behaviour = rolesRef.current.get(nodeId) ?? PATTERNS[0].behaviour;
+        setCaughtMules(prev => prev.has(nodeId) ? prev : new Map(prev).set(nodeId, behaviour));
 
         const audio = new Audio(UncoveredSound);
         audio.play().catch((error) => {
@@ -160,7 +163,7 @@ export const useNodeInteractions = ({
         // out of play. It is the player's record of the catch, and it is the reason
         // the board thins out as they score.
     }, [
-        setLockedNodes, setShakingNodes, setCaughtNodeIds,
+        setLockedNodes, setShakingNodes, setCaughtMules,
         setMuleRoles, setNodeBalances, setActiveTransactions,
     ]);
 

@@ -10,6 +10,7 @@ import { Article, Card, Div, Main, Spinner } from "fictoan-react";
 // LOCAL COMPONENTS ====================================================================================================
 import { AccountNode } from "$components/AccountNode/AccountNode";
 import { AnimationOverlay } from "$components/AnimationOverlay/AnimationOverlay";
+import { EddVisit } from "$components/EddVisit/EddVisit";
 import { NetworkLayer } from "$components/NetworkLayer/NetworkLayer";
 import { PatternReminder } from "$components/PatternReminder/PatternReminder";
 import { RoundIntro } from "$components/RoundIntro/RoundIntro";
@@ -25,7 +26,9 @@ import { useNodeInteractions } from "$hooks/useNodeInteractions";
 import { useTransactions } from "$hooks/useTransactions";
 
 // LIB =================================================================================================================
-import { PATTERNS, TOTAL_PATTERNS } from "$lib/roundConfig";
+import { EDD_ENABLED, EDD_VISITS } from "$lib/gameConfig";
+import { readEddEnabled, withEddMode } from "$lib/eddMode";
+import { PATTERNS, PatternBehaviour, TOTAL_PATTERNS } from "$lib/roundConfig";
 import { cleanName } from "$lib/leaderboard";
 
 // STYLES ==============================================================================================================
@@ -41,8 +44,16 @@ const GamePage = () => {
     // the next player must start from an empty field rather than inherit this one.
     const [ playerName, setPlayerName ] = useState("");
 
-    // Jump straight to the results without playing a round, for checking the end
-    // screen: /game?preview=end  (optionally &score=24&player=NAME).
+    // Whether the field visits run after the round. The default is in gameConfig; the
+    // kiosk can be opened with ?edd=off to skip them for the day, and the choice is
+    // carried from screen to screen in the URL because the machine stores nothing.
+    const [ isEddEnabled, setIsEddEnabled ] = useState(EDD_ENABLED);
+    const [ search, setSearch ] = useState("");
+
+    // Jump straight to a late screen without playing a round, for checking layout:
+    //   /game?preview=end   the result screen   (optionally &score=24&verdicts=2&player=NAME;
+    //                                            verdicts=none shows a run that skipped the visits)
+    //   /game?preview=edd   the field visits    (optionally &score=24&player=NAME)
     //
     // The board is read and ranked for real, so the screen shows genuine standings —
     // but the run is never written, so looking at the layout cannot leave a score on
@@ -51,13 +62,16 @@ const GamePage = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
+        setSearch(window.location.search);
+        setIsEddEnabled(readEddEnabled(window.location.search));
 
         const fromUrl = params.get("player");
         if (fromUrl) {
             setPlayerName(cleanName(fromUrl));
         }
 
-        if (params.get("preview") !== "end") {
+        const preview = params.get("preview");
+        if (preview !== "end" && preview !== "edd") {
             return;
         }
 
@@ -67,11 +81,23 @@ const GamePage = () => {
         }
 
         // The score is the number of accounts caught, so a previewed score is that
-        // many stand-in ids. They are never anything but a count on this screen.
+        // many stand-in accounts, dealt a pattern each in turn so the field visits
+        // have something to be drawn towards
         const previewScore = Math.max(0, Math.min(99, Number(params.get("score") ?? 24)));
-        gameState.setCaughtNodeIds(() => new Set(
-            Array.from({length : previewScore}, (_, index) => `preview-${index}`),
+        gameState.setCaughtMules(() => new Map(
+            Array.from({length : previewScore}, (_, index) : [ string, PatternBehaviour ] =>
+                [ `preview-${index}`, PATTERNS[index % TOTAL_PATTERNS].behaviour ]),
         ));
+
+        if (preview === "edd") {
+            gameState.setPhase("edd");
+            return;
+        }
+
+        const verdicts = params.get("verdicts");
+        gameState.setEddCorrect(verdicts === "none"
+            ? null
+            : Math.max(0, Math.min(EDD_VISITS, Number(verdicts ?? 2))));
         gameState.setPhase("finished");
     }, []);
 
@@ -118,7 +144,7 @@ const GamePage = () => {
         nodeBalances          : gameState.nodeBalances,
         setLockedNodes        : gameState.setLockedNodes,
         setShakingNodes       : gameState.setShakingNodes,
-        setCaughtNodeIds      : gameState.setCaughtNodeIds,
+        setCaughtMules        : gameState.setCaughtMules,
         setMuleRoles          : gameState.setMuleRoles,
         setNodeBalances       : gameState.setNodeBalances,
         setActiveTransactions : gameState.setActiveTransactions,
@@ -142,6 +168,8 @@ const GamePage = () => {
         setPhase              : gameState.setPhase,
         setUnlockedPatterns   : gameState.setUnlockedPatterns,
         setIntroPatternIndex  : gameState.setIntroPatternIndex,
+        setEddCorrect         : gameState.setEddCorrect,
+        isEddEnabled,
     });
 
     // Update nodes with dynamic state. Which accounts are mules is decided by the
@@ -191,7 +219,9 @@ const GamePage = () => {
     useEffect(() => {
         return gridLayout.setupGrid({
             roundIndex,
-            shouldRecalculateOnResize : () => phaseRef.current !== "finished",
+            // Once the clock has run out the board is behind an overlay and out of play,
+            // so a resize must not deal it again
+            shouldRecalculateOnResize : () => phaseRef.current === "intro" || phaseRef.current === "playing",
             currentRoles              : () => rolesRef.current,
             currentBalances           : () => balancesRef.current,
             unlockedBehaviours        : () => PATTERNS
@@ -292,11 +322,24 @@ const GamePage = () => {
                 />
             )}
 
+            {/* FIELD VISITS /////////////////////////////////////////////////////////////////////////////////////// */}
+            {/* The clock has run out. Before the result, the player checks their own
+                catches the way a branch would. The score is written once they are done. */}
+            {gameState.phase === "edd" && (
+                <EddVisit
+                    caughtMules={gameState.caughtMules}
+                    onComplete={gameFlow.finishEdd}
+                    onSkip={gameFlow.skipEdd}
+                />
+            )}
+
             {/* SCORE AREA ///////////////////////////////////////////////////////////////////////////////////////// */}
             <Div id="score-area">
                 <ScoreBar
                     mulesFoundCount={gameState.mulesFoundCount}
                     isFinished={gameState.phase === "finished"}
+                    eddCorrect={gameState.eddCorrect}
+                    playAgainHref={withEddMode("/", search)}
                     playerName={playerName}
                     rows={leaderboard.rows}
                     position={leaderboard.position}

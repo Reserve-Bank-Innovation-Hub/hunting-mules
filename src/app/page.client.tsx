@@ -9,6 +9,7 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoa
 
 // LIB =================================================================================================================
 import { cleanName, fetchLeaderboard, isNameTaken, LeaderboardEntry, MAX_NAME_LENGTH } from "$lib/leaderboard";
+import { withEddMode } from "$lib/eddMode";
 
 // LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
@@ -38,7 +39,12 @@ const HomePage = () => {
     // their score, and this is a shared kiosk where the next person is waiting.
     const [ board, setBoard ] = React.useState<LeaderboardEntry[]>([]);
 
+    // The kiosk's settings ride in the URL, because the machine stores nothing. Read
+    // once here so they can be carried into the round.
+    const [ search, setSearch ] = React.useState("");
+
     useEffect(() => {
+        setSearch(window.location.search);
         fetchLeaderboard()
             .then(setBoard)
             // A board that cannot be read must not stop anyone playing. The server
@@ -48,6 +54,7 @@ const HomePage = () => {
 
     const isTaken = isNameTaken(board, trimmedName);
     const canStart = trimmedName.length > 0 && !isTaken;
+    const gameHref = withEddMode(`/game?player=${encodeURIComponent(trimmedName)}`, search);
 
     useEffect(() => {
         // Create audio element
@@ -132,7 +139,7 @@ const HomePage = () => {
                                 onChange={event => setPlayerName(event.target.value)}
                                 onKeyDown={event => {
                                     if (event.key === "Enter" && canStart) {
-                                        window.location.href = `/game?player=${encodeURIComponent(trimmedName)}`;
+                                        window.location.href = gameHref;
                                     }
                                 }}
                             />
@@ -150,7 +157,7 @@ const HomePage = () => {
                     <Portion>
                         <Div id="start-holder" horizontallyCentreThis>
                             {canStart ? (
-                                <Link href={`/game?player=${encodeURIComponent(trimmedName)}`}>
+                                <Link href={gameHref}>
                                     <Button className="eightbit-btn">
                                         START
                                     </Button>

@@ -14,8 +14,10 @@ export interface NodeData {
     onNodeClick    ? : (nodeId : string, isMule : boolean) => void;
 }
 
-// A pattern intro takes the clock off, so the game sits in "intro" while one is up
-export type GamePhase = "intro" | "playing" | "finished";
+// A pattern intro takes the clock off, so the game sits in "intro" while one is up.
+// When the clock runs out the game goes to "edd", the field visits, and only then to
+// "finished", which is when the result screen rises and the score is written.
+export type GamePhase = "intro" | "playing" | "edd" | "finished";
 
 export interface TransactionInstance {
     id              : string;
@@ -72,9 +74,12 @@ export interface UseGameStateReturn {
     lockedNodes                : Set<string>;
     shakingNodes               : Set<string>;
     baseNodes                  : Node[];
-    // The accounts caught so far. The score is its size — see useGameState.
-    caughtNodeIds              : Set<string>;
+    // The accounts caught so far, each with the pattern it was running when it was
+    // caught. The score is its size; see useGameState.
+    caughtMules                : Map<string, PatternBehaviour>;
     mulesFoundCount            : number;
+    // Field-visit verdicts the player got right. Null until the visits are done.
+    eddCorrect                 : number | null;
     gridDimensions             : GridDimensions | null;
     timeLeft                   : number;
     phase                      : GamePhase;
@@ -94,7 +99,8 @@ export interface UseGameStateReturn {
     setLockedNodes             : (updater : (prev : Set<string>) => Set<string>) => void;
     setShakingNodes            : (updater : (prev : Set<string>) => Set<string>) => void;
     setBaseNodes               : (nodes : Node[]) => void;
-    setCaughtNodeIds           : (updater : (prev : Set<string>) => Set<string>) => void;
+    setCaughtMules             : (updater : (prev : Map<string, PatternBehaviour>) => Map<string, PatternBehaviour>) => void;
+    setEddCorrect              : (correct : number | null) => void;
     setGridDimensions          : (dimensions : GridDimensions | null) => void;
     setTimeLeft                : (updater : (prev : number) => number) => void;
     setPhase                   : (phase : GamePhase) => void;
