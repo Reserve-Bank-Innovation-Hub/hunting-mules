@@ -23,16 +23,19 @@ export const useGameState = () : UseGameStateReturn => {
     const [ gridDimensions, setGridDimensions ] = useState<GridDimensions | null>(null);
 
     // SCORE ===========================================================================================================
-    // Held as the set of accounts caught, not as a running total. The score is its
-    // size, so a catch that somehow registers twice — a double-fired click, an
+    // Held as the accounts caught, not as a running total. The score is how many
+    // there are, so a catch that somehow registers twice — a double-fired click, an
     // updater React chose to run again — still counts once, because adding an id
-    // already in the set changes nothing. A `count + 1` cannot make that promise.
+    // already present changes nothing. A `count + 1` cannot make that promise.
+    //
+    // Each catch is kept with the pattern the account was running at the time, so
+    // the field visits after the round can say what an account was frozen for.
     //
     // Node ids carry their round, so an account caught in round two can never be
-    // confused with the one standing in the same place in round three. The set is
+    // confused with the one standing in the same place in round three. The map is
     // never cleared: the score runs the whole eighty seconds.
-    const [ caughtNodeIds, setCaughtNodeIds ] = useState<Set<string>>(new Set());
-    const mulesFoundCount = caughtNodeIds.size;
+    const [ caughtMules, setCaughtMules ] = useState<Map<string, PatternBehaviour>>(new Map());
+    const mulesFoundCount = caughtMules.size;
 
     // THE ROUND =======================================================================================================
     // One continuous round. It opens on the first pattern's intro, which is not on the clock.
@@ -40,6 +43,11 @@ export const useGameState = () : UseGameStateReturn => {
     const [ timeLeft, setTimeLeft ] = useState(ROUND_DURATION);
     const [ unlockedPatterns, setUnlockedPatterns ] = useState(0);
     const [ introPatternIndex, setIntroPatternIndex ] = useState<number | null>(0);
+
+    // THE FIELD VISITS ================================================================================================
+    // How many verdicts the player got right. Kept apart from the score on purpose:
+    // catching and verifying are different skills, and the leaderboard ranks the first.
+    const [ eddCorrect, setEddCorrect ] = useState<number | null>(null);
 
     // ACCOUNTS ========================================================================================================
     const [ muleRoles, setMuleRoles ] = useState<Map<string, PatternBehaviour>>(new Map());
@@ -59,7 +67,8 @@ export const useGameState = () : UseGameStateReturn => {
         setLockedNodes             : useCallback(setLockedNodes, []),
         setShakingNodes            : useCallback(setShakingNodes, []),
         setBaseNodes               : useCallback(setBaseNodes, []),
-        setCaughtNodeIds           : useCallback(setCaughtNodeIds, []),
+        setCaughtMules             : useCallback(setCaughtMules, []),
+        setEddCorrect              : useCallback(setEddCorrect, []),
         setGridDimensions          : useCallback(setGridDimensions, []),
         setTimeLeft                : useCallback(setTimeLeft, []),
         setPhase                   : useCallback(setPhase, []),
@@ -80,8 +89,9 @@ export const useGameState = () : UseGameStateReturn => {
         lockedNodes,
         shakingNodes,
         baseNodes,
-        caughtNodeIds,
+        caughtMules,
         mulesFoundCount,
+        eddCorrect,
         gridDimensions,
         timeLeft,
         phase,

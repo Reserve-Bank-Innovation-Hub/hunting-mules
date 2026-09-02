@@ -19,8 +19,11 @@ import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
 // margin trimmed, so they sit on the result blocks rather than in a paler square
 import TargetIcon from "../../assets/images/icon-target.png";
 import TrophyIcon from "../../assets/images/icon-trophy.png";
+// The branch, for the verdicts the player gave on the field visits
+import BankIcon from "../../assets/images/bank-icon.png";
 
 // LIB =================================================================================================================
+import { EDD_VISITS } from "$lib/gameConfig";
 import { RankedEntry } from "$lib/leaderboard";
 
 // STYLES ==============================================================================================================
@@ -83,6 +86,8 @@ const LEARN_MORE_URL = "https://www.figma.com/proto/hU8AxWIfkTIrNKKkqWxhh7/GFF?p
 interface ScoreBarProps {
     mulesFoundCount : number;
     isFinished      : boolean;
+    eddCorrect      : number | null;   // Field-visit verdicts right. Null if the visits did not run.
+    playAgainHref   : string;          // Back to the home screen, carrying the kiosk's settings with it
     playerName      : string;
     rows            : RankedEntry[];
     position        : number | null;
@@ -100,6 +105,8 @@ interface ScoreBarProps {
 export const ScoreBar = ({
     mulesFoundCount,
     isFinished,
+    eddCorrect,
+    playAgainHref,
     playerName,
     rows,
     position,
@@ -138,7 +145,9 @@ export const ScoreBar = ({
                 />
 
                 {/* WHOSE SCORE THIS IS //////////////////////////////////////////////////////////////////////// */}
-                <span className="score-bar-result-lead">TIME&rsquo;S UP</span>
+                {/* "Time's up" was said when the clock ran out, before the field
+                    visits. By the time this screen rises, the case is closed. */}
+                <span className="score-bar-result-lead">CASE CLOSED</span>
 
                 {playerName && (
                     <h1
@@ -154,11 +163,11 @@ export const ScoreBar = ({
                 <span className="score-bar-result-sub">YOUR SCORE</span>
 
                 {/* THE FIGURES //////////////////////////////////////////////////////////////////////////////// */}
-                {/* Two different facts: how many were caught, and where that placed
-                    them. Showing the catch count twice — once as "caught" and again as
-                    "score" — said nothing, because one catch is one point and the two
-                    numbers could never differ. */}
-                <div className="score-bar-result-figures">
+                {/* Two facts, or three: how many were caught, where that placed them,
+                    and, if the field visits ran, how many verdicts they got right. The
+                    verdicts are deliberately not part of the score. Catching and
+                    verifying are different skills, and the board ranks the first. */}
+                <div className={`score-bar-result-figures ${eddCorrect !== null ? "has-verdicts" : ""}`}>
                     <div className="score-bar-figure">
                         <span className="score-bar-figure-label">MULES CAUGHT</span>
                         <div className="score-bar-figure-row">
@@ -178,13 +187,27 @@ export const ScoreBar = ({
                             </span>
                         </div>
                     </div>
+
+                    {/* Only when the visits ran. Skipped or switched off, the screen is
+                        exactly as it was before the visits existed. */}
+                    {eddCorrect !== null && (
+                        <div className="score-bar-figure">
+                            <span className="score-bar-figure-label">EDD VERDICTS</span>
+                            <div className="score-bar-figure-row">
+                                <img className="score-bar-figure-icon" src={BankIcon.src} alt="" />
+                                <span className="score-bar-figure-value">
+                                    {eddCorrect}/{EDD_VISITS}
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* THE ACTIONS //////////////////////////////////////////////////////////////////////////////// */}
                 {/* Sitting on the background with nothing framing them — the pixel
                     buttons already carry their own edge */}
                 <div className="score-bar-result-actions">
-                    <Link href="/">
+                    <Link href={playAgainHref}>
                         <Button className="eightbit-btn failure">PLAY AGAIN</Button>
                     </Link>
 

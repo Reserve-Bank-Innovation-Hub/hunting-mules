@@ -28,6 +28,9 @@ interface UseGameFlowProps {
     setPhase              : (phase : GamePhase) => void;
     setUnlockedPatterns   : (updater : (prev : number) => number) => void;
     setIntroPatternIndex  : (index : number | null) => void;
+    setEddCorrect         : (correct : number | null) => void;
+    // Whether the field visits run when the clock runs out, or the result rises at once
+    isEddEnabled          : boolean;
 }
 
 export const useGameFlow = ({
@@ -48,6 +51,8 @@ export const useGameFlow = ({
     setPhase,
     setUnlockedPatterns,
     setIntroPatternIndex,
+    setEddCorrect,
+    isEddEnabled,
 } : UseGameFlowProps) => {
 
     // Create ripple effect for a node
@@ -143,29 +148,53 @@ export const useGameFlow = ({
     }, [ phase, timeLeft, unlockedPatterns, setIntroPatternIndex, setPhase ]);
 
     // THE END =========================================================================================================
-    // The round ends when the clock does, and only then
+    // The result rises, the score is written, and the reward sound plays with it
+    const finishRound = useCallback(() => {
+        setPhase("finished");
+
+        const audio = new Audio(VictorySound);
+        audio.play().catch((error) => {
+            console.log("Audio playback failed:", error);
+        });
+    }, [ setPhase ]);
+
+    // The round ends when the clock does, and only then. With the field visits on, it
+    // does not go straight to the result: the accounts the player froze go to the
+    // branch first, and the score is only written once those are done. With them
+    // off, the result rises at once, exactly as it did before the visits existed.
     useEffect(() => {
         if (phase !== "playing" || timeLeft > 0) {
             return;
         }
 
-        // Let whatever is mid-flight land before the result takes over the screen
+        // Let whatever is mid-flight land before the next screen takes over
         const timeoutId = setTimeout(() => {
-            setPhase("finished");
-
-            const audio = new Audio(VictorySound);
-            audio.play().catch((error) => {
-                console.log("Audio playback failed:", error);
-            });
+            if (isEddEnabled) {
+                setPhase("edd");
+            } else {
+                finishRound();
+            }
         }, 700);
 
         return () => clearTimeout(timeoutId);
-    }, [ phase, timeLeft, setPhase ]);
+    }, [ phase, timeLeft, isEddEnabled, setPhase, finishRound ]);
+
+    // The visits are done. The verdict count is kept, and now the result can rise.
+    const finishEdd = useCallback((correct : number) => {
+        setEddCorrect(correct);
+        finishRound();
+    }, [ setEddCorrect, finishRound ]);
+
+    // The player would rather not. Nothing is recorded, so the result shows no
+    // verdicts figure, and nothing else about the run changes.
+    const skipEdd = finishRound;
 
     return {
         createRipple,
         handleRippleComplete,
         handleFlashComplete,
         dismissIntro,
+        finishEdd,
+        skipEdd,
     };
 };

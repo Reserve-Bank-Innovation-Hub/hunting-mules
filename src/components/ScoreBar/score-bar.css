@@ -165,13 +165,17 @@
 
 /* THE FIGURES /////////////////////////////////////////////////////////////// */
 /* Cream blocks with the hard pixel bevel the buttons already use — the game's own
-   furniture, not dashboard cards. */
+   furniture, not dashboard cards. Two of them, or three when the field visits ran. */
 .score-bar-result-figures {
     display               : grid;
     grid-template-columns : 1fr 1fr;
     gap                   : clamp(10px, 1.4vw, 20px);
     width                 : 100%;
     margin-top            : clamp(2px, 0.6vh, 10px);
+}
+
+.score-bar-result-figures.has-verdicts {
+    grid-template-columns : repeat(3, 1fr);
 }
 
 .score-bar-figure {
@@ -365,5 +369,6 @@
 @media screen and (max-width : 768px) {
     .score-bar-playing        { padding : 5px 8px; }
     .score-bar-result         { padding : 16px 14px; gap : 8px; }
+    .score-bar-result-figures { gap : 6px; }
     .score-bar-result-lead    { font-size : 14px; letter-spacing : 0.16em; }
 }

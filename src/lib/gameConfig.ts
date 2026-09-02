@@ -17,6 +17,19 @@ export const ACTIVE_MULES   = 8;           // Mules running at any one moment, t
 // twenty seconds this is a backstop rather than something a round normally reaches.
 export const MIN_ORDINARY_ACCOUNTS = 4;
 
+// THE FIELD VISITS ====================================================================================================
+// After the clock runs out, this many of the player's frozen accounts go to the
+// branch for enhanced due diligence, and this many of those turn out to be innocent.
+// Three is the fewest that lets one false positive hide among confirmed cases; two
+// would make the innocent one a coin toss. This is a kiosk with a queue behind it.
+//
+// EDD_ENABLED is the default for the kiosk. Opening any screen with ?edd=off (or
+// ?edd=on) overrides it for that session without a rebuild, and a player can always
+// skip from the brief. See eddMode.ts.
+export const EDD_ENABLED  = true;
+export const EDD_VISITS   = 3;
+export const EDD_RELEASES = 1;
+
 // TRANSACTION VOLUME ==================================================================================================
 export const TRANSACTION_CONFIG = {
     STARTING_AMOUNT         : 10000000,  // ₹1,00,00,000
