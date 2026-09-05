@@ -1,9 +1,9 @@
 .transaction-card {
     width            : fit-content;
     z-index          : 15;
-    border-radius    : 8px;
-    border           : 1px solid var(--slate-light60);
-    background-color : white;
+    border-radius    : 999px;
+    border           : none;
+    background-color : var(--bg-lift);
     will-change      : transform;
     pointer-events   : none;
     padding          : 6px 12px !important;
@@ -11,26 +11,31 @@
        time; at the old weight each cast a card-sized halo and every ordinary payment
        read as something worth reacting to. The label keeps its size and its lift —
        it just stops announcing itself. */
-    box-shadow       : 0 1px 4px 0 rgba(0, 0, 0, 0.16);
+    border           : 1px solid var(--hairline);
+    /* Ordinary traffic. Quiet on purpose: a dozen of these cross the board at a
+       time, and if they all announce themselves the pattern cannot be seen. */
+    opacity          : 0.72;
     transform-origin : center center;
     transition       : background-color 0.3s ease, border-color 0.3s ease;
 
     &.bounced {
-        background-color : var(--red-light90);
-        border           : 2px solid var(--red);
+        background-color : rgba(239, 68, 68, 0.20);
+        border           : 1px solid var(--bad);
+        box-shadow       : none;
         animation        : bounce-pulse 0.5s ease-in-out;
 
         p {
-            color : var(--red-dark20);
+            color : #FCA5A5;
         }
     }
 
     p {
+        font-family : var(--font-toon);
         font-size   : 14px;
-        font-weight : 700;
+        font-weight : 800;
         text-align  : center;
         margin      : 0;
-        color       : var(--slate);
+        color       : var(--ink);
 
         @media screen and (max-width : 768px) {
             font-size : 8px;
@@ -57,4 +62,30 @@
     100% {
         transform : rotate(-360deg) scale(1);
     }
+}
+
+
+/* PART OF THE PATTERN ======================================================
+   The whole game is telling one movement apart from ordinary traffic, so the
+   transactions belonging to the live pattern are the ones that carry weight —
+   full strength, a lime rim and a trace of lime under them, against neighbours
+   held back at 0.72.
+
+   One shadow and one border. The separation comes from the contrast with
+   everything around it, not from the effect itself. */
+.transaction-card.is-pattern {
+    opacity      : 1;
+    border-color : rgba(190, 242, 100, 0.55);
+    box-shadow   : 0 0 20px -6px rgba(190, 242, 100, 0.45);
+
+    p { color : var(--lime-text); }
+}
+
+/* A bounced payment is a mule refusing money it cannot take — suspicious, so it
+   keeps red and outranks the lime */
+.transaction-card.bounced.is-pattern {
+    border-color : var(--bad);
+    box-shadow   : 0 0 20px -6px rgba(239, 68, 68, 0.45);
+
+    p { color : #FCA5A5; }
 }

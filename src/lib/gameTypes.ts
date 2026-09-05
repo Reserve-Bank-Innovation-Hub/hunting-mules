@@ -14,9 +14,12 @@ export interface NodeData {
     onNodeClick    ? : (nodeId : string, isMule : boolean) => void;
 }
 
-// A pattern intro takes the clock off, so the game sits in "intro" while one is up.
-// When the clock runs out the game goes to "edd", the field visits, and only then to
-// "finished", which is when the result screen rises and the score is written.
+// The game opens straight onto the first pattern's intro — the player is already
+// at the desk, and the map is not shown until there is a reason to be on it. A
+// pattern intro takes the clock off, so the game sits in "intro" while one is up.
+// When the clock runs out the game goes to "edd", the field visits, which is where
+// the map is introduced, and only then to "finished", which is when the result
+// screen rises and the score is written.
 export type GamePhase = "intro" | "playing" | "edd" | "finished";
 
 export interface TransactionInstance {

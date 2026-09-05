@@ -38,7 +38,9 @@ export const useGameState = () : UseGameStateReturn => {
     const mulesFoundCount = caughtMules.size;
 
     // THE ROUND =======================================================================================================
-    // One continuous round. It opens on the first pattern's intro, which is not on the clock.
+    // One continuous round. It opens on the first pattern's intro, which is not on
+    // the clock — the player is already at the desk, and the map is not introduced
+    // until the round sends them out into the field.
     const [ phase, setPhase ] = useState<GamePhase>("intro");
     const [ timeLeft, setTimeLeft ] = useState(ROUND_DURATION);
     const [ unlockedPatterns, setUnlockedPatterns ] = useState(0);

@@ -1,3 +1,7 @@
+// SECTION 1 — LANDING PAGE. The mule, the wordmark and "click anywhere to start".
+// Section names are a shared vocabulary for discussing the game; see CLAUDE.md.
+// They are never shown to a player.
+
 // REACT CORE ==========================================================================================================
 import React from "react";
 

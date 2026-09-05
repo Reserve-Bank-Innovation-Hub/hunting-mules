@@ -1,14 +1,21 @@
 /* A thin full-width strip between the numbers and the board. Deliberately short:
    every pixel of height here is a pixel the play area loses, and the play area is
-   what decides how many accounts fit on screen. */
+   what decides how many accounts fit on screen.
+
+   The strip is a moulded bar now rather than a flat band of beige. Its sizing,
+   its pulse and the way it steps its type down for the longer reminders are
+   unchanged — only what it is made of. */
 .pattern-strip {
     display          : flex;
     align-items      : center;
     /* Roomier gap so the pattern's name and the instruction read as two things */
     gap              : clamp(18px, 2.4vw, 36px);
     width            : 100%;
-    padding          : clamp(8px, 1.02vh, 14px) clamp(12px, 1.5vw, 22px);
-    background-color : var(--amber-light20);
+    padding          : clamp(8px, 1.02vh, 14px) clamp(14px, 1.6vw, 24px);
+    border-radius    : 16px;
+    border           : 1px solid var(--hairline);
+    background-color : var(--panel);
+    box-shadow       : none;
     overflow         : hidden;
 }
 
@@ -22,7 +29,7 @@
 
 @keyframes pattern-strip-pulse {
     0%   { transform : scale(1);     filter : brightness(1); }
-    28%  { transform : scale(1.015); filter : brightness(1.14); }
+    28%  { transform : scale(1.015); filter : brightness(1.06); }
     100% { transform : scale(1);     filter : brightness(1); }
 }
 
@@ -34,16 +41,19 @@
     padding          : calc(clamp(6px, 0.75vh, 11px) * var(--strip-scale, 1))
                        calc(clamp(14px, 1.9vw, 28px) * var(--strip-scale, 1));
     border-radius    : 999px;
-    /* The red the rest of the game uses — the pattern cue lines, TIME'S UP, the
-       stolen figure — so the pattern's name reads as the thing to watch for */
-    background-color : var(--red);
-    /* White on red, the same as the game's red button — and it clears the contrast
-       bar on this fill where the cream did not quite */
-    color            : var(--white);
-    font-family      : "Minecraft", sans-serif;
+    /* The red the rest of the game uses — the pattern cue lines, the stolen
+       figure, a confirmed freeze — so the pattern's name reads as the thing
+       to watch for */
+    /* Purple, not red. A pattern's name is the system telling the player what to
+       look for — it is not itself a risky or suspicious state, and red that means
+       nothing costs red its meaning where it does. */
+    background-color : var(--primary);
+    color            : var(--primary-ink);
+    box-shadow       : none;
+    font-family      : var(--font-toon);
     font-size        : max(11px, calc(clamp(11px, 2.1vw, 24px) * var(--strip-scale, 1)));
-    font-weight      : 400;
-    letter-spacing   : 0.04em;
+    font-weight      : 800;
+    letter-spacing   : 0.06em;
     white-space      : nowrap;
     line-height      : 1.4;
 }
@@ -52,12 +62,12 @@
 /* Read as one phrase — "LOOK OUT FOR MANY → ONE" — so the two halves are close in
    size. The shape carries a little more weight, not several times more. */
 .pattern-strip-instruction {
-    display     : flex;
-    align-items : baseline;
-    gap         : clamp(12px, 1.7vw, 28px);
-    min-width   : 0;
-    white-space : nowrap;
-    overflow    : hidden;
+    display       : flex;
+    align-items   : baseline;
+    gap           : clamp(12px, 1.7vw, 28px);
+    min-width     : 0;
+    white-space   : nowrap;
+    overflow      : hidden;
     text-overflow : ellipsis;
 }
 
@@ -65,28 +75,86 @@
     flex-shrink    : 0;
     /* A step under the shape beside it — still clearly part of the same phrase, but
        the shape is the thing being taught, so it leads */
-    font-family    : "Minecraft", sans-serif;
+    font-family    : var(--font-toon);
     font-size      : max(10px, calc(clamp(11px, 2.2vw, 24px) * var(--strip-scale, 1)));
-    font-weight    : 400;
-    letter-spacing : 0.02em;
-    /* The same label colour the stat tiles use on this same beige */
-    color          : var(--amber-dark60);
+    font-weight    : 800;
+    letter-spacing : 0.1em;
+    color          : var(--ink-faint);
 }
 
 .pattern-strip-shape {
-    font-family    : "Minecraft", sans-serif;
+    font-family    : var(--font-toon);
     font-size      : max(12px, calc(clamp(13px, 2.75vw, 30px) * var(--strip-scale, 1)));
+    font-weight    : 800;
     letter-spacing : 0.04em;
-    color          : var(--slate-dark60);
+    color          : var(--ink);
 }
 
 /* The pill and the lead give way before the shape does on a narrow screen */
 @media screen and (max-width : 768px) {
-    .pattern-strip             { gap : 12px; padding : 8px 10px; }
+    .pattern-strip             { gap : 12px; padding : 8px 10px; border-radius : 12px; }
     .pattern-strip-pill        { letter-spacing : 0.06em; }
 
     /* Too narrow to hold the longest reminder on one line at a size worth reading,
        so it wraps instead of shrinking away */
     .pattern-strip-instruction { flex-wrap : wrap; white-space : normal; }
     .pattern-strip             { align-items : center; }
+}
+
+
+/* A CASE BRIEFING, NOT A BANNER ============================================
+   Three zones divided by hairlines: which case this is, what to look for, and
+   the same thing drawn. Layout follows the reference; the surfaces, type and
+   colour are the game's own.
+   ========================================================================== */
+
+.pattern-strip-case {
+    display        : flex;
+    flex-direction : column;
+    align-items    : flex-start;
+    gap            : calc(clamp(4px, 0.5vh, 7px) * var(--strip-scale, 1));
+    flex-shrink    : 0;
+}
+
+/* The case number. Quiet — it orders the four patterns, it does not name them. */
+.pattern-strip-no {
+    font-family    : var(--font-toon);
+    font-size      : max(9px, calc(clamp(9px, 1.05vw, 14px) * var(--strip-scale, 1)));
+    font-weight    : 800;
+    letter-spacing : 0.18em;
+    color          : var(--ink-faint);
+}
+
+/* Between the zones only, never on the outside edges */
+.pattern-strip-instruction,
+.pattern-strip-diagram {
+    position : relative;
+}
+
+.pattern-strip-instruction::before,
+.pattern-strip-diagram::before {
+    content     : "";
+    position    : absolute;
+    left        : calc(clamp(18px, 2.4vw, 36px) / -2);
+    top         : 8%;
+    bottom      : 8%;
+    border-left : 1px solid var(--hairline);
+}
+
+.pattern-strip-diagram {
+    display     : flex;
+    align-items : center;
+    flex-shrink : 0;
+    margin-left : auto;
+}
+
+.pattern-shape {
+    display : block;
+    width   : calc(clamp(78px, 9vw, 128px) * var(--strip-scale, 1));
+    height  : auto;
+}
+
+@media screen and (max-width : 768px) {
+    /* The diagram is the first thing to go when there is no room for it */
+    .pattern-strip-diagram { display : none; }
 }

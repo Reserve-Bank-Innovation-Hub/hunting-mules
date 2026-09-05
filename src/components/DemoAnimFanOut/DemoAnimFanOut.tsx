@@ -8,8 +8,10 @@ import { Text } from "fictoan-react";
 import { motion } from "framer-motion";
 
 // ASSETS ==============================================================================================================
-import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { BankMark } from "$components/BankMark/BankMark";
 
 // STYLES ==============================================================================================================
 import "./demo-anim-fan-out.css";
@@ -91,16 +93,23 @@ export const DemoAnimFanOut = ({className} : DemoAnimFanOutProps) => {
             {destinations.map((dest, i) => {
                 const isActive = activeTransactions.includes(i);
                 return (
-                    <img
-                        key={i}
-                        src={isActive ? MuleHeadImage.src : BankIconImage.src}
-                        alt={isActive ? "Mule Account" : "Bank"}
-                        className={`destination-node ${isActive ? "active" : ""}`}
-                        style={{
-                            left : `${dest.leftPct}%`,
-                            top  : `${dest.topPct}%`,
-                        }}
-                    />
+                    isActive ? (
+                        <img
+                            key={i}
+                            src={MuleHeadImage.src}
+                            alt="Mule account"
+                            className="destination-node active"
+                            style={{left : `${dest.leftPct}%`, top : `${dest.topPct}%`}}
+                        />
+                    ) : (
+                        <span
+                            key={i}
+                            className="destination-node bank-disc"
+                            style={{left : `${dest.leftPct}%`, top : `${dest.topPct}%`}}
+                        >
+                            <BankMark />
+                        </span>
+                    )
                 );
             })}
 

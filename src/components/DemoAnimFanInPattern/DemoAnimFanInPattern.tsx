@@ -8,8 +8,10 @@ import { Text } from "fictoan-react";
 import { motion } from "framer-motion";
 
 // ASSETS ==============================================================================================================
-import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { BankMark } from "$components/BankMark/BankMark";
 
 // STYLES ==============================================================================================================
 import "$/styles/demo-anim.css";
@@ -62,15 +64,15 @@ export const DemoAnimFanInPattern = () => {
                  style={{left : "50%", top : "50%"}} />
 
             {satellites.map((satellite, i) => (
-                <img
+                <span
                     key={i}
-                    src={BankIconImage.src}
-                    alt="Bank account"
-                    className={`satellite-node ${
+                    className={`satellite-node bank-disc ${
                         (step === 0 && PAYERS.includes(i)) || (step === 2 && i === ONWARD) ? "active" : ""
                     }`}
                     style={{left : `${satellite.leftPct}%`, top : `${satellite.topPct}%`}}
-                />
+                >
+                    <BankMark />
+                </span>
             ))}
 
             {/* Many credits converging */}

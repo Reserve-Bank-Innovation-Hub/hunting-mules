@@ -1,3 +1,16 @@
+/* SECTION 3 — PATTERN ROUNDS: the board the accounts are laid out on.
+   See CLAUDE.md for the five sections. */
+
+/* INSIDE THE BRANCH ==========================================================
+   The dashboard is a room in the world the player just walked in from, so it
+   is painted like one: a cool interior, warm light falling from the ceiling,
+   and the board itself a desk lit under it.
+
+   Not one line of the layout has changed. The grid, its four rows and the way
+   the play area claims what is left are exactly what they were — this file
+   only decides what the room is made of.
+   ========================================================================== */
+
 #game-page {
     display               : grid;
     grid-template-columns : 1fr;
@@ -6,7 +19,14 @@
     height                : 100vh;
     gap                   : 16px;
     padding               : 24px;
-    background-color      : var(--grey-dark80);
+    font-family           : var(--font-toon);
+    color                 : var(--ink);
+
+    /* The room. A warm pool of light at the top where the player came in, going
+       cool and deep towards the floor. */
+    /* Inside the branch is the same near-black field as the network outside it */
+    background            : var(--bg);
+    background-attachment : fixed;
 
     @media screen and (max-width : 768px) {
         gap     : 8px;
@@ -18,8 +38,23 @@
         min-height : 0;   /* Never let the score strip squeeze the network */
     }
 
-    #play-area .card {
-        position : relative;
+    /* THE DESK ////////////////////////////////////////////////////////////// */
+    /* The board the accounts sit on: a dark plate with a hairline, like every
+       other panel in the game. Nothing raised, nothing lit.
+
+       Matched on the child element rather than a class — Fictoan's Card renders
+       its own utility classes here and does not carry a .card of its own, so a
+       .card selector silently matched nothing and the board stayed cream. */
+    #play-area > div {
+        position         : relative;
+        border           : 1px solid var(--hairline);
+        border-radius    : 18px;
+        /* The field, not a panel. On --panel the board read as a blue plate laid
+           on the page; the hairline is enough to bound it. */
+        background-color : var(--bg);
+        background-image : none;
+        box-shadow       : none;
+        overflow         : hidden;
     }
 
     /* PLAY AREA //////////////////////////////////////////////////////////// */
@@ -34,7 +69,7 @@
     }
 
     #play-area .react-flow__renderer {
-        border-radius : var(--global-border-radius);
+        border-radius : 18px;
     }
 
     p, h6 {

@@ -1,0 +1,158 @@
+/* INSTRUCTION CARDS ==========================================================
+   Every card that explains something or asks for a decision is this component:
+   the Home Page brief, all four 4 Pattern Identification tutorials, the field
+   brief on the World Map, and the Investigation Cards.
+
+   They were designed one at a time and had drifted — four corner radii, three
+   paddings, two type scales. This is the single definition. A card that needs
+   to be different sets a variable, not a new rule.
+
+   THE STRUCTURE, in this order and only this order:
+
+       .icard-label     CONTEXT LABEL     what kind of thing this is
+       .icard-title     SHORT EXPLANATION the one sentence that matters
+       .icard-body                        at most a line or two more
+       .icard-visual    RELEVANT VISUAL   optional
+       .icard-actions   ONE CLEAR ACTION  one button, two only for a verdict
+       .icard-foot                        the quiet aside, optional
+
+   Semi-transparent on purpose: what a card sits over is the thing it is
+   talking about, and the player should be able to see it. The blur is what
+   keeps it readable — enough to separate the card from the board behind it,
+   not enough to be an effect in its own right.
+   ========================================================================== */
+
+.icard {
+    --icard-pad    : clamp(22px, 3vh, 40px);
+    --icard-gap    : clamp(12px, 1.6vh, 20px);
+    --icard-radius : 18px;
+
+    position         : relative;
+    display          : flex;
+    flex-direction   : column;
+    align-items      : center;
+    gap              : var(--icard-gap);
+    padding          : var(--icard-pad);
+    border           : 1px solid var(--hairline);
+    border-radius    : var(--icard-radius);
+    background-color : rgba(11, 18, 32, 0.88);
+    backdrop-filter  : blur(14px);
+    box-shadow       : 0 24px 60px -28px rgba(0, 0, 0, 0.85);
+    text-align       : center;
+    font-family      : var(--font-toon);
+    color            : var(--ink);
+}
+
+/* CONTEXT LABEL ///////////////////////////////////////////////////////////// */
+/* What kind of card this is. Always present, always the same treatment: it is
+   how the player knows a tutorial from a decision without reading either. */
+.icard-label {
+    padding          : clamp(6px, 0.8vh, 9px) clamp(16px, 2vw, 24px);
+    border           : 1px solid var(--hairline);
+    border-radius    : 999px;
+    background-color : rgba(3, 7, 18, 0.6);
+    font-size        : clamp(10px, 1.1vw, 14px);
+    font-weight      : 800;
+    letter-spacing   : 0.2em;
+    line-height      : 1;
+    white-space      : nowrap;
+    color            : var(--ink-soft);
+}
+
+/* The label can sit astride the top border instead, where the card has room */
+.icard.has-tab {
+    padding-top : calc(var(--icard-pad) + 10px);
+}
+
+.icard.has-tab > .icard-label {
+    position         : absolute;
+    top              : 0;
+    left             : 50%;
+    transform        : translate(-50%, -50%);
+    background-color : var(--bg);
+}
+
+/* SHORT EXPLANATION ///////////////////////////////////////////////////////// */
+.icard-title {
+    margin         : 0;
+    max-width      : 30ch;
+    font-size      : clamp(19px, 2.3vw, 30px) !important;
+    font-weight    : 800;
+    letter-spacing : 0.01em;
+    line-height    : 1.3;
+    color          : var(--ink) !important;
+}
+
+.icard-body {
+    margin      : 0;
+    max-width   : 46ch;
+    font-size   : clamp(14px, 1.65vw, 21px) !important;
+    font-weight : 500;
+    line-height : 1.5;
+    color       : var(--ink-soft) !important;
+}
+
+/* The one line in the body that carries the instruction, rather than context */
+.icard-body.is-key {
+    font-weight : 700;
+    color       : var(--ink) !important;
+}
+
+/* RELEVANT VISUAL /////////////////////////////////////////////////////////// */
+.icard-visual {
+    width           : 100%;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    padding         : clamp(8px, 1.2vh, 16px) 0;
+}
+
+/* A rule between the explanation and whatever the card closes with */
+.icard-rule {
+    width            : 100%;
+    height           : 1px;
+    background-color : var(--hairline);
+}
+
+/* ONE CLEAR ACTION ////////////////////////////////////////////////////////// */
+.icard-actions {
+    display         : flex;
+    flex-wrap       : wrap;
+    justify-content : center;
+    gap             : clamp(10px, 1.4vw, 18px);
+    margin-top      : clamp(2px, 0.5vh, 6px);
+}
+
+/* THE QUIET ASIDE /////////////////////////////////////////////////////////// */
+/* Never an instruction — only the thing a player may want to know and may
+   equally ignore. Kept small and grey so it reads last. */
+.icard-foot {
+    font-size      : clamp(11px, 1.2vw, 15px);
+    font-weight    : 600;
+    letter-spacing : 0.04em;
+    color          : var(--ink-faint);
+}
+
+/* SIZES ///////////////////////////////////////////////////////////////////// */
+/* Three widths, because there are three jobs: a tutorial to read, a brief to
+   act on, and a file to decide on. Nothing else sets its own width. */
+.icard.is-narrow { width : min(560px, 90vw); }
+.icard.is-medium { width : min(680px, 92vw); }
+.icard.is-wide   { width : min(860px, 92vw); }
+
+/* WHAT A CARD SITS ON /////////////////////////////////////////////////////// */
+/* The screen behind stays visible — it is what the card is about. Dark enough
+   to hold the card, light enough that the board still reads through it. */
+.icard-layer {
+    position        : fixed;
+    inset           : 0;
+    z-index         : 9000;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    padding         : clamp(16px, 3vh, 40px);
+    overflow-y      : auto;
+    background      : rgba(1, 4, 9, 0.58);
+    backdrop-filter : blur(3px);
+    font-family     : var(--font-toon);
+}

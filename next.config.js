@@ -3,6 +3,10 @@ const nextConfig = {
     images         : {
         unoptimized : true,
     },
+    // The dev overlay sits in the bottom-left corner of every screen. It never
+    // ships, but this is a kiosk that gets photographed and demoed off a dev
+    // server, so it is off here too.
+    devIndicators  : false,
     async redirects() {
         return [
             {

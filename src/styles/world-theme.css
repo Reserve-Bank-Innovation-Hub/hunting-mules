@@ -1,0 +1,153 @@
+/* THE GAME'S PALETTE =========================================================
+   One place for every colour and surface, so the network map, the branch's
+   dashboard and every panel in between are demonstrably the same product.
+
+   THE SYSTEM
+     A near-black field. Everything that holds information is a dark panel with
+     a hairline round it — no fills, no moulding, no drop shadows doing the work
+     an edge should do. Type is near-white on it, with a muted grey for anything
+     secondary. Colour is reserved: it belongs to the six transit lines, and it
+     appears only where it means something.
+
+   Imported last in globals.css so it wins over both Fictoan themes.
+   ========================================================================== */
+
+.theme-dark, .theme-light {
+    /* TYPE ---------------------------------------------------------------- */
+    /* A neutral grotesque. A transit diagram is set in one, and the rounded
+       face the toy-town map used reads as a different product entirely. All
+       system faces: a kiosk cannot be made to wait on a font download. */
+    --font-toon    : ui-sans-serif, -apple-system, "Segoe UI", Roboto,
+                     "Helvetica Neue", Arial, sans-serif;
+
+    --font-sans-serif       : var(--font-toon);
+    --heading-font          : var(--font-toon);
+    --paragraph-font        : var(--font-toon);
+
+    --global-border-radius  : 16px;
+    --heading-line-height   : 1.2;
+    --paragraph-line-height : 1.5;
+
+    /* THE FIELD ----------------------------------------------------------- */
+    --bg             : #030712;   /* Deep navy */
+    --bg-deep        : #010409;
+    --bg-lift        : #111827;
+
+    /* PANELS -------------------------------------------------------------- */
+    /* A panel is a dark plate with a hairline. That hairline is the only edge
+       in the system — nothing here is moulded or raised. */
+    --panel          : #0B1220;
+    --panel-warm     : #111827;
+    --panel-edge     : rgba(245, 245, 245, 0.10);
+    --panel-shadow   : rgba(0, 0, 0, 0.6);
+    --hairline       : rgba(245, 245, 245, 0.10);
+
+    /* INK ----------------------------------------------------------------- */
+    --ink            : #F5F5F5;   /* White */
+    --ink-soft       : #9CA3AF;   /* Grey */
+    /* Lifted off the palette's own grey: #6B7280 is 3.87:1 on a panel, and the
+       leaderboard's rank numbers are real content, not decoration. */
+    --ink-faint      : #7B8494;
+    --ink-invert     : #030712;   /* On a lime or teal pill */
+
+    /* THE PRIMARY ---------------------------------------------------------- */
+    /* Purple is 1.84:1 against the field — it cannot draw a line, set a label
+       or mark anything read against the background. White on it is 10:1, so it
+       is a colour to fill WITH, never to draw IN. Every use below is a solid
+       block of it carrying white type. */
+    --primary        : #4C1D95;
+    --primary-ink    : #F5F5F5;
+    /* The same purple let down onto the field, for the forty account discs. Solid,
+       they read as a wall of colour; this thin, the board shows through and the
+       white facade on each one still clears 16:1 against the blend. Two stops so
+       the disc catches a little light at the top, which is what makes it read as
+       something to press rather than a flat dot. */
+    --primary-wash     : rgba(124, 58, 237, 0.30);
+    --primary-wash-low : rgba(76, 29, 149, 0.22);
+    --primary-rim      : rgba(139, 92, 246, 0.34);
+
+    /* The second disc colour. Indigo rather than blue: it sits between the
+       primary purple and true blue, so the two read as one system rather than
+       two palettes — and it is far enough from the teal on the pattern cue
+       lines that a disc is never mistaken for a connection. */
+    --node-alt-wash     : rgba(67, 56, 202, 0.30);
+    --node-alt-wash-low : rgba(49, 46, 129, 0.22);
+    --node-alt-rim      : rgba(129, 140, 248, 0.34);
+
+    /* THE LINES ----------------------------------------------------------- */
+    /* The network's routes. Named for what they are now: the palette has four
+       chromatic colours, so the three that serve a bank take red, lime and teal,
+       and the two that only make the map read as a network take the violets. A
+       route is a graphic, which needs 3:1 — violet clears it at 3.53. */
+    --line-red       : #EF4444;
+    --line-lime      : #BEF264;
+    --line-teal      : #2DD4BF;
+    --line-violet    : #7C3AED;
+    --line-lilac     : #A78BFA;
+    --line-grey      : #374151;
+
+    /* THE SAME COLOURS, FOR TYPE ------------------------------------------ */
+    /* Unlike the old palette, these clear 4.5:1 against the field as they are —
+       only red is lifted, and only because 5.35:1 is thin for a 12px caption. */
+    --red-text       : #F87171;
+    --lime-text      : #BEF264;
+    --teal-text      : #2DD4BF;
+
+    /* SIGNALS ------------------------------------------------------------- */
+    /* Drawn from the lines, so a caught account and bank 1 are the same red */
+    --good           : var(--line-lime);
+    --good-dark      : #84CC16;
+    --bad            : var(--line-red);
+    --bad-dark       : #B91C1C;
+    --alert          : var(--line-lime);
+    --alert-dark     : #84CC16;
+
+    /* THE THREE BANKS ----------------------------------------------------- */
+    /* Each is its own line, and its pale tint is only ever a panel wash */
+    --house-1        : var(--line-red);
+    --house-1-dark   : #B91C1C;
+    --house-1-wall   : rgba(239, 68, 68, 0.14);
+
+    --house-2        : var(--line-lime);
+    --house-2-dark   : #84CC16;
+    --house-2-wall   : rgba(190, 242, 100, 0.12);
+
+    --house-3        : var(--line-teal);
+    --house-3-dark   : #14B8A6;
+    --house-3-wall   : rgba(45, 212, 191, 0.12);
+
+    /* THE BRANCH ---------------------------------------------------------- */
+    /* Inside the bank is the same field as outside it */
+    --interior-high  : #070C18;
+    --interior-low   : #010409;
+    --desk           : #0B1220;
+    --desk-edge      : rgba(245, 245, 245, 0.08);
+
+    /* PEOPLE -------------------------------------------------------------- */
+    --skin-1         : #E8B183;
+    --skin-2         : #C58750;
+    --skin-3         : #8E5730;
+
+    /* HOW THINGS SIT ------------------------------------------------------ */
+    /* No lip. The old palette raised every surface on a hard bottom edge; this
+       one is flat, and an edge is a hairline. --lip is kept at zero so the
+       rules that still reference it resolve to nothing rather than breaking. */
+    --lip            : 0 0 0;
+    --drop           : 0 6px 18px -8px rgba(0, 0, 0, 0.6);
+    --drop-tall      : 0 18px 44px -14px rgba(0, 0, 0, 0.75);
+}
+
+/* Fictoan paints its own furniture from these */
+.theme-dark, .theme-light {
+    --heading-text-colour                 : var(--ink);
+    --card-bg                             : var(--panel);
+    --card-border                         : var(--hairline);
+
+    --button-primary-bg-default           : var(--primary);
+    --button-primary-border-default        : transparent;
+    --button-primary-border-width-default : 0;
+    --button-primary-text-default         : var(--primary-ink);
+    --button-primary-bg-hover             : var(--primary);
+    --button-primary-border-hover         : transparent;
+    --button-primary-border-width-hover   : 0;
+}

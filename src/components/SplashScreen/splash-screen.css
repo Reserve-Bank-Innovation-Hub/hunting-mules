@@ -1,10 +1,13 @@
+/* SECTION 1 — LANDING PAGE. See CLAUDE.md for the five sections. */
+
 .splash-screen-overlay {
     position         : fixed;
     top              : 0;
     left             : 0;
     width            : 100vw;
     height           : 100vh;
-    background-color : rgba(0, 0, 0, 0.9);
+    background : rgba(1, 4, 9, 0.97);
+    font-family : var(--font-toon);
     display          : flex;
     align-items      : center;
     justify-content  : center;

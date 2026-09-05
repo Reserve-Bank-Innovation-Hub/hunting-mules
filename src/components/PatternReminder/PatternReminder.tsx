@@ -7,6 +7,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { PATTERNS } from "$lib/roundConfig";
 import { PATTERN_REMINDER_INTERVAL } from "$lib/gameConfig";
 
+import { PatternShape } from "./PatternShape";
+
 // STYLES ==============================================================================================================
 import "./pattern-reminder.css";
 
@@ -66,11 +68,23 @@ export const PatternReminder = ({unlockedPatterns} : PatternReminderProps) => {
             className={`pattern-strip ${isPulsing ? "is-pulsing" : ""}`}
             style={{"--strip-scale" : scale} as React.CSSProperties}
         >
-            <span className="pattern-strip-pill">{pattern.title}</span>
+            {/* WHICH CASE ================================================================ */}
+            <span className="pattern-strip-case">
+                <span className="pattern-strip-no">
+                    PATTERN {String(unlockedPatterns).padStart(2, "0")}
+                </span>
+                <span className="pattern-strip-pill">{pattern.title}</span>
+            </span>
 
+            {/* WHAT TO LOOK FOR ========================================================== */}
             <span className="pattern-strip-instruction">
                 <span className="pattern-strip-lead">{LEAD}</span>
                 <span className="pattern-strip-shape">{pattern.reminder}</span>
+            </span>
+
+            {/* THE SAME THING, DRAWN ===================================================== */}
+            <span className="pattern-strip-diagram">
+                <PatternShape behaviour={pattern.behaviour} />
             </span>
         </div>
     );

@@ -2,20 +2,20 @@
    and a mule receiving money no longer flashes red — that revealed the answer. */
 .node-ripple {
     position       : absolute;
-    border         : 2px solid var(--slate-light40);
+    border         : 2px solid var(--ink-faint);
     border-radius  : 50%;
     pointer-events : none;
     opacity        : 0.45;
 
     /* Money turned away at an account the player has already caught */
     &.locked {
-        border-color : var(--amber);
+        border-color : var(--alert);
         opacity      : 0.85;
     }
 
     /* Reserved for the moment of a catch */
     &.mule-receiving {
-        border-color : var(--red);
+        border-color : var(--bad);
         opacity      : 0.9;
     }
 }

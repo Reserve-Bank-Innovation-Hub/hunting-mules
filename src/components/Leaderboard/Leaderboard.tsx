@@ -62,7 +62,11 @@ export const Leaderboard = ({
     return (
         <div className={`leaderboard is-${variant}`}>
             {/* The result screen carries its own heading on the panel frame */}
-            {!isPanel && <span className="leaderboard-title">LEADERBOARD</span>}
+            {!isPanel && (
+                <span className="leaderboard-title">
+                    <i className="leaderboard-cup" aria-hidden="true" />LEADERBOARD
+                </span>
+            )}
 
             {rows.length === 0 ? (
                 <span className="leaderboard-empty">

@@ -1,7 +1,7 @@
 "use client";
 
 // REACT CORE ==========================================================================================================
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 // UI ==================================================================================================================
@@ -17,14 +17,13 @@ import { Leaderboard } from "$components/Leaderboard/Leaderboard";
 import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
 // The two pixel icons, with their baked-in cream background cleared and the empty
 // margin trimmed, so they sit on the result blocks rather than in a paler square
-import TargetIcon from "../../assets/images/icon-target.png";
-import TrophyIcon from "../../assets/images/icon-trophy.png";
 // The branch, for the verdicts the player gave on the field visits
-import BankIcon from "../../assets/images/bank-icon.png";
 
 // LIB =================================================================================================================
 import { EDD_VISITS } from "$lib/gameConfig";
 import { RankedEntry } from "$lib/leaderboard";
+
+import { CaughtMark, PositionMark, VerdictMark } from "$components/ResultIcons/ResultIcons";
 
 // STYLES ==============================================================================================================
 import "./score-bar.css";
@@ -112,13 +111,44 @@ export const ScoreBar = ({
     position,
     isConnected,
 } : ScoreBarProps) => {
+    // HOW MANY PLACES FIT ============================================================================================
+    // The board was pinned at four rows on a screen with room for three times
+    // that, so most of the panel was empty and the player could not see who else
+    // was on it. Measured from the space the board is actually given.
+    const boardRef = useRef<HTMLDivElement>(null);
+    const [ boardRows, setBoardRows ] = useState(4);
+
+    useEffect(() => {
+        const frame = boardRef.current;
+        if (!frame || typeof ResizeObserver === "undefined") {
+            return;
+        }
+        const measure = () => {
+            // Everything above the rows — the heading and the podium — has to come
+            // off the top before the remainder can be divided into places.
+            const used = Array.from(frame.children)
+                .filter(child => !child.classList.contains("leaderboard"))
+                .reduce((total, child) => total + (child as HTMLElement).offsetHeight, 0);
+            const row  = frame.querySelector(".leaderboard-row") as HTMLElement | null;
+            const step = (row?.offsetHeight ?? 46) + 6;
+            const room = frame.clientHeight - used - 8;
+            setBoardRows(Math.max(4, Math.min(16, Math.floor(room / step))));
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(frame);
+        return () => observer.disconnect();
+    }, [ rows.length ]);
+
     if (!isFinished) {
         return (
             <div className="score-bar">
                 {/* Just the standings. The catch count was alongside them, saying the
                     same thing the player's own highlighted row already says. */}
                 <div className="score-bar-playing">
-                    <span className="score-bar-playing-title">LEADERBOARD</span>
+                    <span className="score-bar-playing-title">
+                        <i className="leaderboard-cup" aria-hidden="true" />LEADERBOARD
+                    </span>
 
                     {/* The same tiles as the results screen, so the board a player
                         watches while playing is the board they end on */}
@@ -171,7 +201,7 @@ export const ScoreBar = ({
                     <div className="score-bar-figure">
                         <span className="score-bar-figure-label">MULES CAUGHT</span>
                         <div className="score-bar-figure-row">
-                            <img className="score-bar-figure-icon" src={TargetIcon.src} alt="" />
+                            <CaughtMark className="score-bar-figure-icon" />
                             <span className="score-bar-figure-value">{mulesFoundCount}</span>
                         </div>
                     </div>
@@ -179,7 +209,7 @@ export const ScoreBar = ({
                     <div className="score-bar-figure">
                         <span className="score-bar-figure-label">LEADERBOARD POSITION</span>
                         <div className="score-bar-figure-row">
-                            <img className="score-bar-figure-icon" src={TrophyIcon.src} alt="" />
+                            <PositionMark className="score-bar-figure-icon" />
                             <span className="score-bar-figure-value">
                                 {/* Only ever a real position — a dash rather than an
                                     invented number if the board could not be reached */}
@@ -194,7 +224,7 @@ export const ScoreBar = ({
                         <div className="score-bar-figure">
                             <span className="score-bar-figure-label">EDD VERDICTS</span>
                             <div className="score-bar-figure-row">
-                                <img className="score-bar-figure-icon" src={BankIcon.src} alt="" />
+                                <VerdictMark className="score-bar-figure-icon" />
                                 <span className="score-bar-figure-value">
                                     {eddCorrect}/{EDD_VISITS}
                                 </span>
@@ -208,12 +238,12 @@ export const ScoreBar = ({
                     buttons already carry their own edge */}
                 <div className="score-bar-result-actions">
                     <Link href={playAgainHref}>
-                        <Button className="eightbit-btn failure">PLAY AGAIN</Button>
+                        <Button className="toon-btn failure">PLAY AGAIN</Button>
                     </Link>
 
                     {/* The same destination the original game's result modals used */}
                     <a href={LEARN_MORE_URL} target="_blank" rel="noreferrer">
-                        <Button className="eightbit-btn">LEARN MORE</Button>
+                        <Button className="toon-btn">LEARN MORE</Button>
                     </a>
                 </div>
 
@@ -222,9 +252,11 @@ export const ScoreBar = ({
                     edge — so it reads as another panel from the same game. The player's
                     position sits on the frame itself rather than in a block of its own,
                     which is what ties their result to the board underneath it. */}
-                <div className="score-bar-board">
+                <div className="score-bar-board" ref={boardRef}>
                     <div className="score-bar-board-head">
-                        <span className="score-bar-board-title">LEADERBOARD</span>
+                        <span className="score-bar-board-title">
+                            <i className="leaderboard-cup" aria-hidden="true" />LEADERBOARD
+                        </span>
                     </div>
 
                     <Podium rows={rows} highlightPosition={position} />
@@ -234,7 +266,7 @@ export const ScoreBar = ({
                     {rows.length > 3 && (
                         <Leaderboard
                             rows={rows.slice(3)}
-                            visibleRows={4}
+                            visibleRows={boardRows}
                             isConnected={isConnected}
                             variant="blocks"
                             highlightPosition={position}

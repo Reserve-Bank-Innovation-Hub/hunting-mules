@@ -1,54 +1,211 @@
-/* The whole composition is centred in the viewport rather than stacked at the top,
-   which is what left the lower two thirds of a tall kiosk screen empty. It sits a
-   little above true centre — optically centred reads as deliberate where a block
-   pinned dead in the middle reads as slightly low. */
-#page-home {
-    display        : flex;
-    min-height     : 100vh;
-    padding-bottom : 6vh;
-    background     : #000810;
+/* SECTION 2 — HOME PAGE. See CLAUDE.md for the five sections. */
 
-    /* Centred with auto margins rather than align-items, so that on a window too
-       short to hold the block it overflows downwards and stays reachable instead of
-       being clipped off the top */
-    > * {
-        width  : 100%;
-        margin : auto;
-    }
+/* THE TITLE SCREEN ===========================================================
+   Stacked from the top rather than floated in the middle. On a 1920-tall kiosk
+   a centred block leaves a third of the screen empty above and below it and
+   reads as a page that failed to load; anchored to the top, the same content
+   reads as a sequence the player works down.
+
+   The order is the argument: what is happening → a rule → the one instruction
+   → the three things they will be doing → their name → START.
+   ========================================================================== */
+#page-home {
+    position    : relative;
+    min-height  : 100vh;
+    padding     : clamp(28px, 3.4vh, 68px) 0 clamp(28px, 3vh, 60px);
+    overflow-x  : hidden;
+    font-family : var(--font-toon);
+
+    /* The same near-black field as the network, so the title screen and the map
+       behind the START button are demonstrably the same product. */
+    background  : var(--bg);
+
+    > * { width : 100%; }
 
     #mule-hunter-logo {
-        width : 600px;
+        width : min(680px, 78vw);
     }
+}
 
-    #hero-background-video {
-        width      : 100%;
-        height     : 100%;
-        object-fit : cover;
-        clip-path  : inset(0 0 22% 0);
-    }
+#page-home > * { position : relative; z-index : 1; }
+
+#page-home #logo-holder {
+    margin-bottom : clamp(20px, 2.8vh, 56px);
 }
 
 /* CONTEXT SETTING /////////////////////////////////////////////////////////// */
 /* Deliberately sparse — this is a kiosk, the player should be moving in seconds */
 #page-home #context-setting {
-    max-width : 680px;
+    max-width : 760px;
     margin    : 0 auto;
 }
 
-/* One rhythm down the block. The three lines used to sit almost touching, which is
-   what made a short piece of copy feel like a wall of text. */
-#page-home #context-setting > * + * {
-    margin-top : 32px;
-}
-
-#page-home #context-setting p,
-#page-home #context-setting h6 {
-    line-height   : 1.6;
+#page-home #context-setting p {
+    line-height   : 1.55;
     margin-bottom : 0;
 }
 
-#page-home #logo-holder {
-    margin-bottom : 48px;
+/* THE BRIEF ///////////////////////////////////////////////////////////////// */
+/* The card is .icard (styles/instruction-card.css). This page only widens it,
+   opens the padding out and lifts the type a step: it is read standing up, at
+   arm's length, on a screen a metre tall. */
+#page-home .home-brief {
+    --icard-pad : clamp(28px, 3.8vh, 52px);
+    --icard-gap : clamp(14px, 1.9vh, 24px);
+
+    width  : min(940px, 92vw);
+    margin : clamp(20px, 2.6vh, 50px) auto 0;
+
+    /* THE PRIMARY. The one thing on this page that is read first, and the only
+       thing set at this size. */
+    .icard-title {
+        max-width      : 30ch;
+        font-size      : clamp(23px, 3.3vw, 46px) !important;
+        line-height    : 1.22;
+        letter-spacing : 0.01em;
+        text-transform : uppercase;
+    }
+
+    /* THE SUPPORT. What the instruction is about — deliberately a long step down
+       from it, so the two are read in order rather than at once. */
+    .icard-body {
+        max-width   : 52ch;
+        font-size   : clamp(14px, 1.65vw, 22px) !important;
+        font-weight : 500;
+    }
+}
+
+/* The half of the instruction that names the thing being looked for. Lime is
+   what the game means by detected, and it clears 15:1 on this field. */
+#page-home .shout-accent {
+    color : var(--lime-text) !important;
+}
+
+/* THE ROUND'S TWO FACTS ///////////////////////////////////////////////////// */
+/* A spec, not more of the sentence above: split by a hairline of their own. */
+#page-home .band-stats {
+    display         : flex;
+    justify-content : center;
+    align-items     : stretch;
+
+    span {
+        display        : flex;
+        align-items    : center;
+        gap            : clamp(8px, 1vw, 12px);
+        padding        : clamp(4px, 0.6vh, 8px) clamp(20px, 2.8vw, 40px);
+        font-size      : clamp(12px, 1.4vw, 18px);
+        font-weight    : 800;
+        letter-spacing : 0.14em;
+        color          : var(--ink-soft);
+    }
+
+    /* Inset, so it divides the two facts without touching the card's own edges */
+    span + span { position : relative; }
+
+    span + span::before {
+        content     : "";
+        position    : absolute;
+        left        : 0;
+        top         : 12%;
+        bottom      : 12%;
+        border-left : 1px solid var(--hairline);
+    }
+}
+
+#page-home .stat-icon {
+    flex-shrink         : 0;
+    width               : clamp(16px, 1.8vw, 24px);
+    aspect-ratio        : 1;
+    background-repeat   : no-repeat;
+    background-position : center;
+    background-size     : 100%;
+}
+
+#page-home .stat-icon.is-clock {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%239CA3AF' stroke-width='1.9'/%3E%3Cpath d='M12 6.6V12l3.9 2.4' fill='none' stroke='%239CA3AF' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+#page-home .stat-icon.is-stack {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%239CA3AF' stroke-width='1.9' stroke-linejoin='round'%3E%3Cpath d='M12 2.9 21.4 8 12 13.1 2.6 8Z'/%3E%3Cpath d='m3.4 12.4 8.6 4.7 8.6-4.7'/%3E%3Cpath d='m3.4 16.7 8.6 4.7 8.6-4.7'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* THE ERRAND, IN ORDER ////////////////////////////////////////////////////// */
+/* Three steps of one job. The dashed run between them is set from the disc's own
+   size, so the line always meets the discs on their centre line however the
+   clamps resolve — see --step-disc below. */
+#page-home #home-steps {
+    /* Third tier. These were nearly as loud as the instruction above them, which
+       is most of why the page had no hierarchy — same words, three times the
+       area. Roughly two thirds the size they were. */
+    --step-disc : clamp(46px, 6.2vw, 78px);
+    --step-num  : clamp(10px, 1.2vw, 15px);
+    --step-gap  : clamp(9px, 1.2vh, 16px);
+
+    display               : grid;
+    grid-template-columns : repeat(3, 1fr);
+    align-items           : start;
+    max-width             : 720px;
+    margin                : clamp(26px, 3.6vh, 74px) auto 0;
+    padding               : 0;
+    list-style            : none;
+
+    li {
+        position       : relative;
+        display        : flex;
+        flex-direction : column;
+        align-items    : center;
+        gap            : var(--step-gap);
+        padding        : 0 clamp(8px, 1.4vw, 20px);
+        text-align     : center;
+    }
+
+    /* Reaches from this step's disc to the next one's, on their shared centre
+       line: number height + the gap under it + half a disc */
+    li:not(:last-child)::after {
+        content    : "";
+        position   : absolute;
+        top        : calc(var(--step-num) + var(--step-gap) + var(--step-disc) / 2);
+        left       : calc(50% + var(--step-disc) / 2 + clamp(10px, 1.2vw, 18px));
+        right      : calc(var(--step-disc) / 2 - 50% + clamp(10px, 1.2vw, 18px));
+        border-top : 1px dashed var(--hairline);
+    }
+
+    .step-num {
+        font-size            : var(--step-num);
+        line-height          : 1;
+        font-weight          : 800;
+        letter-spacing       : 0.1em;
+        font-variant-numeric : tabular-nums;
+        color                : var(--ink-faint);
+    }
+
+    /* The icon rides a dark disc with a hairline round it, which is the same
+       station the network map draws its interchanges as */
+    .step-icon {
+        width               : var(--step-disc);
+        aspect-ratio        : 1;
+        border-radius       : 50%;
+        border              : 1px solid var(--hairline);
+        background-color    : var(--bg-lift);
+        background-size     : 48%;
+        background-repeat   : no-repeat;
+        background-position : center;
+    }
+
+    .step-verb {
+        font-size      : clamp(12px, 1.5vw, 19px);
+        font-weight    : 900;
+        letter-spacing : 0.1em;
+        color          : var(--ink);
+    }
+
+    .step-note {
+        margin-top  : calc(var(--step-gap) * -0.45);
+        font-size   : clamp(10px, 1.25vw, 15px);
+        font-weight : 600;
+        line-height : 1.35;
+        color       : var(--ink-soft);
+    }
 }
 
 /* NAME ////////////////////////////////////////////////////////////////////// */
@@ -57,87 +214,143 @@
     display        : flex;
     flex-direction : column;
     align-items    : center;
-    gap            : 10px;
+    gap            : clamp(10px, 1.4vh, 16px);
     /* Wider than it was, so the "already on the board" line has room to sit on one
        or two lines rather than three */
-    max-width      : 420px;
-    margin         : 40px auto 0;
+    max-width      : min(560px, 78vw);
+    margin         : clamp(28px, 4vh, 82px) auto 0;
 }
 
 #page-home #name-holder label {
-    font-size      : clamp(14px, 1.5vw, 20px);
-    font-weight    : 700;
+    font-size      : clamp(13px, 1.65vw, 22px);
+    font-weight    : 800;
     letter-spacing : 0.14em;
     line-height    : 1.6;
     text-align     : center;
-    color          : var(--slate-light40);
-    opacity        : 0.85;
+    color          : var(--ink-soft);
+}
+
+/* The mark sits in the pill rather than beside it, so an empty field reads as
+   somewhere to type even before the placeholder is read */
+#page-home #name-field {
+    position : relative;
+    width    : 100%;
+}
+
+#page-home .name-mark {
+    position            : absolute;
+    left                : clamp(20px, 4%, 28px);
+    top                 : 50%;
+    transform           : translateY(-50%);
+    width               : 24px;
+    aspect-ratio        : 1;
+    pointer-events      : none;
+    background-repeat   : no-repeat;
+    background-position : center;
+    background-size     : 100%;
+    background-image    : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4.1' fill='%236B7280'/%3E%3Cpath d='M3.6 21.4c0-4.7 3.8-7.6 8.4-7.6s8.4 2.9 8.4 7.6Z' fill='%236B7280'/%3E%3C/svg%3E");
 }
 
 #page-home #name-holder input {
     width            : 100%;
     /* Roomy enough for the parts of letters that hang below the baseline — a
        j or a y was being clipped by the line box at the old height */
-    padding          : 18px 16px;
+    padding          : 18px 52px;
     line-height      : 1.7;
     text-align       : center;
-    font-family      : "Minecraft", sans-serif;
-    font-size        : 22px;
-    color            : var(--amber);
-    background-color : rgba(255, 255, 255, 0.05);
-    border           : 2px solid var(--slate-dark60);
-    border-radius    : 0;   /* Squared off, in keeping with the arcade type */
+    font-family      : var(--font-toon);
+    font-size        : clamp(20px, 2.3vw, 30px);
+    font-weight      : 800;
+    color            : var(--ink);
+    background-color : var(--panel);
+    border           : 1px solid var(--hairline);
+    border-radius    : 999px;
+    box-shadow       : none;
     outline          : none;
-    transition       : border-color 0.2s ease, background-color 0.2s ease;
+    transition       : border-color 0.2s ease;
 }
 
 #page-home #name-holder input::placeholder {
-    color       : var(--slate-light40);
-    opacity     : 0.45;
-    font-size   : 18px;
+    color       : var(--ink-faint);
+    opacity     : 0.8;
+    font-size   : clamp(17px, 2vw, 25px);
+    font-weight : 700;
 }
 
 #page-home #name-taken {
     font-size      : clamp(13px, 1.35vw, 18px);
-    font-weight    : 700;
+    font-weight    : 800;
     letter-spacing : 0.06em;
     line-height    : 1.45;
     text-align     : center;
-    color          : var(--red);
+    color          : var(--red-text);
 }
 
 /* The field itself says so too, so the message is not the only signal */
-#page-home #name-holder input[aria-invalid="true"] {
-    border-color : var(--red);
-}
+#page-home #name-holder input[aria-invalid="true"] { border-color : var(--bad); }
 
-#page-home #name-holder input:focus {
-    border-color     : var(--amber);
-    background-color : rgba(250, 176, 5, 0.07);
-}
+#page-home #name-holder input:focus { border-color : var(--ink); }
 
 #page-home #start-holder {
-    margin-top : 32px;
+    margin-top : clamp(24px, 3.2vh, 62px);
+}
+
+/* The last thing on the page and the only one that goes anywhere, so it is set
+   larger than the buttons inside the round rather than at the shared size. */
+#page-home .toon-btn {
+    padding        : clamp(16px, 2.1vh, 26px) clamp(46px, 5.4vw, 82px) !important;
+    font-size      : clamp(18px, 2.1vw, 28px) !important;
+    font-weight    : 900 !important;
+    letter-spacing : 0.1em;
 }
 
 /* Nothing to start until there is a name to put on the board */
-#page-home .eightbit-btn.is-waiting {
+#page-home .toon-btn.is-waiting {
     opacity        : 0.4;
     cursor         : not-allowed;
     pointer-events : none;
 }
 
+/* THE COPY ////////////////////////////////////////////////////////////////// */
+#page-home .home-lead {
+    font-size   : clamp(19px, 2.9vw, 38px) !important;
+    font-weight : 800;
+    line-height : 1.3 !important;
+    color       : var(--ink) !important;
+}
+
+/* The explanation sits back from the claim above it — smaller, lighter, and in
+   the muted ink, so the two lines are read in order rather than at once. */
+#page-home .home-sub {
+    margin-top  : clamp(8px, 1vh, 16px) !important;
+    font-size   : clamp(15px, 2.1vw, 28px) !important;
+    font-weight : 600;
+    color       : var(--ink-soft) !important;
+}
+
+#page-home .home-accent {
+    font-weight : 900;
+    color       : var(--red-text) !important;
+}
+
+
+
+
+
+/* The half of the instruction that names the thing being looked for. Amber is
+   the game's watch-out colour, and clears 7:1 on this field as type. */
+#page-home .shout-accent {
+    color : var(--lime-text) !important;
+}
+
 @media screen and (max-width : 768px) {
-    #page-home {
-        padding-bottom : 4vh;
+    #page-home #mule-hunter-logo { width : 88%; }
+
+    #page-home #home-steps {
+        max-width : 100%;
+
+        li { padding : 0 5px; }
     }
 
-    #page-home #mule-hunter-logo {
-        width : 88%;
-    }
-
-    #page-home #logo-holder      { margin-bottom : 32px; }
-    #page-home #name-holder      { margin-top    : 28px; }
-    #page-home #start-holder     { margin-top    : 24px; }
-    #page-home #context-setting > * + * { margin-top : 24px; }
+    #page-home #name-holder input { font-size : 18px; padding : 15px 46px; }
 }

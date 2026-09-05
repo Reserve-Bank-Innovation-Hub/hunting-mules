@@ -1,0 +1,41 @@
+/* SECTION 3 — 4 PATTERN IDENTIFICATION: the board's background texture.
+
+   Every value here is deliberately low. The job is to stop the board reading as
+   an empty rectangle, not to be looked at. If any of this becomes noticeable at
+   a glance it has gone too far — the pattern is the only thing on this screen
+   that should catch the eye.
+
+   These values are tuned against the board's own ground (--bg). They were set
+   once against --panel, and when the board dropped to the field the same marks
+   read a full step stronger. If the ground changes again, these change with it.
+   ========================================================================== */
+
+.board-texture {
+    position       : absolute;
+    inset          : 0;
+    width          : 100%;
+    height         : 100%;
+    z-index        : 0;          /* Under the dot grid, the web and the accounts */
+    pointer-events : none;
+    user-select    : none;
+}
+
+/* Barely off the panel it sits on. At the first value these read as
+   rectangles laid on the board rather than as surface. */
+.board-texture .texture-slab  { fill : #070D19; }
+.board-texture .texture-chip  { fill : #0D1728; }
+.board-texture .texture-dots  { fill : #0D1728; }
+
+.board-texture .texture-curve {
+    fill           : none;
+    stroke         : #0C1526;
+    stroke-width   : 2.2;
+    stroke-linecap : round;
+}
+
+.board-texture .texture-wave {
+    fill           : none;
+    stroke         : #102030;
+    stroke-width   : 2.8;
+    stroke-linecap : round;
+}

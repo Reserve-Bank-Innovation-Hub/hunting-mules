@@ -1,10 +1,12 @@
 "use client";
 
+// SECTION 3 — PATTERN ROUNDS: the card that introduces one pattern, off the clock.
+
 // REACT CORE ==========================================================================================================
 import React from "react";
 
 // UI ==================================================================================================================
-import { Button, Card, Div, Heading6, Text } from "fictoan-react";
+import { Button, Div, Heading6, Text } from "fictoan-react";
 
 // LOCAL COMPONENTS ====================================================================================================
 import { DemoAnimFanInPattern } from "$components/DemoAnimFanInPattern/DemoAnimFanInPattern";
@@ -41,45 +43,36 @@ export const RoundIntro = ({pattern, patternIndex, onStart} : RoundIntroProps) =
     const isOpening = patternIndex === 0;
 
     return (
-        <Div className="round-intro-overlay">
-            <Div className="round-intro-content">
-                <Heading6 textColour="amber" align="centre" marginBottom="nano">
-                    <span className="round-intro-detective" role="img" aria-label="Detective">🕵️</span>
-                    {" "}NEW PATTERN DETECTED
-                </Heading6>
-
-                <Text align="centre" textColour="white" opacity="40" marginBottom="nano">
+        <Div className="icard-layer round-intro-layer">
+            <Div className="icard is-narrow has-tab round-intro">
+                {/* CONTEXT LABEL */}
+                <span className="icard-label">
                     PATTERN {patternIndex + 1} OF {TOTAL_PATTERNS}
-                </Text>
+                </span>
 
-                {/* Same card treatment as the how-to-play boxes on the home screen */}
-                <Card className="mule-behaviour-demo round-intro-card" padding="micro">
+                {/* SHORT EXPLANATION */}
+                <Heading6 className="icard-title round-intro-name">{pattern.title}</Heading6>
+                <Text className="icard-body is-key round-intro-shape">{pattern.reminder}</Text>
+
+                {/* RELEVANT VISUAL */}
+                <Div className="icard-visual">
                     <Demo />
+                </Div>
 
-                    <Text align="centre" weight="700" marginBottom="nano">
-                        {pattern.title}
-                    </Text>
+                <Text className="icard-body">{pattern.description}</Text>
 
-                    <Text align="centre" textColour="amber" weight="700" marginBottom="nano">
-                        {pattern.reminder}
-                    </Text>
-
-                    <Text align="centre" textColour="white">
-                        {pattern.description}
-                    </Text>
-                </Card>
-
-                <Div horizontallyCentreThis marginTop="micro">
-                    <Button className="eightbit-btn" onClick={onStart}>
+                {/* ONE CLEAR ACTION */}
+                <Div className="icard-actions">
+                    <Button className="toon-btn is-primary" onClick={onStart}>
                         {isOpening ? "START" : "GOT IT"}
                     </Button>
                 </Div>
 
-                <Text align="centre" textColour="white" opacity="40" marginTop="nano">
+                <span className="icard-foot">
                     {isOpening
                         ? "80 seconds · tap the accounts doing this"
-                        : "The clock is paused · it starts again when you carry on"}
-                </Text>
+                        : "The clock is paused"}
+                </span>
             </Div>
         </Div>
     );

@@ -48,13 +48,22 @@ export const TRANSACTION_DENSITY_INCREASE = 0.15;
 
 // ...and on top of that, each stage of the round is busier than the one before it.
 // Indexed by how many patterns are unlocked, so it rises as the player learns more.
-export const STAGE_DENSITY = [ 1, 1, 1.12, 1.26, 1.42 ];
+// Round four was the busiest stage running the most patterns at once, and the
+// two compounded into noise. Both eased back: the last pattern is the hardest to
+// read, so it needs room, not more traffic.
+export const STAGE_DENSITY = [ 1, 1, 1.12, 1.24, 1.26 ];
 
 export const densityAtStage = (unlockedPatterns : number) =>
     (STAGE_DENSITY[unlockedPatterns] ?? 1) * (1 + TRANSACTION_DENSITY_INCREASE);
 
 // How often a wave of routines goes out, before the density ramp is applied
 export const BASE_BURST_INTERVAL = 2600;
+
+// Round one sets the pace, and each round after it runs a little quicker. Above 1
+// is slower, below is faster. The calm in the later rounds comes from running ONE
+// routine at a time rather than from leaving long gaps between them — a gap makes
+// the board feel dead, where a single clean routine reads perfectly well.
+export const BURST_INTERVAL_STAGE = [ 1, 1, 0.95, 0.90, 0.88 ];
 
 // How many mules set off at the same moment, indexed by patterns unlocked.
 //
@@ -64,7 +73,10 @@ export const BASE_BURST_INTERVAL = 2600;
 // the board and tell them apart, which is the actual skill. The wave prefers a
 // different pattern for each mule, so what overlaps is usually two kinds of
 // behaviour rather than the same one twice.
-export const SIMULTANEOUS_BURSTS = [ 0, 1, 2, 2, 3 ];
+// Rounds two and three drop to one routine at a time. Two overlapping fan-outs,
+// or two gather-scatters, is the point at which the player stops telling one
+// movement from another and starts watching whichever corner moved last.
+export const SIMULTANEOUS_BURSTS = [ 0, 1, 1, 1, 2 ];
 
 export const burstsAtStage = (unlockedPatterns : number) =>
     SIMULTANEOUS_BURSTS[unlockedPatterns] ?? 1;
@@ -111,8 +123,13 @@ export const LOW_BALANCE_CONFIG = {
     INFLOW_MAX  : 180000,
     HOLD_MIN_MS : 1100,     // How long the money sits before it moves on again
     HOLD_MAX_MS : 1900,
-    RETAIN_MIN  : 0.02,     // The slice the mule keeps, so the outflow is slightly smaller
-    RETAIN_MAX  : 0.10,
+    // What the mule keeps. A FLAT FEE, not a share: a recruited account is paid a
+    // few hundred rupees to let money through, which is what one of the field
+    // cases says outright. As a percentage of a lakh it was keeping up to ₹18,000
+    // a run, which put the account over MAX_TO_RUN after ONE burst and stopped it
+    // ever running the pattern again — the reason so few low-balance mules showed.
+    RETAIN_FEE_MIN : 200,
+    RETAIN_FEE_MAX : 1200,
     // An account only runs this pattern while it is genuinely sitting on very little.
     // A well-funded account taking in a lakh and passing it on is ordinary business —
     // it is the mismatch that makes the pattern, so there is nothing to show without it.

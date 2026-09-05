@@ -1,5 +1,8 @@
 "use client";
 
+// SECTION 2 — HOME PAGE. Wordmark, brief box, the three steps, the name, START.
+// See CLAUDE.md for the five sections.
+
 // REACT CORE ==========================================================================================================
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
@@ -91,27 +94,61 @@ const HomePage = () => {
                         </Div>
                     </Portion>
 
-                    {/* CONTEXT ///////////////////////////////////////////////////////////////////////////// */}
-                    {/* Kiosk framing. Spacing is handled in home.css so the three lines are
-                        set as one rhythm rather than each carrying its own margin. */}
+                    {/* THE BRIEF ///////////////////////////////////////////////////////////////////////// */}
+                    {/* One message, not two. The instruction is the primary and carries
+                        the size; what it is about sits under it, smaller and grey, as
+                        the supporting line. These used to be the same size in two
+                        different places, which meant neither won. */}
                     <Portion>
-                        <Div id="context-setting" horizontallyCentreThis>
-                            <Text align="centre" textColour="white">
+                        <Div className="icard is-wide has-tab home-brief">
+                            <span className="icard-label">YOUR BRIEF</span>
+
+                            <Heading6 className="icard-title">
+                                Spot the accounts moving money in{" "}
+                                <Span className="shout-accent">unusual patterns</Span>
+                            </Heading6>
+
+                            <Text className="icard-body">
                                 Stolen money never sits still. It is pushed through
-                                {" "}<Span textColour="amber">ordinary bank accounts</Span>{" "}
+                                {" "}<Span className="home-accent">ordinary bank accounts</Span>{" "}
                                 to shake off the trail.
                             </Text>
 
-                            <Heading6 align="centre" textColour="amber">
-                                SPOT THE ACCOUNTS MOVING MONEY IN UNUSUAL PATTERNS
-                            </Heading6>
+                            <div className="icard-rule" />
 
-                            {/* How to play is not spelled out here — the first pattern's
-                                intro card says it, on the very next screen */}
-                            <Text align="centre" textColour="white" opacity="60">
-                                Four patterns · 80 seconds
-                            </Text>
+                            <div className="band-stats">
+                                <span><i className="stat-icon is-clock" aria-hidden="true" />80 SECONDS</span>
+                                <span><i className="stat-icon is-stack" aria-hidden="true" />4 PATTERNS</span>
+                            </div>
                         </Div>
+                    </Portion>
+
+                    {/* THE ERRAND, IN ORDER ///////////////////////////////////////////////////////////////// */}
+                    {/* Numbered and joined by a dashed run, because these are three
+                        steps of one job rather than three separate facts. Same icons
+                        and same words the network map shows once the player is out
+                        in the world. */}
+                    <Portion>
+                        <ol id="home-steps">
+                            <li>
+                                <span className="step-num">01</span>
+                                <i className="step-icon is-look" aria-hidden="true" />
+                                <span className="step-verb">TRACE</span>
+                                <span className="step-note">Follow the<br />transactions</span>
+                            </li>
+                            <li>
+                                <span className="step-num">02</span>
+                                <i className="step-icon is-flag" aria-hidden="true" />
+                                <span className="step-verb">FLAG</span>
+                                <span className="step-note">Spot suspicious<br />accounts</span>
+                            </li>
+                            <li>
+                                <span className="step-num">03</span>
+                                <i className="step-icon is-safe" aria-hidden="true" />
+                                <span className="step-verb">STOP</span>
+                                <span className="step-note">Help keep the<br />system safe</span>
+                            </li>
+                        </ol>
                     </Portion>
 
                     {/* NAME ///////////////////////////////////////////////////////////////////////////////// */}
@@ -121,28 +158,32 @@ const HomePage = () => {
                         <Div id="name-holder">
                             <label htmlFor="player-name">PLEASE ENTER YOUR NAME FOR THE GAME</label>
 
-                            {/* A plain input rather than a form control from the kit:
-                                this one is typed on a kiosk keyboard and needs to be
-                                large, centred and free of any autofill or history that
-                                might offer up the last player's name. */}
-                            <input
-                                id="player-name"
-                                type="text"
-                                value={playerName}
-                                placeholder="Type your name"
-                                maxLength={MAX_NAME_LENGTH}
-                                autoComplete="off"
-                                autoCorrect="off"
-                                autoCapitalize="words"
-                                spellCheck={false}
-                                aria-invalid={isTaken}
-                                onChange={event => setPlayerName(event.target.value)}
-                                onKeyDown={event => {
-                                    if (event.key === "Enter" && canStart) {
-                                        window.location.href = gameHref;
-                                    }
-                                }}
-                            />
+                            <div id="name-field">
+                                <i className="name-mark" aria-hidden="true" />
+
+                                {/* A plain input rather than a form control from the kit:
+                                    this one is typed on a kiosk keyboard and needs to be
+                                    large, centred and free of any autofill or history that
+                                    might offer up the last player's name. */}
+                                <input
+                                    id="player-name"
+                                    type="text"
+                                    value={playerName}
+                                    placeholder="Type your name"
+                                    maxLength={MAX_NAME_LENGTH}
+                                    autoComplete="off"
+                                    autoCorrect="off"
+                                    autoCapitalize="words"
+                                    spellCheck={false}
+                                    aria-invalid={isTaken}
+                                    onChange={event => setPlayerName(event.target.value)}
+                                    onKeyDown={event => {
+                                        if (event.key === "Enter" && canStart) {
+                                            window.location.href = gameHref;
+                                        }
+                                    }}
+                                    />
+                            </div>
 
                             {/* Names are matched ignoring case and spacing, so the
                                 board can never show two rows a player reads as theirs */}
@@ -158,12 +199,12 @@ const HomePage = () => {
                         <Div id="start-holder" horizontallyCentreThis>
                             {canStart ? (
                                 <Link href={gameHref}>
-                                    <Button className="eightbit-btn">
+                                    <Button className="toon-btn is-go">
                                         START
                                     </Button>
                                 </Link>
                             ) : (
-                                <Button className="eightbit-btn is-waiting" disabled>
+                                <Button className="toon-btn is-go is-waiting" disabled>
                                     START
                                 </Button>
                             )}

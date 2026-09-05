@@ -1,3 +1,5 @@
+// SECTION 5 — INVESTIGATING CARDS: the cases, drawn three at a time.
+
 // What the branch finds when it goes to look.
 //
 // For eighty seconds the player has been the model: catching accounts on the shape

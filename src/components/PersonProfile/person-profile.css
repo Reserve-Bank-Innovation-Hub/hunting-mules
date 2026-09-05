@@ -1,0 +1,359 @@
+/* SECTION 5 — INVESTIGATING CARDS. See CLAUDE.md for the five sections. */
+
+/* THE DOORSTEP FILE ==========================================================
+   The field-verification report, as a profile card.
+
+   It is pinned to the right and never the middle. The person who has just come
+   out of the house is standing on the left of the screen, and the whole point
+   of walking there was to see them — a panel across the centre would put the
+   file over the face it belongs to.
+   ========================================================================== */
+
+/* TWO CARDS, SIDE BY SIDE ==================================================
+   Who we are investigating, and what we know about them. Splitting the two is
+   the whole point: the face is not evidence, and mixing it into the file made
+   the card read as one long column with no order to it.
+
+   Centred rather than pinned right, now that the person is inside a card of
+   their own rather than standing on the map behind it. Both stay translucent so
+   the house they belong to is still there.
+   ========================================================================== */
+
+.profile-spread {
+    position    : absolute;
+    top         : 50%;
+    left        : 50%;
+    transform   : translate(-50%, -50%);
+    z-index     : 60;
+    display     : flex;
+    align-items : stretch;
+    gap         : clamp(12px, 1.6vw, 22px);
+    width       : min(92vw, 1000px);
+    max-height  : 88vh;
+
+    --house-hue      : var(--house-1);
+    --house-hue-dark : var(--house-1-dark);
+    --house-hue-wall : var(--house-1-wall);
+}
+
+/* Both cards are .icard, so radius, hairline, blur and translucency are the
+   system's. Only what is particular to a doorstep is set here. */
+.profile-spread .icard {
+    --icard-pad : clamp(20px, 2.6vh, 34px);
+    --icard-gap : clamp(10px, 1.3vh, 18px);
+
+    align-items      : center;
+    background-color : rgba(11, 18, 32, 0.9);
+    text-align       : center;
+}
+
+/* CARD 1 — WHO ////////////////////////////////////////////////////////////// */
+.profile-who-card {
+    /* Wider than it was. The mark is square, so on a narrow card it fits to the
+       width and leaves the height empty — the card has to be about as wide as it
+       is tall for the person to actually fill it. */
+    flex          : 0 0 clamp(230px, 34%, 380px);
+    justify-content : center;
+    position      : relative;
+}
+
+/* The house number sits in the corner, the way a case number does on a file */
+.profile-who-card .profile-house {
+    position : absolute;
+    top      : clamp(12px, 1.6vh, 18px);
+    right    : clamp(12px, 1.4vw, 18px);
+    color    : var(--house-hue);
+}
+
+/* CARD 2 — THE FILE ///////////////////////////////////////////////////////// */
+.profile-file-card {
+    flex       : 1;
+    min-width  : 0;
+    align-items : stretch !important;
+    overflow-y : auto;
+    text-align : left !important;
+}
+
+.profile-facts-label {
+    align-self : flex-start;
+}
+
+.profile-spread.house-2 { --house-hue : var(--house-2); --house-hue-dark : var(--house-2-dark); --house-hue-wall : var(--house-2-wall); }
+.profile-spread.house-3 { --house-hue : var(--house-3); --house-hue-dark : var(--house-3-dark); --house-hue-wall : var(--house-3-wall); }
+
+.profile-spread::-webkit-scrollbar       { width : 8px; }
+.profile-spread::-webkit-scrollbar-thumb { background : var(--panel-edge); border-radius : 999px; }
+
+@keyframes profile-in {
+    from { opacity : 0; transform : translateY(-50%) translateX(36px) scale(0.97); }
+    to   { opacity : 1; transform : translateY(-50%) translateX(0)    scale(1);    }
+}
+
+/* WHO ANSWERED ////////////////////////////////////////////////////////////// */
+.profile-head {
+    display       : flex;
+    align-items   : center;
+    gap           : clamp(12px, 1.4vw, 20px);
+    padding-bottom: 14px;
+    border-bottom : 1px solid var(--hairline);
+}
+
+.profile-portrait {
+    flex-shrink      : 0;
+    display          : grid;
+    place-items      : center;
+    /* The card's one job is who answered the door, so the person takes it —
+       growing to whatever height card 2 sets rather than sitting in the middle
+       of it at a fixed size. */
+    width            : 100%;
+    aspect-ratio     : 1;
+    max-height       : 100%;
+    padding          : 6px 6px 0;
+    border-radius    : 18px;
+    overflow         : hidden;
+    background       : var(--house-hue-wall);
+    box-shadow       : inset 0 0 0 2px var(--house-hue);
+}
+
+.profile-portrait svg {
+    display : block;
+    width   : 78%;
+    height  : auto;
+}
+
+.profile-who {
+    display        : flex;
+    flex-direction : column;
+    gap            : 3px;
+    min-width      : 0;
+}
+
+/* Uses .icard-label from the shared card system; only the size is raised, since
+   on this card it is also the heading. */
+.profile-house.icard-label {
+    font-size      : clamp(14px, 1.4vw, 19px);
+    letter-spacing : 0.16em;
+    color          : var(--ink);
+}
+
+/* Whether the account belongs to a person or a business. A fact about the
+   account, not a judgement on it, so it stays neutral — the house's own colour
+   here read as a verdict the player has not made yet. */
+.profile-subject {
+    font-size      : clamp(10px, 0.92vw, 13px);
+    font-weight    : 800;
+    letter-spacing : 0.13em;
+    color          : var(--ink-soft);
+}
+
+.profile-visit-count {
+    font-size      : clamp(9px, 0.8vw, 11px);
+    font-weight    : 700;
+    letter-spacing : 0.13em;
+    color          : var(--ink-faint);
+}
+
+/* WHY WE KNOCKED //////////////////////////////////////////////////////////// */
+.profile-reason {
+    display        : flex;
+    flex-direction : column;
+    gap            : 4px;
+    margin         : 16px 0;
+    padding        : 12px 16px;
+    border-radius  : 14px;
+    background     : var(--house-hue-wall);
+    border         : 1px solid var(--hairline);
+}
+
+.profile-reason-lead {
+    font-size      : clamp(10px, 0.92vw, 14px);
+    font-weight    : 800;
+    letter-spacing : 0.13em;
+    color          : var(--ink-soft);
+}
+
+/* The pattern this account was flagged for. Off-white: the tinted panel behind
+   it is what says "flagged", and naming the pattern in red as well would spend
+   the colour twice on one idea. */
+.profile-reason-pattern {
+    /* Stepped down below the facts. It is why the player was sent here, not what
+       they are deciding on — and it was the largest thing on the card. */
+    font-size      : clamp(12px, 1.2vw, 17px);
+    font-weight    : 800;
+    letter-spacing : 0.04em;
+    color          : var(--ink);
+}
+
+/* WHAT THE VISIT FOUND ////////////////////////////////////////////////////// */
+/* A report, read as label-and-answer pairs. Every line is a real field from the
+   form banks use — the layout's job is to keep them scannable standing up. */
+.profile-findings {
+    margin  : 0;
+    display : grid;
+    gap     : 9px;
+}
+
+.profile-finding {
+    display               : grid;
+    grid-template-columns : minmax(88px, 26%) 1fr;
+    gap                   : 12px;
+    align-items           : baseline;
+    padding-bottom        : 9px;
+    border-bottom         : 1px solid var(--hairline);
+}
+
+.profile-finding:last-child { border-bottom : none; padding-bottom : 0; }
+
+.profile-finding dt {
+    font-size      : clamp(9px, 0.82vw, 12px);
+    font-weight    : 800;
+    letter-spacing : 0.1em;
+    text-transform : uppercase;
+    color          : var(--ink-faint);
+}
+
+.profile-finding dd {
+    margin      : 0;
+    font-size   : clamp(14px, 1.42vw, 21px);
+    font-weight : 600;
+    line-height : 1.45;
+    color       : var(--ink);
+}
+
+/* THE VERDICT /////////////////////////////////////////////////////////////// */
+.profile-verdict {
+    margin-top : 20px;
+    text-align : center;
+}
+
+.profile-verdict-question {
+    display        : block;
+    margin-bottom  : 12px;
+    font-size      : clamp(11px, 1vw, 14px);
+    font-weight    : 800;
+    letter-spacing : 0.15em;
+    color          : var(--ink-soft);
+}
+
+.profile-verdict-options {
+    display               : grid;
+    grid-template-columns : 1fr 1fr;
+    gap                   : 12px;
+}
+
+.profile-verdict-options .toon-btn {
+    width          : 100%;
+    font-size      : clamp(13px, 1.15vw, 17px) !important;
+    padding        : 12px 10px !important;
+    letter-spacing : 0.04em;
+}
+
+/* THE REVEAL //////////////////////////////////////////////////////////////// */
+.profile-reveal {
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : 9px;
+    margin-top     : 20px;
+    padding        : 16px;
+    border-radius  : 18px;
+    text-align     : center;
+    animation      : reveal-in 260ms ease-out both;
+
+    --verdict      : var(--good);
+    --verdict-dark : var(--good-dark);
+
+    background     : color-mix(in srgb, var(--verdict) 16%, var(--panel));
+    border         : 1.5px solid var(--verdict);
+}
+
+.profile-reveal.is-wrong { --verdict : var(--bad); --verdict-dark : var(--bad-dark); }
+
+@keyframes reveal-in {
+    from { opacity : 0; transform : translateY(10px); }
+    to   { opacity : 1; transform : translateY(0);    }
+}
+
+/* Comes down like a stamp, and stays put — the same gesture the caught accounts
+   on the board get, so a decision looks the same wherever it is made */
+.profile-reveal-stamp {
+    padding          : 6px 20px;
+    border-radius    : 999px;
+    background-color : var(--verdict);
+    color            : #FFFFFF;
+    font-size        : clamp(14px, 1.4vw, 20px);
+    font-weight      : 800;
+    letter-spacing   : 0.14em;
+    animation        : stamp-down 380ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+@keyframes stamp-down {
+    0%   { transform : scale(1.7) rotate(-11deg); opacity : 0; }
+    58%  { transform : scale(0.94) rotate(2deg);  opacity : 1; }
+    100% { transform : scale(1) rotate(0deg);     opacity : 1; }
+}
+
+.profile-reveal-status {
+    font-size      : clamp(9px, 0.8vw, 11.5px);
+    font-weight    : 800;
+    letter-spacing : 0.1em;
+    line-height    : 1.5;
+    color          : var(--verdict-dark);
+}
+
+.profile-reveal-text {
+    margin      : 2px 0 6px;
+    font-size   : clamp(12px, 1.05vw, 15.5px);
+    font-weight : 600;
+    line-height : 1.55;
+    color       : var(--ink);
+}
+
+.profile-next { margin-top : 4px; }
+
+/* FOOTNOTE ////////////////////////////////////////////////////////////////// */
+.profile-foot {
+    display        : block;
+    margin-top     : 14px;
+    text-align     : center;
+    font-size      : clamp(9px, 0.8vw, 12px);
+    font-weight    : 700;
+    letter-spacing : 0.07em;
+    color          : var(--ink-faint);
+}
+
+/* SMALL SCREENS ///////////////////////////////////////////////////////////// */
+/* There is no room beside the person on a phone, so the file becomes a sheet
+   that comes up from the bottom and leaves the top of the map showing */
+@media screen and (max-width : 900px) {
+    .profile-spread {
+        top           : auto;
+        bottom        : 0;
+        left          : 0;
+        right         : 0;
+        width         : 100%;
+        max-height    : 74vh;
+        transform     : none;
+        border-radius : 24px 24px 0 0;
+        animation     : profile-up 320ms cubic-bezier(0.2, 1.05, 0.35, 1) both;
+    }
+
+    @keyframes profile-up {
+        from { opacity : 0; transform : translateY(40px); }
+        to   { opacity : 1; transform : translateY(0);    }
+    }
+
+    .profile-finding { grid-template-columns : 1fr; gap : 2px; }
+}
+
+/* THE RESIDENT ////////////////////////////////////////////////////////////// */
+/* Takes the house's hue, and knocks its detail out in the card's own background
+   so the shape reads as cut rather than as a second colour. */
+.profile-resident {
+    --mark-cut : rgba(11, 18, 32, 1);
+
+    display : block;
+    width   : 100%;
+    height  : 100%;
+    color   : var(--house-hue);
+}

@@ -15,6 +15,12 @@ export interface PatternConfig {
     title         : string;
     description   : string;         // One line. This is a kiosk, not a manual.
     reminder      : string;         // Sits in the strip above the board for the rest of the round
+    /**
+     * The pattern's shape, as two short lines. Sits in the hint bar along the
+     * bottom of the board — the one cell of the three that changes with the
+     * pattern, so the player always has its shape in front of them.
+     */
+    shape         : [ string, string ];
     burstInterval : number;         // Before the stage density ramp is applied
 }
 
@@ -26,6 +32,7 @@ export const PATTERNS : PatternConfig[] = [
         title         : "FAN IN",
         description   : "Many accounts pay one account. It sends the whole lot onward in a single transfer.",
         reminder      : "MANY → ONE",
+        shape         : [ "Many senders", "One receiver" ],
         burstInterval : 2600,
     },
     {
@@ -35,6 +42,7 @@ export const PATTERNS : PatternConfig[] = [
         title         : "FAN OUT",
         description   : "One large payment lands, then splits away across many accounts at once.",
         reminder      : "ONE → MANY",
+        shape         : [ "One sender", "Many receivers" ],
         burstInterval : 2800,
     },
     {
@@ -44,6 +52,7 @@ export const PATTERNS : PatternConfig[] = [
         title         : "GATHER & SCATTER",
         description   : "Money pools for a moment, then scatters straight back out to different accounts.",
         reminder      : "IN → OUT",
+        shape         : [ "Money pools in", "Then scatters out" ],
         burstInterval : 2600,
     },
     {
@@ -53,6 +62,7 @@ export const PATTERNS : PatternConfig[] = [
         title         : "LOW BALANCE",
         description   : "An account sitting on a few hundred rupees takes in lakhs, then passes almost all of it on.",
         reminder      : "HUGE IN → ALMOST ALL OUT",
+        shape         : [ "A small account", "Huge amounts through" ],
         burstInterval : 2700,
     },
 ];

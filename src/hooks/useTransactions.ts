@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 // LIB =================================================================================================================
 import {
-    BASE_BURST_INTERVAL, BASE_DECOY_INTERVAL, TRANSACTION_CONFIG,
+    BASE_BURST_INTERVAL, BASE_DECOY_INTERVAL, BURST_INTERVAL_STAGE, TRANSACTION_CONFIG,
     burstsAtStage, densityAtStage,
 } from "$lib/gameConfig";
 import { TransactionInstance, PatternFlash, GamePhase } from "$lib/gameTypes";
@@ -294,7 +294,11 @@ export const useTransactions = ({
         // tick without disturbing anything already queued
         const tick = () => {
             runWave();
-            nextTick = setTimeout(tick, Math.round(BASE_BURST_INTERVAL / densityRef.current));
+            const stretch = BURST_INTERVAL_STAGE[unlockedRef.current] ?? 1;
+            nextTick = setTimeout(
+                tick,
+                Math.round((BASE_BURST_INTERVAL * stretch) / densityRef.current),
+            );
         };
 
         // Get one going straight away rather than making the player wait a full interval

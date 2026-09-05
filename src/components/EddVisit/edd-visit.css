@@ -1,350 +1,86 @@
-/* The field visits after the round. Same dark ground and amber frame as the pattern
-   intro cards, so this reads as another screen of the same game rather than a form
-   that has been bolted onto it. Sized against viewport height like the result
-   screen, so the portrait kiosk fills out without scrolling. */
-.edd-overlay {
-    position         : fixed;
-    top              : 0;
-    left             : 0;
-    width            : 100vw;
-    height           : 100vh;
-    display          : flex;
-    align-items      : center;
-    justify-content  : center;
-    padding          : 24px;
-    background-color : rgba(0, 8, 16, 0.96);
-    z-index          : 9000;
-    overflow-y       : auto;
+/* THE BRIEF ==================================================================
+   The one card between the clock running out and the player going out into the
+   field. It sits over the world map rather than replacing it: the three houses
+   they are about to be sent to are visible behind it while they are being told
+   why they are going, so "investigate further" has somewhere to point at.
+   ========================================================================== */
+
+.edd-brief-layer {
+    position        : absolute;
+    inset           : 0;
+    z-index         : 70;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    padding         : 24px;
+    /* Just enough to lift the card off the world without hiding it */
+    background      : rgba(1, 4, 9, 0.9);
+    animation       : edd-brief-fade 320ms ease-out both;
 }
 
-.edd-content {
-    display        : flex;
-    flex-direction : column;
-    align-items    : center;
-    gap            : clamp(6px, 0.9vh, 12px);
-    width          : 100%;
-    /* Wide enough for the two verdict buttons to sit side by side. Stacked, the
-       top one read as the default answer, and there must not be one. */
-    max-width      : 640px;
-    margin         : auto;
-    text-align     : center;
-    animation      : edd-fade-in 0.4s ease-out both;
+@keyframes edd-brief-fade {
+    from { opacity : 0; }
+    to   { opacity : 1; }
 }
 
-@keyframes edd-fade-in {
-    from { opacity : 0; transform : translateY(12px); }
-    to   { opacity : 1; transform : translateY(0); }
-}
-
-/* THE HEADING /////////////////////////////////////////////////////////////// */
-.edd-lead {
-    display        : inline-flex;
-    align-items    : center;
-    gap            : 8px;
-    font-family    : "Minecraft", sans-serif;
-    font-size      : clamp(14px, 1.7vh, 24px);
-    letter-spacing : 0.18em;
-    color          : var(--amber);
-}
-
-.edd-lead-icon {
-    height          : clamp(22px, 2.8vh, 40px);
-    width           : auto;
-    image-rendering : pixelated;
-}
-
-.edd-sub {
-    font-size      : clamp(9px, 1vh, 13px);
-    font-weight    : 700;
-    letter-spacing : 0.22em;
-    color          : white;
-    opacity        : 0.4;
-}
-
-/* THE CARD ////////////////////////////////////////////////////////////////// */
-.edd-card {
-    width            : 100%;
-    padding          : clamp(12px, 1.6vh, 22px) clamp(14px, 2vw, 24px);
-    background-color : var(--black);
-    border           : 1px solid var(--amber);
-    border-radius    : var(--global-border-radius);
-    text-align       : left;
-    animation        : edd-card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes edd-card-in {
-    from { opacity : 0; transform : translateX(24px); }
-    to   { opacity : 1; transform : translateX(0); }
-}
-
-/* THE BRIEF ///////////////////////////////////////////////////////////////// */
 .edd-brief {
     display        : flex;
     flex-direction : column;
     align-items    : center;
-    gap            : clamp(8px, 1.2vh, 16px);
+    gap            : 14px;
+    width          : min(92%, 560px);
+    max-height     : 88vh;
+    overflow-y     : auto;
+    padding        : clamp(22px, 3.4vh, 38px) clamp(20px, 2.6vw, 40px);
     text-align     : center;
+    animation      : edd-brief-rise 380ms cubic-bezier(0.2, 1.1, 0.35, 1) both;
 }
 
-.edd-brief-icon {
-    width           : clamp(56px, 7vh, 110px);
-    height          : auto;
-    image-rendering : pixelated;
+@keyframes edd-brief-rise {
+    from { opacity : 0; transform : translateY(22px) scale(0.97); }
+    to   { opacity : 1; transform : translateY(0)    scale(1);    }
+}
+
+.edd-brief-kicker {
+    padding          : 5px 16px;
+    border-radius    : 999px;
+    border           : 1px solid var(--hairline);
+    background-color : transparent;
+    color            : var(--lime-text);
+    font-size        : clamp(9px, 0.85vw, 12px);
+    font-weight      : 700;
+    letter-spacing   : 0.16em;
 }
 
 .edd-brief-headline {
-    margin      : 0;
-    font-size   : clamp(14px, 1.7vh, 21px);
-    font-weight : 700;
-    line-height : 1.4;
-    color       : white;
-
-    strong {
-        font-family : "Minecraft", sans-serif;
-        font-weight : 400;
-        color       : var(--amber);
-    }
+    margin      : 4px 0 0;
+    font-size   : clamp(16px, 1.7vw, 24px);
+    font-weight : 800;
+    line-height : 1.35;
+    color       : var(--ink);
 }
+
+.edd-brief-headline strong { color : var(--red-text); }
 
 .edd-brief-body {
     margin      : 0;
-    font-size   : clamp(12px, 1.4vh, 17px);
-    line-height : 1.5;
-    color       : white;
-    opacity     : 0.85;
-
-    &.is-amber {
-        font-weight : 700;
-        color       : var(--amber);
-        opacity     : 1;
-    }
+    font-size   : clamp(12px, 1.08vw, 16px);
+    font-weight : 600;
+    line-height : 1.55;
+    color       : var(--ink-soft);
 }
 
-/* WHY WE ARE HERE /////////////////////////////////////////////////////////// */
-.edd-reason {
-    display        : flex;
-    flex-wrap      : wrap;
-    align-items    : center;
-    gap            : 6px 10px;
-    padding-bottom : clamp(8px, 1.1vh, 14px);
-    margin-bottom  : clamp(6px, 0.9vh, 12px);
-    border-bottom  : 1px solid rgba(250, 176, 5, 0.25);
+/* The instruction. It is the line the player has to leave with, so it is the
+   only one in the card that carries a colour. */
+.edd-brief-body.is-lead {
+    margin-top  : 2px;
+    color       : var(--alert-dark);
+    font-weight : 800;
 }
 
-.edd-reason-lead {
-    font-size      : clamp(9px, 1vh, 12px);
+.edd-brief-foot {
+    font-size      : clamp(9px, 0.8vw, 12px);
     font-weight    : 700;
-    letter-spacing : 0.16em;
-    color          : var(--amber-light60);
-    opacity        : 0.8;
-}
-
-/* The same pill the reminder strip uses for the pattern in play */
-.edd-reason-pattern {
-    padding          : 3px 10px;
-    font-family      : "Minecraft", sans-serif;
-    font-size        : clamp(11px, 1.3vh, 16px);
-    letter-spacing   : 0.06em;
-    color            : var(--black);
-    background-color : var(--amber);
-}
-
-.edd-reason-subject {
-    margin-left    : auto;
-    font-size      : clamp(9px, 1vh, 12px);
-    font-weight    : 700;
-    letter-spacing : 0.14em;
-    color          : white;
-    opacity        : 0.45;
-}
-
-/* WHAT THE BRANCH FOUND ///////////////////////////////////////////////////// */
-.edd-findings {
-    display        : flex;
-    flex-direction : column;
-    margin         : 0;
-}
-
-.edd-finding {
-    display               : grid;
-    grid-template-columns : minmax(88px, 28%) 1fr;
-    gap                   : 12px;
-    padding               : clamp(5px, 0.75vh, 10px) 0;
-    border-bottom         : 1px solid rgba(255, 255, 255, 0.08);
-
-    &:last-child {
-        border-bottom : none;
-    }
-
-    dt {
-        font-size      : clamp(9px, 1.05vh, 13px);
-        font-weight    : 700;
-        letter-spacing : 0.1em;
-        line-height    : 1.5;
-        text-transform : uppercase;
-        color          : var(--amber-light60);
-        opacity        : 0.8;
-    }
-
-    dd {
-        margin      : 0;
-        font-size   : clamp(12px, 1.4vh, 17px);
-        line-height : 1.45;
-        color       : white;
-    }
-}
-
-/* THE VERDICT /////////////////////////////////////////////////////////////// */
-.edd-verdict {
-    display        : flex;
-    flex-direction : column;
-    align-items    : center;
-    gap            : clamp(8px, 1.1vh, 14px);
-    margin-top     : clamp(10px, 1.4vh, 18px);
-    padding-top    : clamp(10px, 1.4vh, 18px);
-    border-top     : 1px solid rgba(250, 176, 5, 0.25);
-}
-
-.edd-verdict-question {
-    font-family    : "Minecraft", sans-serif;
-    font-size      : clamp(12px, 1.4vh, 18px);
-    letter-spacing : 0.14em;
-    color          : white;
-}
-
-.edd-verdict-options {
-    display         : flex;
-    flex-wrap       : wrap;
-    justify-content : center;
-    gap             : clamp(14px, 2.4vw, 28px);
-    width           : 100%;
-}
-
-.edd-verdict-option {
-    display        : flex;
-    flex-direction : column;
-    align-items    : center;
-    gap            : 8px;
-}
-
-/* The buttons carry a 6px black frame drawn outside their box, so they need room
-   from each other and from the caption underneath */
-.edd-actions .eightbit-btn {
-    font-size : clamp(13px, 1.55vh, 20px) !important;
-    padding   : clamp(10px, 1.3vh, 16px) clamp(16px, 2.2vw, 28px) !important;
-}
-
-/* A step smaller than the single action buttons: two of these have to share one
-   row, and the pixel face runs wide */
-.edd-verdict-option .eightbit-btn {
-    font-size : clamp(12px, 1.4vh, 18px) !important;
-    padding   : clamp(9px, 1.2vh, 14px) clamp(14px, 1.8vw, 22px) !important;
-}
-
-.edd-verdict-caption {
-    font-size      : clamp(8px, 0.95vh, 11px);
-    font-weight    : 700;
-    letter-spacing : 0.14em;
-    color          : white;
-    opacity        : 0.45;
-}
-
-/* THE REVEAL //////////////////////////////////////////////////////////////// */
-.edd-reveal {
-    display        : flex;
-    flex-direction : column;
-    align-items    : center;
-    gap            : clamp(6px, 0.9vh, 12px);
-    margin-top     : clamp(10px, 1.4vh, 18px);
-    padding-top    : clamp(10px, 1.4vh, 18px);
-    border-top     : 1px solid rgba(250, 176, 5, 0.25);
-    text-align     : center;
-}
-
-.edd-reveal-stamp {
-    font-family    : "Minecraft", sans-serif;
-    font-size      : clamp(20px, 2.6vh, 36px);
     letter-spacing : 0.1em;
-    line-height    : 1;
-    animation      : edd-stamp 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) both;
-}
-
-.edd-reveal.is-right .edd-reveal-stamp {
-    color       : var(--green);
-    text-shadow : 3px 3px 0 var(--green-dark60);
-}
-
-.edd-reveal.is-wrong .edd-reveal-stamp {
-    color       : var(--red);
-    text-shadow : 3px 3px 0 var(--red-dark60);
-}
-
-@keyframes edd-stamp {
-    0%   { transform : scale(1.6) rotate(-8deg); opacity : 0; }
-    60%  { transform : scale(0.94) rotate(2deg);  opacity : 1; }
-    100% { transform : scale(1) rotate(0deg);     opacity : 1; }
-}
-
-.edd-reveal-status {
-    font-size      : clamp(9px, 1.05vh, 13px);
-    font-weight    : 700;
-    letter-spacing : 0.14em;
-    color          : var(--amber);
-}
-
-.edd-reveal-text {
-    margin      : 0;
-    font-size   : clamp(12px, 1.45vh, 18px);
-    line-height : 1.5;
-    color       : white;
-}
-
-/* THE ACTIONS /////////////////////////////////////////////////////////////// */
-.edd-actions {
-    display         : flex;
-    justify-content : center;
-    margin-top      : clamp(6px, 1vh, 14px);
-}
-
-.edd-footnote {
-    font-size : clamp(10px, 1.1vh, 14px);
-    color     : white;
-    opacity   : 0.4;
-}
-
-/* THE WAY OUT /////////////////////////////////////////////////////////////// */
-/* A text button, not a pixel one: it has to be findable, not tempting. Padded to a
-   comfortable touch target all the same. */
-.edd-skip {
-    margin-top            : clamp(2px, 0.6vh, 8px);
-    padding               : 12px 20px;
-    background            : none;
-    border                : none;
-    font-size             : clamp(10px, 1.1vh, 14px);
-    font-weight           : 700;
-    letter-spacing        : 0.18em;
-    color                 : white;
-    opacity               : 0.45;
-    text-decoration       : underline;
-    text-underline-offset : 4px;
-    cursor                : pointer;
-
-    &:hover, &:focus-visible {
-        opacity : 0.85;
-    }
-}
-
-@media screen and (max-width : 768px) {
-    .edd-overlay { padding : 16px; }
-    .edd-card    { padding : 12px 14px; }
-
-    .edd-finding {
-        grid-template-columns : 1fr;
-        gap                   : 2px;
-    }
-
-    .edd-reason-subject {
-        margin-left : 0;
-        flex-basis  : 100%;
-    }
+    color          : var(--ink-faint);
 }

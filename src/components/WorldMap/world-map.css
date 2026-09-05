@@ -1,0 +1,329 @@
+/* SECTION 4 — WORLD MAP. See CLAUDE.md for the five sections. */
+
+/* THE NETWORK MAP ============================================================
+   A transit diagram on a near-black field. The lines and stations live in one
+   SVG that fills the screen; the four cards over it are HTML, so their type
+   stays crisp and their copy stays live.
+   ========================================================================== */
+
+.world-scene {
+    position    : fixed;
+    inset       : 0;
+    z-index     : 8000;
+    overflow    : hidden;
+    background  : #030712;
+    font-family : var(--font-toon);
+    color       : #F5F5F5;
+    user-select : none;
+}
+
+.world-svg {
+    display : block;
+    width   : 100%;
+    height  : 100%;
+}
+
+/* THE LINES ///////////////////////////////////////////////////////////////// */
+.route {
+    transition : opacity 220ms ease-out;
+}
+
+/* The line the player has just picked, running bright end to end. This is the
+   map's whole idea of travel: nothing walks anywhere, the route lights up. */
+/* The road the arrow is travelling. It brightens and holds — it does not run.
+   A map where the lines animate reads as a flowchart, and it competes with the
+   one thing that is actually telling the player where to go. */
+.route.is-active {
+    filter : brightness(1.35);
+}
+
+/* THE STATIONS ////////////////////////////////////////////////////////////// */
+.station-num {
+    font-family : var(--font-toon);
+    font-size   : 26px;
+    font-weight : 800;
+}
+
+/* A bank that is live to tap */
+.station.is-open {
+    cursor     : pointer;
+    transition : transform 200ms cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.station.is-open:hover {
+    filter : brightness(1.12);
+}
+
+/* A bank that is not this errand's business, and one already called on */
+.station.is-idle { opacity : 0.72; }
+.station.is-done { opacity : 0.44; }
+
+/* THE BRANCH //////////////////////////////////////////////////////////////// */
+.branch-name {
+    fill           : #F5F5F5;
+    font-family    : var(--font-toon);
+    font-size      : 30px;
+    font-weight    : 800;
+    letter-spacing : 0.06em;
+}
+
+.branch-enter { cursor : pointer; }
+
+.branch-enter-text {
+    fill           : #0B1220;
+    font-family    : var(--font-toon);
+    font-size      : 25px;
+    font-weight    : 800;
+    letter-spacing : 0.04em;
+}
+
+.branch-enter:hover rect { fill : var(--ink); }
+.branch-enter:hover      { filter : drop-shadow(0 0 18px rgba(255, 255, 255, 0.35)); }
+
+.branch.is-shut { opacity : 0.6; }
+
+/* THE ERRAND //////////////////////////////////////////////////////////////// */
+/* A dark card with a hairline, the way every panel on this map is built */
+/* Banner and hint in one column, so their spacing is a gap rather than two
+   independent offsets that can cross. */
+.world-top {
+    position       : absolute;
+    top            : clamp(12px, 2.2vh, 34px);
+    left           : 50%;
+    transform      : translateX(-50%);
+    z-index        : 40;
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : clamp(8px, 1.6vh, 20px);
+    width          : min(92%, 820px);
+    pointer-events : none;
+}
+
+.world-banner {
+    width            : 100%;
+    display          : flex;
+    align-items      : center;
+    gap              : clamp(12px, 1.8vw, 24px);
+    padding          : clamp(14px, 2.2vh, 32px) clamp(18px, 2.4vw, 36px);
+    border           : 1px solid rgba(245, 245, 245, 0.14);
+    border-radius    : 18px;
+    background-color : rgba(11, 18, 32, 0.96);
+    box-shadow       : 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+    pointer-events   : none;
+}
+
+.banner-mark {
+    flex-shrink   : 0;
+    display       : grid;
+    place-items   : center;
+    width         : clamp(38px, 4.6vw, 56px);
+    aspect-ratio  : 1;
+    border        : 1px solid rgba(255, 255, 255, 0.14);
+    border-radius : 50%;
+}
+
+.banner-mark svg { width : 62%; height : 62%; }
+
+.banner-copy { min-width : 0; }
+
+.world-headline {
+    margin         : 0;
+    /* Was 27px at the top end and being read by nobody. This is the only thing
+       on the screen saying what the player is now doing. */
+    /* vmin, not vw: on a wide short window vw kept growing the headline while
+       there was less and less height to put it in. */
+    font-size      : clamp(19px, 3.6vmin, 42px);
+    text-transform : uppercase;
+    font-weight    : 800;
+    letter-spacing : 0.02em;
+    line-height    : 1.1;
+    color          : #F5F5F5;
+}
+
+.world-caption {
+    margin      : 7px 0 0;
+    font-size   : clamp(12px, 1.9vmin, 21px);
+    font-weight : 500;
+    line-height : 1.35;
+    color       : #9CA3AF;
+}
+
+/* THE BRIEF /////////////////////////////////////////////////////////////// */
+.world-brief {
+    position         : absolute;
+    left             : clamp(10px, 1.8vw, 30px);
+    bottom           : clamp(74px, 9vh, 118px);
+    z-index          : 40;
+    width            : clamp(168px, 21vw, 262px);
+    padding          : clamp(14px, 1.8vh, 22px) clamp(12px, 1.5vw, 20px);
+    border           : 1px solid rgba(245, 245, 245, 0.10);
+    border-radius    : 16px;
+    background-color : rgba(11, 18, 32, 0.94);
+    pointer-events   : none;
+}
+
+.brief-title {
+    margin         : 0 0 clamp(9px, 1.2vh, 14px);
+    font-size      : clamp(11px, 1.2vw, 16px);
+    font-weight    : 800;
+    letter-spacing : 0.08em;
+    color          : #F5F5F5;
+}
+
+.brief-list {
+    display    : grid;
+    gap        : clamp(9px, 1.2vh, 14px);
+    margin     : 0;
+    padding    : 0;
+    list-style : none;
+}
+
+.brief-list li {
+    display     : flex;
+    align-items : center;
+    gap         : clamp(9px, 1vw, 13px);
+    font-size   : clamp(9px, 0.95vw, 13px);
+    font-weight : 500;
+    line-height : 1.3;
+    color       : #9CA3AF;
+}
+
+/* WHAT TO TAP /////////////////////////////////////////////////////////////// */
+/* WHAT TO DO NEXT ////////////////////////////////////////////////////////// */
+/* This is the instruction, and at 17px grey on the bottom edge of a screen a
+   metre tall it was being read by nobody. Lifted off the floor, set at the size
+   of a thing meant to be obeyed, and given the lime the game uses for the thing
+   to act on — with one slow breath so the eye finds it without being shouted at. */
+.world-hint {
+    /* No position of its own — it is the second row of .world-top. */
+    width            : max-content;
+    max-width        : 100%;
+    padding          : clamp(11px, 1.8vh, 24px) clamp(20px, 3vw, 48px);
+    border           : 1px solid rgba(190, 242, 100, 0.42);
+    border-radius    : 999px;
+    background-color : rgba(11, 18, 32, 0.96);
+    box-shadow       : 0 20px 50px -26px rgba(0, 0, 0, 0.9);
+    text-align       : center;
+    font-size        : clamp(14px, 2.6vmin, 30px);
+    font-weight      : 800;
+    letter-spacing   : 0.01em;
+    color            : var(--lime-text);
+    pointer-events   : none;
+    animation        : world-hint-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes world-hint-breathe {
+    0%, 100% { transform : scale(1);     opacity : 1;    }
+    50%      { transform : scale(1.018); opacity : 0.88; }
+}
+
+@media (prefers-reduced-motion : reduce) {
+    .world-hint { animation : none; }
+}
+
+/* THE WAY OUT /////////////////////////////////////////////////////////////// */
+.world-skip {
+    position         : absolute;
+    right            : clamp(10px, 1.8vw, 30px);
+    bottom           : clamp(74px, 9vh, 118px);
+    z-index          : 40;
+    padding          : 9px 18px;
+    border           : 1px solid rgba(255, 255, 255, 0.14);
+    border-radius    : 999px;
+    background-color : rgba(11, 18, 32, 0.94);
+    color            : #9CA3AF;
+    font-family      : var(--font-toon);
+    font-size        : clamp(9px, 0.82vw, 12px);
+    font-weight      : 700;
+    letter-spacing   : 0.12em;
+    cursor           : pointer;
+    transition       : color 160ms ease-out, border-color 160ms ease-out;
+}
+
+.world-skip:hover { color : #F5F5F5; border-color : rgba(255, 255, 255, 0.3); }
+
+/* MAKING ROOM FOR A PANEL /////////////////////////////////////////////////// */
+/* The doorstep file takes the right of the screen; the cards step out of its way */
+.world-banner, .world-brief, .world-hint {
+    transition : opacity 240ms ease-out;
+}
+
+/* With a card open, the map steps back. It is still the place the decision is
+   being made in, so it stays visible — it just stops competing with the file. */
+.world-scene.is-panelled .world-svg {
+    filter     : brightness(0.42) saturate(0.75);
+    transition : filter 320ms ease-out;
+}
+
+.world-svg { transition : filter 320ms ease-out; }
+
+.world-scene.is-panelled .world-banner,
+.world-scene.is-panelled .world-brief,
+.world-scene.is-panelled .world-hint {
+    opacity        : 0;
+    pointer-events : none;
+}
+
+@media screen and (max-width : 700px) {
+    .world-brief { display : none; }
+}
+
+@media (prefers-reduced-motion : reduce) {
+    .nav-arrow {
+    will-change : transform, offset-distance; animation : none; transition : none; }
+}
+
+
+/* THE CAMERA //////////////////////////////////////////////////////////////// */
+/* The map opens close on the bank and pulls back to the whole world when the
+   player steps outside. Animating the viewBox rather than transforming the SVG
+   keeps every stroke width honest at both ends of the move. */
+.world-camera {
+    transition : transform 1500ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* The map is ~150 vector shapes. Without this the browser re-rasterises all
+       of them on every frame of the pull-back, which is what made the zoom
+       judder; with it the group is rasterised once and the layer is transformed. */
+    will-change : transform;
+}
+
+/* THE NAVIGATION ARROW ////////////////////////////////////////////////////// */
+/* The only moving thing on the map. At rest it pulses, slowly, to say "start
+   here"; when a house is picked it travels there and the pulse stops. */
+.nav-arrow {
+    /* Position and heading both come from the offset-path while travelling; the
+       transition is set inline with the journey. Parked, it is a plain translate. */
+    animation        : nav-arrow-pulse 2.1s ease-in-out infinite;
+    transform-origin : center;
+    transform-box    : fill-box;
+}
+
+.nav-arrow.is-travelling {
+    animation : none;
+}
+
+@keyframes nav-arrow-pulse {
+    0%, 100% { opacity : 1;    }
+    50%      { opacity : 0.55; }
+}
+
+/* A ring that breathes out from under it, so the pulse reads at a distance
+   without the arrow itself changing size and losing its edge */
+.nav-arrow::after {
+    content : "";
+}
+
+@media (prefers-reduced-motion : reduce) {
+    .world-camera { transition : none; }
+    .nav-arrow  { animation  : none; transition : none; }
+}
+
+
+/* THE REST OF THE PLACE ///////////////////////////////////////////////////// */
+/* Building footprints, behind everything. Barely off the field — at any more
+   they start reading as things rather than as the ground the routes cross, and
+   the three houses the player is actually going to have to compete with them. */
+.footprint {
+    fill    : #101B2C;
+    opacity : 0.5;
+}

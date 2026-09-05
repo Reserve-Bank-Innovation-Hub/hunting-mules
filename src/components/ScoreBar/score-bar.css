@@ -7,9 +7,12 @@
     justify-content  : center;
     width            : 100%;
     height           : 100%;
-    border-radius    : var(--global-border-radius);
-    background-color : var(--slate-dark80);
-    border           : 1px solid var(--slate-dark60);
+    border-radius    : 18px;
+    /* A recess in the room's wall rather than another raised tile — the keys
+       inside it are what stand proud here */
+    background-color : var(--panel);
+    border           : 1px solid var(--hairline);
+    box-shadow       : none;
     overflow         : hidden;
     transition       : none;
 }
@@ -31,8 +34,8 @@
     font-size      : clamp(8px, 0.9vh, 13px);
     font-weight    : 700;
     letter-spacing : 0.2em;
-    color          : var(--slate-light40);
-    opacity        : 0.7;
+    color          : var(--ink-faint);
+    opacity        : 1;
 }
 
 /* The band is only 15vh, so the tiles run tighter here than on the results screen
@@ -88,7 +91,8 @@
     height           : 100vh;
     border-radius    : 0;
     border           : none;
-    background-color : #000810;
+    box-shadow       : none;
+    background : var(--bg);
     z-index          : 9500;
     overflow-y       : auto;
     animation        : score-bar-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -100,6 +104,9 @@
 }
 
 .score-bar-result {
+    /* Never taller than the screen it is shown on */
+    max-height      : 100vh;
+    overflow        : hidden;
     display         : flex;
     flex-direction  : column;
     align-items     : stretch;
@@ -135,20 +142,22 @@
 
 /* WHOSE SCORE THIS IS /////////////////////////////////////////////////////// */
 .score-bar-result-lead {
-    font-family    : "Minecraft", sans-serif;
+    font-family    : var(--font-toon);
+    font-weight    : 800;
     font-size      : clamp(14px, 1.55vh, 24px);
     letter-spacing : 0.2em;
-    color          : var(--red);
+    color          : var(--red-text);
 }
 
 .score-bar-result-name {
     margin         : 0;
-    font-family    : "Minecraft", sans-serif;
+    font-family    : var(--font-toon);
+    font-weight    : 900;
     font-size      : calc(clamp(32px, 4.2vh, 68px) * var(--name-scale, 1));
     line-height    : 1.05;
-    letter-spacing : 0.02em;
-    color          : var(--amber);
-    text-shadow    : 3px 3px 0 var(--amber-dark60);
+    letter-spacing : 0.01em;
+    color          : var(--ink);
+    text-shadow    : none;
     text-transform : uppercase;
     white-space    : nowrap;
     overflow       : hidden;
@@ -159,13 +168,13 @@
     font-size      : clamp(11px, 1.2vh, 17px);
     font-weight    : 700;
     letter-spacing : 0.22em;
-    color          : var(--amber-light60);
-    opacity        : 0.85;
+    color          : var(--ink-soft);
+    opacity        : 1;
 }
 
 /* THE FIGURES /////////////////////////////////////////////////////////////// */
-/* Cream blocks with the hard pixel bevel the buttons already use — the game's own
-   furniture, not dashboard cards. Two of them, or three when the field visits ran. */
+/* Moulded keys, the same as everything else that holds a number in this game.
+   Two of them, or three when the field visits ran. */
 .score-bar-result-figures {
     display               : grid;
     grid-template-columns : 1fr 1fr;
@@ -185,8 +194,9 @@
     justify-content  : center;
     gap              : clamp(4px, 0.7vh, 10px);
     padding          : clamp(8px, 1.15vh, 17px) 10px;
-    background-color : var(--amber-light90);
-    box-shadow       : inset -3px -3px 0 0 var(--amber-light70);
+    border-radius    : 16px;
+    border           : 1px solid var(--hairline);
+    background-color : var(--panel);
 }
 
 .score-bar-figure-label {
@@ -195,7 +205,7 @@
     letter-spacing : 0.12em;
     line-height    : 1.3;
     text-align     : center;
-    color          : var(--amber-dark40);
+    color          : var(--ink-faint);
 }
 
 .score-bar-figure-row {
@@ -214,10 +224,11 @@
 }
 
 .score-bar-figure-value {
-    font-family : "Minecraft", sans-serif;
+    font-family : var(--font-toon);
+    font-weight : 900;
     font-size   : clamp(26px, 3.2vh, 52px);
     line-height : 1;
-    color       : var(--slate-dark60);
+    color       : var(--ink);
 }
 
 /* THE ACTIONS /////////////////////////////////////////////////////////////// */
@@ -233,7 +244,7 @@
     border          : none;
 }
 
-.score-bar-result-actions .eightbit-btn {
+.score-bar-result-actions .toon-btn {
     font-size : clamp(14px, 1.65vh, 22px) !important;
     padding   : clamp(10px, 1.35vh, 18px) clamp(18px, 2.6vw, 34px) !important;
 }
@@ -261,8 +272,9 @@
     align-items      : center;
     gap              : clamp(3px, 0.5vh, 7px);
     padding          : clamp(10px, 1.3vh, 20px) clamp(6px, 0.9vw, 14px);
-    background-color : var(--amber-light90);
-    box-shadow       : inset -3px -3px 0 0 var(--amber-light70);
+    border-radius    : 16px 16px 6px 6px;
+    border           : 1px solid var(--hairline);
+    background-color : var(--panel);
 }
 
 /* First place stands taller and heavier than the two beside it */
@@ -271,12 +283,13 @@
 }
 
 .score-bar-podium-rank {
-    font-family : "Minecraft", sans-serif;
+    font-family : var(--font-toon);
+    font-weight : 900;
     /* The layout already says who came where, so the figure only has to confirm it
        — at its old size it swamped the name, which is the part worth reading */
     font-size   : clamp(18px, 2.1vh, 34px);
     line-height : 1.15;
-    color       : var(--amber-dark40);
+    color       : var(--ink-faint);
 }
 
 .score-bar-podium-slot.is-first .score-bar-podium-rank {
@@ -288,8 +301,8 @@
     font-size      : clamp(8px, 0.85vh, 12px);
     font-weight    : 700;
     letter-spacing : 0.2em;
-    color          : var(--amber-dark40);
-    opacity        : 0.75;
+    color          : var(--ink-faint);
+    opacity        : 0.8;
 }
 
 .score-bar-podium-slot.is-first .score-bar-podium-label {
@@ -305,7 +318,7 @@
     letter-spacing : 0.06em;
     line-height    : 1.3;
     text-transform : uppercase;
-    color          : var(--slate-dark60);
+    color          : var(--ink);
     white-space    : nowrap;
     overflow       : hidden;
     text-overflow  : ellipsis;
@@ -316,10 +329,11 @@
 }
 
 .score-bar-podium-score {
-    font-family : "Minecraft", sans-serif;
+    font-family : var(--font-toon);
+    font-weight : 900;
     font-size   : clamp(16px, 1.9vh, 30px);
     line-height : 1.15;
-    color       : var(--amber-dark20);
+    color       : var(--alert-dark);
 }
 
 .score-bar-podium-slot.is-first .score-bar-podium-score {
@@ -329,22 +343,39 @@
 /* A place that belongs to the player, in the amber the rest of the game uses for
    anything of theirs */
 .score-bar-podium-slot.is-mine {
-    background-color : var(--amber);
-    box-shadow       : inset -3px -3px 0 0 var(--amber-dark20);
+    background-color : rgba(190, 242, 100, 0.14);
+    border           : 1px solid var(--alert);
 
-    .score-bar-podium-label { color : var(--amber-dark60); opacity : 0.85; }
-    .score-bar-podium-rank  { color : var(--amber-dark60); }
-    .score-bar-podium-name  { color : #000810; }
-    .score-bar-podium-score { color : #000810; }
+    .score-bar-podium-label { color : var(--lime-text); opacity : 0.9; }
+    .score-bar-podium-rank  { color : var(--lime-text); }
+    .score-bar-podium-name  { color : var(--ink); }
+    .score-bar-podium-score { color : var(--lime-text); }
 }
 
 /* THE STANDINGS ///////////////////////////////////////////////////////////// */
 /* No frame around it. The rows are already blocks with their own edges, so a border
    drawn round the lot of them was one box too many — and it made the rows sit
    narrower than the result blocks above, which broke the column. */
+/* Claims whatever is left of the panel, so the board can be measured against
+   real space rather than against its own content — which is circular, and is
+   why it settled at half the places it had room for. */
 .score-bar-board {
-    width      : 100%;
-    margin-top : clamp(4px, 0.8vh, 14px);
+    display        : flex;
+    flex-direction : column;
+    flex           : 1 1 auto;
+    min-height     : 0;
+    width          : 100%;
+    margin-top     : clamp(4px, 0.8vh, 14px);
+}
+
+/* The rows take the remainder of the board and CLIP rather than push it taller.
+   flex-basis has to be 0, not auto: on auto the rows count toward the board's
+   height, so measuring the board to decide how many rows fit made the board grow,
+   which admitted more rows, which grew it again — the panel ran off the screen. */
+.score-bar-board .leaderboard {
+    flex       : 1 1 0;
+    min-height : 0;
+    overflow   : hidden;
 }
 
 .score-bar-board-head {
@@ -354,10 +385,11 @@
 }
 
 .score-bar-board-title {
-    font-family    : "Minecraft", sans-serif;
+    font-family    : var(--font-toon);
+    font-weight    : 800;
     font-size      : clamp(15px, 1.75vh, 26px);
     letter-spacing : 0.14em;
-    color          : var(--amber);
+    color          : var(--ink);
 }
 
 /* A short screen cannot hold a panel title and a row of column headings above four
@@ -371,4 +403,21 @@
     .score-bar-result         { padding : 16px 14px; gap : 8px; }
     .score-bar-result-figures { gap : 6px; }
     .score-bar-result-lead    { font-size : 14px; letter-spacing : 0.16em; }
+}
+
+/* The cup sits with the heading, in the icon family the top bar uses */
+.score-bar-playing-title,
+.score-bar-board-title {
+    display     : inline-flex;
+    align-items : center;
+    gap         : 7px;
+}
+
+/* The figure marks are drawn now rather than raster, so they take a colour from
+   the panel instead of carrying their own. Neutral: the numbers beside them are
+   what the eye is meant to land on. */
+.score-bar-figure-icon {
+    color  : var(--ink-soft);
+    width  : clamp(24px, 2.7vw, 36px);
+    height : auto;
 }

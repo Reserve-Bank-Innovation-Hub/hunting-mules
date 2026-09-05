@@ -1,27 +1,55 @@
+/* AN ACCOUNT =================================================================
+   One of forty on the desk. It is a moulded chip now rather than a bare icon:
+   a raised disc with a lip under it, the account's own mark sitting in the
+   middle, and its balance on a tag hanging below.
+
+   Nothing about how it behaves has changed. It is the same box at the same
+   grid size, it takes the same click, and the balance tag still hangs outside
+   the box so the grid never shifts when one appears.
+   ========================================================================== */
+
 .account-node {
     width           : var(--icon-size, 64px);
     height          : var(--icon-size, 64px);
-    border-radius   : 4px;
+    border-radius   : 50%;
     display         : flex;
     align-items     : center;
     justify-content : center;
     font-size       : 12px;
-    color           : #333;
+    color           : var(--ink);
     cursor          : pointer;
-    transition      : transform 0.1s ease;
     pointer-events  : auto;
     z-index         : 10;
     position        : relative;
     overflow        : visible;
 
+    /* The disc itself is .bank-disc in globals.css — the same one the pattern
+       tutorials draw. Only what is specific to being on the board lives here. */
+    transition      : box-shadow 140ms ease-out, filter 140ms ease-out,
+                      transform 140ms ease-out;
+
     img {
-        width  : var(--icon-size, 64px);
-        height : var(--icon-size, 64px);
+        width      : 74%;
+        height     : 74%;
+        object-fit : contain;
     }
+
 }
 
+/* Comes up under the finger rather than gaining an outline */
 .account-node:hover {
-    transform : scale(1.05);
+    filter     : brightness(1.22);
+    box-shadow : inset 0 0 0 1px rgba(167, 139, 250, 0.55),
+                 inset 0 1px 0 rgba(245, 245, 245, 0.22),
+                 0 5px 14px -4px rgba(0, 0, 0, 0.6);
+}
+
+/* And goes down when it is pressed, losing the shadow it was standing on */
+.account-node:active {
+    transform  : translateY(1px);
+    filter     : brightness(0.94);
+    box-shadow : inset 0 0 0 1px var(--primary-rim),
+                 0 1px 3px -2px rgba(0, 0, 0, 0.6);
 }
 
 .account-node.shaking {
@@ -36,7 +64,7 @@
     width            : var(--icon-size, 64px);
     height           : var(--icon-size, 64px);
     border-radius    : 50%;
-    background-color : #ffffff;
+    background       : rgba(239, 68, 68, 0.18);
     display          : flex;
     align-items      : center;
     justify-content  : center;
@@ -45,18 +73,21 @@
     z-index          : 11;   /* Sits above its untouched neighbours */
     position         : relative;
     overflow         : visible;
-    filter           : drop-shadow(0 2px 8px rgba(200, 0, 0, 0.34));
+    box-shadow       : inset 0 0 0 3.5px var(--bad);
     /* Comes down like a stamp, then stays put */
     animation        : mule-stamp 0.42s cubic-bezier(0.2, 1.5, 0.4, 1) both;
 
     img {
-        width  : 100%;
-        height : 100%;
+        width         : 100%;
+        height        : 100%;
+        border-radius : 50%;
+        object-fit    : cover;
     }
 }
 
 .account-node.locked:hover {
-    transform : none;
+    transform  : none;
+    box-shadow : inset 0 0 0 3.5px var(--bad);
 }
 
 /* Down hard and slightly askew, the way a stamp lands */
@@ -66,9 +97,9 @@
     100% { transform : scale(1) rotate(0deg);      opacity : 1; }
 }
 
+/* A mule looks exactly like every other account. That is the whole game, so
+   there is deliberately nothing here. */
 .mule-account {
-    /*background-color : var(--red-light60);*/
-    /*border           : 2px solid var(--red);*/
 }
 
 @keyframes shake {
@@ -82,27 +113,35 @@
         transform : translateX(3px);
     }
 }
+
 /* BALANCES ////////////////////////////////////////////////////////////////// */
-/* The node box stays the grid cell size, so the chip hangs below it without
-   pushing anything around. The grid reserves vertical spacing for it. */
+/* The node box stays the grid cell size, so the tag hangs below it without
+   pushing anything around. The grid reserves vertical spacing for it.
+
+   Deliberately colourless. The number itself is the tell for the low-balance
+   pattern, so tinting it would hand the player the answer. */
 .account-node .account-balance {
     position         : absolute;
-    top              : calc(100% + 4px);
+    top              : calc(100% + 5px);
     left             : 50%;
     transform        : translateX(-50%);
     padding          : clamp(2px, 0.28vw, 4px) clamp(6px, 0.85vw, 11px);
-    border-radius    : 4px;
-    background-color : var(--amber);
-    border           : 1px solid var(--amber-dark20);
-    color            : var(--slate-dark60);
+    border-radius    : 999px;
     /* Sized against the viewport rather than pinned, so it grows with the board */
+    font-family      : var(--font-toon);
     font-size        : clamp(11px, 1.35vw, 16px);
-    font-weight      : 700;
+    font-weight      : 800;
     line-height      : 1.3;
     white-space      : nowrap;
     pointer-events   : none;
     font-variant-numeric : tabular-nums;
     z-index          : 12;
+    /* Teal, and quiet. It is the one figure on the board that belongs to the
+       account rather than to a transaction, so it should be legible without
+       drawing a box around every node — no border, and the fill let right down. */
+    background-color : rgba(45, 212, 191, 0.09);
+    border           : none;
+    color            : var(--line-teal);
 }
 
 @media screen and (max-width : 768px) {

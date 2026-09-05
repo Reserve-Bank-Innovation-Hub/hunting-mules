@@ -16,9 +16,12 @@
    is there to say the accounts are connected, not to be read edge by edge. The
    accounts are the anchors, and they need to sit clearly on top of it. */
 .network-edge {
-    stroke       : var(--slate-light40);
+    /* Fainter again. Sixty of these are drawn at once and they only need to say
+       the accounts are joined — with the balance chips and the pattern cues now
+       carrying colour, the web was the loudest quiet thing on the board. */
+    stroke       : var(--ink-faint);
     stroke-width : 1;
-    opacity      : 0.15;
+    opacity      : 0.11;
 }
 
 /* PATTERN CUE /////////////////////////////////////////////////////////////// */
@@ -34,9 +37,10 @@
 /* A trace of where the money is going, not a route drawn between two banks. Kept
    low in opacity so it never competes with the amount travelling along it, but in
    the game's red — the same one the stolen figure and TIME'S UP use — so it reads
-   as something to look at rather than more of the amber furniture. */
+   as something to look at. Teal, not red: red is what a caught account and a lost
+   figure are, so a cue that only says "look here" should not borrow it. */
 .pattern-flash {
-    stroke           : var(--red);
+    stroke           : var(--line-teal);
     stroke-width     : 3.4;
     stroke-linecap   : round;
     stroke-dasharray : var(--flash-length);
@@ -58,7 +62,7 @@
    more. Same colour and the same fade as the line, so the two read as one mark —
    and no glow or pulse of its own. */
 .pattern-flash-arrow {
-    fill      : var(--red);
+    fill      : var(--bad);
     opacity   : 0;
     animation : pattern-flash-arrow var(--flash-duration, 520ms) ease-out
                 var(--flash-delay, 0ms) both;

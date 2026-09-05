@@ -58,7 +58,13 @@ export const AnimatedTransaction = ({
 
     return (
         <motion.div
-            className={`transaction-card ${transaction.isBounced || transaction.isReturnLeg ? 'bounced' : ''}`}
+            className={[
+                "transaction-card",
+                transaction.isBounced || transaction.isReturnLeg ? "bounced" : "",
+                // Part of the pattern being hunted right now, rather than one of
+                // the dozen ordinary payments crossing the board at the same time
+                transaction.isMuleInflow ? "is-pattern" : "",
+            ].filter(Boolean).join(" ")}
             style={{
                 position        : "absolute",
                 left            : 0,

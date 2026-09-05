@@ -8,8 +8,10 @@ import { Text } from "fictoan-react";
 import { motion } from "framer-motion";
 
 // ASSETS ==============================================================================================================
-import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { BankMark } from "$components/BankMark/BankMark";
 
 // LIB =================================================================================================================
 import { formatBalance } from "$lib/transactionUtils";
@@ -54,13 +56,13 @@ export const DemoAnimLowBalance = () => {
             <img src={MuleHeadImage.src} alt="Mule account" className="center-node"
                  style={{left : "50%", top : "50%"}} />
 
-            <img src={BankIconImage.src} alt="Paying account"
-                 className={`satellite-node ${step === 1 ? "active" : ""}`}
-                 style={{left : "15%", top : "50%"}} />
+            <span  
+                 className={`satellite-node bank-disc ${step === 1 ? "active" : ""}`}
+                 style={{left : "15%", top : "50%"}}><BankMark /></span>
 
-            <img src={BankIconImage.src} alt="Receiving account"
-                 className={`satellite-node ${step === 3 ? "active" : ""}`}
-                 style={{left : "85%", top : "50%"}} />
+            <span  
+                 className={`satellite-node bank-disc ${step === 3 ? "active" : ""}`}
+                 style={{left : "85%", top : "50%"}}><BankMark /></span>
 
             {/* The large sum arriving */}
             {step === 1 && (

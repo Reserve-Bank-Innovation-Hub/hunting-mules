@@ -23,7 +23,7 @@
         width      : 13.33%;
         height     : 13.33%;
         transform  : translate(-50%, -50%);
-        filter     : drop-shadow(0 2px 8px rgba(200, 0, 0, 0.3));
+        filter     : drop-shadow(0 2px 8px rgba(239, 68, 68, 0.3));
         transition : all 0.3s ease;
         object-fit : cover;
     }
@@ -39,15 +39,17 @@
 
         &.active {
             opacity : 1;
-            filter  : drop-shadow(0 2px 8px rgba(0, 100, 200, 0.3));
+            filter  : drop-shadow(0 2px 8px rgba(45, 212, 191, 0.3));
         }
     }
 
+    /* On a light card these have to carry a little more weight than they did
+       on a black one, or the web the money travels along disappears */
     .connection-line {
-        stroke           : var(--slate-light70);
-        stroke-width     : 1;
+        stroke           : var(--ink-soft);
+        stroke-width     : 1.2;
         stroke-dasharray : 4 4;
-        opacity          : 0.3;
+        opacity          : 0.34;
     }
 
     .demo-transaction {
@@ -57,9 +59,9 @@
         width            : fit-content;
         padding          : 4px 10px;
         border-radius    : 6px;
-        background-color : white;
-        border           : 1px solid var(--slate-light60);
-        box-shadow       : 0 2px 8px rgba(0, 0, 0, 0.15);
+        background-color : var(--bg-lift);
+        border           : 1px solid var(--hairline);
+        box-shadow       : none;
         transform        : translate(-50%, -50%);
         pointer-events   : none;
         z-index          : 10;
@@ -68,7 +70,7 @@
             font-size   : 12px;
             font-weight : 700;
             margin      : 0;
-            color       : var(--blue);
+            color       : #2DD4BF;
         }
     }
 
@@ -79,10 +81,10 @@
         left        : 50%;
         transform   : translateX(-50%);
         font-size   : 12px;
-        font-weight : 700;
-        letter-spacing : 0.04em;
+        font-weight : 800;
+        letter-spacing : 0.06em;
         white-space : nowrap;
-        color       : var(--amber);
+        color       : var(--alert-dark);
     }
 
     /* Balance chip for the low-balance demo */
@@ -93,9 +95,9 @@
         transform        : translateX(-50%);
         padding          : 3px 9px;
         border-radius    : 4px;
-        background-color : var(--white);
-        border           : 1px solid var(--slate-light60);
-        color            : var(--slate-dark60);
+        background-color : var(--bg-lift);
+        border           : 1px solid var(--hairline);
+        color            : var(--ink-soft);
         font-size        : 14px;
         font-weight      : 700;
         white-space      : nowrap;
@@ -104,9 +106,9 @@
         transition       : background-color 0.2s ease, color 0.2s ease;
 
         &.surging {
-            background-color : var(--red);
-            border-color     : var(--red);
-            color            : var(--white);
+            background-color : var(--bad);
+            border-color     : var(--bad);
+            color            : #FFFFFF;
         }
     }
 
@@ -121,8 +123,8 @@
 
 /* The single consolidated transfer that closes a fan-in */
 .demo-anim .demo-transaction.is-consolidated {
-    border-color : var(--amber-dark20);
-    box-shadow   : 0 2px 12px rgba(0, 0, 0, 0.25);
+    border-color : var(--alert);
+    box-shadow   : none;
 
-    p { color : var(--amber-dark40); }
+    p { color : var(--lime-text); }
 }

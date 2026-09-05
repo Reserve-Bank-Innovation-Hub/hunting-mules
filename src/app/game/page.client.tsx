@@ -1,5 +1,8 @@
 "use client";
 
+// SECTION 3 — PATTERN ROUNDS, and the host for sections 4 and 5 after the clock
+// runs out. See CLAUDE.md for the five sections.
+
 // REACT CORE ==========================================================================================================
 import React, { useMemo, useEffect, useRef, useState } from "react";
 import ReactFlow, { Background, BackgroundVariant, NodeTypes } from "reactflow";
@@ -10,6 +13,8 @@ import { Article, Card, Div, Main, Spinner } from "fictoan-react";
 // LOCAL COMPONENTS ====================================================================================================
 import { AccountNode } from "$components/AccountNode/AccountNode";
 import { AnimationOverlay } from "$components/AnimationOverlay/AnimationOverlay";
+import { BoardHints } from "$components/BoardHints/BoardHints";
+import { BoardTexture } from "$components/BoardTexture/BoardTexture";
 import { EddVisit } from "$components/EddVisit/EddVisit";
 import { NetworkLayer } from "$components/NetworkLayer/NetworkLayer";
 import { PatternReminder } from "$components/PatternReminder/PatternReminder";
@@ -107,6 +112,12 @@ const GamePage = () => {
         isFinished : gameState.phase === "finished",
         isPreview,
     });
+
+    // The pattern currently in play — the last one unlocked. The hint bar under
+    // the board shows its shape for as long as it is live.
+    const livePattern = gameState.unlockedPatterns > 0
+        ? PATTERNS[gameState.unlockedPatterns - 1]
+        : null;
 
     const introPattern = gameState.introPatternIndex !== null
         ? PATTERNS[gameState.introPatternIndex]
@@ -221,7 +232,8 @@ const GamePage = () => {
             roundIndex,
             // Once the clock has run out the board is behind an overlay and out of play,
             // so a resize must not deal it again
-            shouldRecalculateOnResize : () => phaseRef.current === "intro" || phaseRef.current === "playing",
+            shouldRecalculateOnResize : () =>
+                phaseRef.current === "intro" || phaseRef.current === "playing",
             currentRoles              : () => rolesRef.current,
             currentBalances           : () => balancesRef.current,
             unlockedBehaviours        : () => PATTERNS
@@ -253,7 +265,7 @@ const GamePage = () => {
 
             {/* PLAY AREA ////////////////////////////////////////////////////////////////////////////////////////// */}
             <Main id="play-area">
-                <Card bgColour="amber-light90" isFullHeight>
+                <Card isFullHeight>
                     <div ref={gridLayout.containerRef} style={{position : "relative", width : "100%", height : "100%"}}>
                         {!gameState.isGridReady ? (
                             // Loading State
@@ -262,6 +274,10 @@ const GamePage = () => {
                                 </Div>
                         ) : (
                             <>
+                                {/* Texture behind the board, in the World Map's own
+                                    graphic vocabulary. Marks, not objects. */}
+                                <BoardTexture />
+
                                 <NetworkLayer
                                     nodes={nodes}
                                     network={gameState.network}
@@ -293,7 +309,7 @@ const GamePage = () => {
                                         competed with the accounts sitting on it — this is the
                                         same grid, pitched down to a whisper. */}
                                     <Background
-                                        color="#e2d7c2"
+                                        color="#1F2937"
                                         variant={BackgroundVariant.Dots}
                                         gap={20}
                                         size={1}
@@ -306,6 +322,12 @@ const GamePage = () => {
                                     onTransactionComplete={transactions.handleTransactionComplete}
                                     onRippleComplete={gameFlow.handleRippleComplete}
                                 />
+
+                                {/* Three reminders along the foot of the board: what to
+                                    do, what this pattern looks like, and how to act on
+                                    it. There for the whole round, because the tutorial
+                                    card is not. */}
+                                {livePattern && <BoardHints pattern={livePattern} />}
                             </>
                         )}
                     </div>

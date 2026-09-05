@@ -8,8 +8,10 @@ import { Text } from "fictoan-react";
 import { motion } from "framer-motion";
 
 // ASSETS ==============================================================================================================
-import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { BankMark } from "$components/BankMark/BankMark";
 
 // STYLES ==============================================================================================================
 import "$/styles/demo-anim.css";
@@ -54,23 +56,19 @@ export const DemoAnimGatherScatter = () => {
                  style={{left : "50%", top : "50%"}} />
 
             {SOURCES.map((node, i) => (
-                <img
-                    key={`source-${i}`}
-                    src={BankIconImage.src}
-                    alt="Paying account"
-                    className={`satellite-node ${isGathering ? "active" : ""}`}
-                    style={{left : `${toPct(node.x)}%`, top : `${toPct(node.y)}%`}}
-                />
+                <span key={`source-${i}`}
+                    
+                    
+                    className={`satellite-node bank-disc ${isGathering ? "active" : ""}`}
+                    style={{left : `${toPct(node.x)}%`, top : `${toPct(node.y)}%`}}><BankMark /></span>
             ))}
 
             {DESTINATIONS.map((node, i) => (
-                <img
-                    key={`destination-${i}`}
-                    src={BankIconImage.src}
-                    alt="Receiving account"
-                    className={`satellite-node ${!isGathering ? "active" : ""}`}
-                    style={{left : `${toPct(node.x)}%`, top : `${toPct(node.y)}%`}}
-                />
+                <span key={`destination-${i}`}
+                    
+                    
+                    className={`satellite-node bank-disc ${!isGathering ? "active" : ""}`}
+                    style={{left : `${toPct(node.x)}%`, top : `${toPct(node.y)}%`}}><BankMark /></span>
             ))}
 
             {movingGroup.map((node, order) => {

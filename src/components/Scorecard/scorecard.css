@@ -1,7 +1,256 @@
-#scorecard {
-    .metric-card {
-        display         : flex;
-        flex-direction  : column;
-        justify-content : space-between;
-    }
+/* THE FIGURES ================================================================
+   Four things the player needs at a glance: the clock, how much of the round
+   is live, what the mules have taken and what has been caught.
+
+   Same four numbers, same order, same markup. They are moulded tiles now
+   rather than flat cards, and each one carries the colour of what it counts —
+   which is what lets them be read without their labels at speed.
+   ========================================================================== */
+
+#scorecard .metric-card {
+    display          : flex;
+    flex-direction   : column;
+    justify-content  : space-between;
+    gap              : 2px;
+    border           : none;
+    border-radius    : 16px;
+    border           : 1px solid var(--hairline);
+    background-color : var(--panel);
+    box-shadow       : none;
+}
+
+/* The label. Quiet, uppercase, and never in the tile's own colour — the number
+   is what carries that. */
+#scorecard .metric-card p {
+    margin         : 0;
+    font-family    : var(--font-toon);
+    font-size      : clamp(9px, 0.85vw, 12px) !important;
+    font-weight    : 800;
+    letter-spacing : 0.12em;
+    text-transform : uppercase;
+    color          : var(--ink-faint) !important;
+}
+
+#scorecard .metric-card h5,
+#scorecard .metric-card h6 {
+    margin               : 0;
+    font-family          : var(--font-toon);
+    font-weight          : 800;
+    line-height          : 1.1;
+    letter-spacing       : 0.01em;
+    color                : var(--ink);
+    font-variant-numeric : tabular-nums;
+}
+
+#scorecard .metric-card h5 { font-size : clamp(17px, 2vw, 30px) !important; }
+#scorecard .metric-card h6 { font-size : clamp(14px, 1.5vw, 20px) !important; }
+
+/* Fictoan colours these from its own palette. The tokens below are this world's
+   equivalents, so a red figure here is the same red as a red anything else. */
+#scorecard .metric-card [class*="red"]   { color : var(--red-text) !important;   }
+#scorecard .metric-card [class*="green"] { color : var(--lime-text) !important; }
+
+/* On a phone the four sit as rows inside one tile rather than as four tiles */
+#scorecard .metric-card > div {
+    padding : 3px 0;
+}
+
+#scorecard .metric-card > div + div {
+    border-top : 1px solid var(--panel-edge);
+}
+
+
+/* THE TOP BAR, ACROSS ONE ROW ============================================== */
+/* Layout follows the reference: four figures side by side, each an icon, a
+   label and a number, with a bar under the clock. Nothing else is borrowed —
+   the surfaces, the type and the colours are this game's own.
+
+   Icons are inline SVG in the neutral grey: they identify a figure at a glance
+   and are never the thing being read. */
+#scorecard .metric-card {
+    position : relative;
+    gap      : clamp(3px, 0.5vh, 7px);
+    padding  : clamp(10px, 1.3vh, 18px) clamp(12px, 1.3vw, 20px) !important;
+}
+
+#scorecard .metric-card p {
+    display     : flex;
+    align-items : center;
+    gap         : 7px;
+}
+
+.metric-icon {
+    flex-shrink         : 0;
+    width               : clamp(12px, 1.15vw, 17px);
+    aspect-ratio        : 1;
+    background-repeat   : no-repeat;
+    background-position : center;
+    background-size     : 100%;
+}
+
+.metric-icon.is-clock {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%239CA3AF' stroke-width='2'/%3E%3Cpath d='M12 6.6V12l3.9 2.4' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.metric-icon.is-patterns {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%239CA3AF'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='12' cy='3.4' r='2.1'/%3E%3Ccircle cx='12' cy='20.6' r='2.1'/%3E%3Ccircle cx='4.5' cy='7.7' r='2.1'/%3E%3Ccircle cx='19.5' cy='7.7' r='2.1'/%3E%3Ccircle cx='4.5' cy='16.3' r='2.1'/%3E%3Ccircle cx='19.5' cy='16.3' r='2.1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.metric-icon.is-rupee {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 4h10'/%3E%3Cpath d='M7 9h10'/%3E%3Cpath d='M9 4v5'/%3E%3Cpath d='M9 9l7 11'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.metric-icon.is-shield {
+    background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.4 20.6 5.6v6.6c0 5-3.5 8.5-8.6 10.1-5.1-1.6-8.6-5.1-8.6-10.1V5.6Z' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* HOW MUCH OF THE ROUND IS LEFT ///////////////////////////////////////////// */
+/* Under the clock only. Lime while there is time, red under ten seconds — the
+   same rule the number itself follows, so the two never disagree. */
+.metric-bar {
+    display          : block;
+    width            : 100%;
+    height           : 4px;
+    margin-top       : 2px;
+    border-radius    : 999px;
+    background-color : rgba(245, 245, 245, 0.08);
+    overflow         : hidden;
+}
+
+.metric-bar-fill {
+    display          : block;
+    height           : 100%;
+    border-radius    : 999px;
+    background-color : var(--line-lime);
+    transition       : width 1s linear, background-color 300ms ease;
+}
+
+#scorecard .metric-card.is-time:has(h5[class*="red"]) .metric-bar-fill {
+    background-color : var(--line-red);
+}
+
+/* MONEY ///////////////////////////////////////////////////////////////////// */
+/* A very slight lime underlight beneath the figures that count money, so a
+   number that is changing catches the eye without the bar turning into a neon
+   dashboard. One shadow, low alpha, no border, no animation. */
+#scorecard .metric-card.is-money h5,
+#scorecard .metric-card.is-caught h5 {
+    text-shadow : 0 0 20px rgba(190, 242, 100, 0.22);
+}
+
+/* HOW FAR THROUGH THE FOUR ///////////////////////////////////////////////// */
+/* One dot per pattern. Purple is the system, so a pattern that has joined the
+   round is filled in it; the ones still to come are an empty ring. */
+.metric-dots {
+    display    : flex;
+    gap        : 6px;
+    margin-top : 3px;
+}
+
+.metric-dots i {
+    width         : clamp(6px, 0.62vw, 9px);
+    aspect-ratio  : 1;
+    border-radius : 50%;
+    border        : 1px solid var(--hairline);
+    transition    : background-color 300ms ease, border-color 300ms ease;
+}
+
+.metric-dots i.is-live {
+    background-color : var(--line-violet);
+    border-color     : var(--line-violet);
+}
+
+
+/* THE FIGURE AND WHAT SITS BESIDE IT ======================================= */
+/* Layout follows the reference: the number on the left, a small live element on
+   the right of the two cards that have something changing. */
+.metric-figure {
+    display         : flex;
+    align-items     : center;
+    justify-content : space-between;
+    gap             : clamp(8px, 1vw, 14px);
+    width           : 100%;
+}
+
+/* HOW FAST IT IS CLIMBING /////////////////////////////////////////////////// */
+/* A sparkline, not a chart. Sixty units wide, no axes, no labels — it says the
+   shape of the last half minute and nothing else. Red, because what it plots
+   is money lost. */
+.metric-spark {
+    flex-shrink : 0;
+    width       : clamp(38px, 4.6vw, 66px);
+    height      : clamp(16px, 1.9vh, 26px);
+    overflow    : visible;
+}
+
+.metric-spark .spark-line {
+    fill             : none;
+    stroke           : var(--line-red);
+    stroke-width     : 1.6;
+    stroke-linecap   : round;
+    stroke-linejoin  : round;
+    vector-effect    : non-scaling-stroke;
+}
+
+.metric-spark .spark-fill {
+    fill : rgba(239, 68, 68, 0.16);
+}
+
+/* THE ROUND IS LIVE ///////////////////////////////////////////////////////// */
+/* One ring breathing outward beside the catch count. It is the only thing in
+   the bar that moves without the game moving it, which is exactly its job: the
+   numbers can sit still for ten seconds and the screen still reads as running.
+   Two rings on a stagger, so there is always one mid-flight. */
+.metric-scan {
+    position     : relative;
+    flex-shrink  : 0;
+    width        : clamp(24px, 2.9vw, 40px);
+    aspect-ratio : 1;
+}
+
+.metric-scan i,
+.metric-scan b {
+    position      : absolute;
+    inset         : 0;
+    margin        : auto;
+    border-radius : 50%;
+}
+
+.metric-scan i {
+    border    : 1px solid var(--line-lime);
+    opacity   : 0;
+    animation : metric-scan-out 3.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.metric-scan i:nth-child(2) { animation-delay : 1.6s; }
+
+/* The still centre the rings leave from */
+.metric-scan b {
+    width            : 26%;
+    height           : 26%;
+    background-color : var(--line-lime);
+    opacity          : 0.85;
+}
+
+@keyframes metric-scan-out {
+    0%   { width : 26%;  height : 26%;  opacity : 0;    }
+    18%  {                              opacity : 0.55; }
+    100% { width : 100%; height : 100%; opacity : 0;    }
+}
+
+/* The pattern that just joined the round keeps a slow pulse, so the dots say
+   which one is newest as well as how many are live */
+.metric-dots i.is-live:last-of-type {
+    animation : metric-dot-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes metric-dot-pulse {
+    0%, 100% { opacity : 1;    }
+    50%      { opacity : 0.42; }
+}
+
+@media (prefers-reduced-motion : reduce) {
+    .metric-scan i,
+    .metric-dots i.is-live:last-of-type { animation : none; }
+    .metric-scan i:first-child { opacity : 0.35; width : 74%; height : 74%; }
 }

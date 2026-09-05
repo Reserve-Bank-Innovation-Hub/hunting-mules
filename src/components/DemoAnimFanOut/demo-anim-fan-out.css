@@ -21,7 +21,7 @@
         width       : 13.33%;
         height      : 13.33%;
         transform   : translate(-50%, -50%);
-        filter      : drop-shadow(0 2px 8px rgba(0, 100, 200, 0.3));
+        filter      : drop-shadow(0 2px 8px rgba(45, 212, 191, 0.3));
         transition  : all 0.3s ease;
         object-fit  : cover;
     }
@@ -37,12 +37,12 @@
 
         &.active {
             opacity : 1;
-            filter  : drop-shadow(0 2px 8px rgba(0, 150, 100, 0.3));
+            filter  : drop-shadow(0 2px 8px rgba(45, 212, 191, 0.3));
         }
     }
 
     .connection-line {
-        stroke         : var(--slate-light70);
+        stroke         : var(--ink-faint);
         stroke-width   : 1;
         stroke-dasharray : 4 4;
         opacity        : 0.3;
@@ -55,9 +55,12 @@
         width            : fit-content;
         padding          : 4px 10px;
         border-radius    : 6px;
-        background-color : white;
-        border           : 1px solid var(--slate-light60);
-        box-shadow       : 0 2px 8px rgba(0, 0, 0, 0.15);
+        /* The last light-theme surface in the tutorials: a white chip with a blue
+           figure, left behind when everything else went dark. Same treatment as
+           the money crossing the real board. */
+        background-color : var(--bg-lift);
+        border           : 1px solid rgba(190, 242, 100, 0.45);
+        box-shadow       : 0 0 16px -6px rgba(190, 242, 100, 0.4);
         transform        : translate(-50%, -50%);
         pointer-events   : none;
         z-index          : 10;
@@ -66,7 +69,7 @@
             font-size   : 12px;
             font-weight : 700;
             margin      : 0;
-            color       : var(--blue);
+            color       : var(--lime-text);
         }
     }
 

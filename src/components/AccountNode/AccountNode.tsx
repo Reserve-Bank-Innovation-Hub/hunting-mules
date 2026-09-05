@@ -1,5 +1,7 @@
 "use client";
 
+// SECTION 3 — PATTERN ROUNDS: one of the forty accounts on the board.
+
 // REACT CORE ==========================================================================================================
 import React from "react";
 
@@ -7,8 +9,10 @@ import React from "react";
 import { Div } from "fictoan-react";
 
 // ASSETS ==============================================================================================================
-import BankIconImage from "../../assets/images/bank-icon.png";
 import MuleHeadImage from "../../assets/images/mule-head.png";
+
+// LOCAL COMPONENTS ====================================================================================================
+import { BankMark } from "$components/BankMark/BankMark";
 
 // LIB =================================================================================================================
 import { getGridConfig } from "$lib/gameConfig";
@@ -63,6 +67,11 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
         <Div
             className={[
                 "account-node",
+                isCaught ? "" : "bank-disc",
+                // Purple or indigo, decided by the account's own id so it never
+                // changes under the player mid-round. Variation, not meaning.
+                !isCaught && id.split("").reduce((n, c) => n + c.charCodeAt(0), 0) % 3 === 0
+                    ? "is-alt" : "",
                 data.isMule ? "mule-account" : "",
                 isCaught ? "locked" : "",
                 data.isShaking ? "shaking" : "",
@@ -71,18 +80,15 @@ export const AccountNode = ({data, id} : { data : NodeData, id : string }) => {
             onMouseDown={handleMouseDown}
             style={{"--icon-size": `${iconSize}px`} as React.CSSProperties}
         >
-            <img
-                src={isCaught ? MuleHeadImage.src : BankIconImage.src}
-                alt={isCaught ? "Caught mule account" : "Bank Account"}
-                style={isCaught ? {
-                    borderRadius : "50%",
-                    objectFit    : "cover",
-                    maxWidth     : "unset",
-                } : {
-                    objectFit : "cover",
-                    maxWidth  : "unset",
-                }}
-            />
+            {isCaught ? (
+                <img
+                    src={MuleHeadImage.src}
+                    alt="Caught mule account"
+                    style={{borderRadius : "50%", objectFit : "cover", maxWidth : "unset"}}
+                />
+            ) : (
+                <BankMark />
+            )}
 
             {balanceLabel}
         </Div>

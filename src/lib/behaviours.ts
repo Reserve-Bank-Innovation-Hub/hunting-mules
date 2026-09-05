@@ -55,8 +55,11 @@ export const weightedTowardsNewest = <T,>(patterns : T[]) : T[] => {
         return patterns;
     }
 
+    // The newest pattern is the one the player has just been taught, so it needs
+    // to be visibly running. Weighted to about half the board once all four are
+    // out, rather than a quarter.
     const newest = patterns[patterns.length - 1];
-    const extra = new Array(patterns.length - 2).fill(newest);
+    const extra = new Array(patterns.length).fill(newest);
 
     return [ ...patterns, ...extra ];
 };
@@ -64,9 +67,14 @@ export const weightedTowardsNewest = <T,>(patterns : T[]) : T[] => {
 // The gap between money landing on a mule and the mule moving it on again
 const HANDOFF_MS = 520;
 const STAGGER_MS = 170;
+// The arms of a fan-out MUST overlap. The whole pattern is one account paying
+// several at once, and at a wide stagger they leave one at a time and there is
+// nothing to recognise — it just looks like ordinary traffic from a busy account.
+// A short stagger so they do not launch on the same frame, and no more.
+const SPREAD_STAGGER_MS = 130;
 // Gather-scatter is defined by how quickly it turns money around
 const RAPID_HANDOFF_MS = 180;
-const RAPID_STAGGER_MS = 110;
+const RAPID_STAGGER_MS = 130;
 
 // BALANCES ============================================================================================================
 /**
@@ -205,7 +213,7 @@ export const recruitReplacement = (
     if (behaviour === "low-balance" && balances) {
         const poorest = [ ...candidates ]
             .sort((a, b) => (balances.get(a.id) ?? 0) - (balances.get(b.id) ?? 0))
-            .slice(0, 4);
+            .slice(0, 8);
         return {nodeId : pickOne(poorest)!.id, behaviour};
     }
 
@@ -281,7 +289,10 @@ export const planBurst = (
         } else if (behaviour === "fan-out") {
             // ONE inflow, dispersed across MANY destinations
             const source = pool[0];
-            const destinations = pool.slice(1, Math.min(6, pool.length));
+            // Four arms. Fewer than that and "one splits into many" does not read
+            // as many; the calm comes from how many MULES run at once, not from
+            // thinning out the shape of the pattern itself.
+            const destinations = pool.slice(1, Math.min(5, pool.length));
             if (destinations.length < 2) continue;
 
             const inflow = randomBetween(60000, 140000);
@@ -298,7 +309,7 @@ export const planBurst = (
                 remaining -= share;
 
                 planned.push({
-                    delay    : FLIGHT_MS + HANDOFF_MS + index * STAGGER_MS,
+                    delay    : FLIGHT_MS + HANDOFF_MS + index * SPREAD_STAGGER_MS,
                     fromNode : mule, toNode : destination,
                     amount   : share, isInflow : false, muleId : mule.id,
                     movesBalance : true,
@@ -309,7 +320,9 @@ export const planBurst = (
             // Brief aggregation, then rapid redistribution to a different set. The
             // split adapts to how well connected the mule is — on a twenty-account
             // board, insisting on three of each would leave the pattern unable to run.
-            const sourceCount = Math.min(3, pool.length - 2);
+            // Two in, three out. The turnaround is what identifies it, so the
+            // gather side can be lighter than the scatter side.
+            const sourceCount = Math.min(2, pool.length - 2);
             const sources = pool.slice(0, sourceCount);
             const destinations = pool.slice(sourceCount, sourceCount + 3);
             if (sources.length < 2 || destinations.length < 2) continue;
@@ -348,8 +361,8 @@ export const planBurst = (
             if (partners.length < 2) continue;
 
             const inflow = randomBetween(LOW_BALANCE_CONFIG.INFLOW_MIN, LOW_BALANCE_CONFIG.INFLOW_MAX);
-            const retained = inflow * (LOW_BALANCE_CONFIG.RETAIN_MIN +
-                Math.random() * (LOW_BALANCE_CONFIG.RETAIN_MAX - LOW_BALANCE_CONFIG.RETAIN_MIN));
+            const retained = randomBetween(LOW_BALANCE_CONFIG.RETAIN_FEE_MIN,
+                                           LOW_BALANCE_CONFIG.RETAIN_FEE_MAX);
             const outflow = Math.max(1000, Math.round((inflow - retained) / 100) * 100);
             const hold = randomBetween(LOW_BALANCE_CONFIG.HOLD_MIN_MS, LOW_BALANCE_CONFIG.HOLD_MAX_MS);
 
