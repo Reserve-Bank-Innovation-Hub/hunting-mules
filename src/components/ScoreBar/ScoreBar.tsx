@@ -79,8 +79,6 @@ const Podium = ({rows, highlightPosition} : {
     );
 };
 
-// Where the original game sent players who wanted to know more about mule accounts
-const LEARN_MORE_URL = "https://www.figma.com/proto/hU8AxWIfkTIrNKKkqWxhh7/GFF?page-id=11%3A77&node-id=465-1225&viewport=-5%2C286%2C0.22&t=0gqj5u5AkwJ3TkMZ-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=465%3A1225&hide-ui=1";
 
 interface ScoreBarProps {
     mulesFoundCount : number;
@@ -240,11 +238,6 @@ export const ScoreBar = ({
                     <Link href={playAgainHref}>
                         <Button className="toon-btn failure">PLAY AGAIN</Button>
                     </Link>
-
-                    {/* The same destination the original game's result modals used */}
-                    <a href={LEARN_MORE_URL} target="_blank" rel="noreferrer">
-                        <Button className="toon-btn">LEARN MORE</Button>
-                    </a>
                 </div>
 
                 {/* THE STANDINGS ////////////////////////////////////////////////////////////////////////////// */}

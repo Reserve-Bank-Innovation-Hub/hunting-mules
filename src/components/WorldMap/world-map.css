@@ -252,7 +252,7 @@
 /* With a card open, the map steps back. It is still the place the decision is
    being made in, so it stays visible — it just stops competing with the file. */
 .world-scene.is-panelled .world-svg {
-    filter     : brightness(0.42) saturate(0.75);
+    filter     : brightness(0.24) saturate(0.55);
     transition : filter 320ms ease-out;
 }
 

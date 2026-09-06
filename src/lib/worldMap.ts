@@ -81,7 +81,7 @@ export const BANK : Place = {id : "bank", label : "BANK HQ", line : "grey", x : 
 
 // Numbered as the game numbers them, and each sitting on the line of its own colour
 export const HOUSES : Place[] = [
-    {id : "house-1", label : "1", line : "red",   x : 145, y : 1085},
+    {id : "house-1", label : "1", line : "lilac", x : 145, y : 1085},
     {id : "house-2", label : "2", line : "lime", x : 512, y : 1241},
     {id : "house-3", label : "3", line : "teal", x : 858, y : 1098},
 ];
@@ -104,7 +104,7 @@ export const ROUTES : Route[] = [
     // to bank 1. Where it passes behind the branch's own card it is hidden, which
     // is what a station box does on a real diagram.
     {
-        line : "red", serves : "house-1",
+        line : "lilac", serves : "house-1",
         points : [ p(512, -180), p(512, 830), p(430, 910), p(215, 910), p(145, 980), p(145, 1085) ],
     },
 
@@ -126,9 +126,11 @@ export const ROUTES : Route[] = [
         points : [ p(512, 910), p(512, 1241), p(512, 1400), p(640, 1528), p(640, 1720) ],
     },
 
-    // BLUE — top left, down the side, then away across the bottom right
+    // Top left, down the side, then away across the bottom right. It serves no
+    // house, which is the point: red now belongs only to a background route, so
+    // nothing the player can act on is coloured as a risk.
     {
-        line : "lilac",
+        line : "red",
         points : [ p(138, -180), p(138, 240), p(200, 302), p(200, 380), p(130, 450),
                    p(130, 840), p(310, 1010), p(470, 1250), p(470, 1720) ],
     },

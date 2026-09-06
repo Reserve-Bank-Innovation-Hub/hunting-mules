@@ -104,9 +104,13 @@
 
     /* THE THREE BANKS ----------------------------------------------------- */
     /* Each is its own line, and its pale tint is only ever a panel wash */
-    --house-1        : var(--line-red);
-    --house-1-dark   : #B91C1C;
-    --house-1-wall   : rgba(239, 68, 68, 0.14);
+    /* Not red. Red means suspicious everywhere else in the game, and none of the
+       three houses is more suspicious than another until it has been visited —
+       colouring one of them red judged it before the player did. Lilac carries no
+       meaning; it is one of the map's own route colours. */
+    --house-1        : var(--line-lilac);
+    --house-1-dark   : #7C3AED;
+    --house-1-wall   : rgba(167, 139, 250, 0.14);
 
     --house-2        : var(--line-lime);
     --house-2-dark   : #84CC16;

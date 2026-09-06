@@ -45,6 +45,13 @@
     align-items      : center;
     background-color : rgba(11, 18, 32, 0.9);
     text-align       : center;
+
+    /* A little light under the card, so it sits above the map rather than being
+       pasted onto it. Two shadows: the dark one is the drop, the purple one is
+       the underlight — biased downward, wide, and at an alpha where it is felt
+       rather than seen. */
+    box-shadow       : 0 26px 64px -30px rgba(0, 0, 0, 0.9),
+                       0 22px 56px -26px rgba(124, 58, 237, 0.42);
 }
 
 /* CARD 1 — WHO ////////////////////////////////////////////////////////////// */
@@ -57,12 +64,15 @@
     position      : relative;
 }
 
-/* The house number sits in the corner, the way a case number does on a file */
+/* The house number sits in the corner, the way a case number does on a file.
+   Offset by the card's own padding rather than a fixed number, so it lands on
+   exactly the line KEY FACTS starts on in the card beside it — both cards share
+   --icard-pad, and both labels are .icard-label, so the two agree by
+   construction instead of by a value that has to be kept in step by hand. */
 .profile-who-card .profile-house {
     position : absolute;
-    top      : clamp(12px, 1.6vh, 18px);
-    right    : clamp(12px, 1.4vw, 18px);
-    color    : var(--house-hue);
+    top      : var(--icard-pad);
+    right    : var(--icard-pad);
 }
 
 /* CARD 2 — THE FILE ///////////////////////////////////////////////////////// */
@@ -130,10 +140,12 @@
 
 /* Uses .icard-label from the shared card system; only the size is raised, since
    on this card it is also the heading. */
+/* Nothing but the size. Colour, fill and transparency all come from
+   .icard-label, so this pill and KEY FACTS in the card beside it are the same
+   object at two sizes rather than two pills that happen to look similar. */
 .profile-house.icard-label {
     font-size      : clamp(14px, 1.4vw, 19px);
     letter-spacing : 0.16em;
-    color          : var(--ink);
 }
 
 /* Whether the account belongs to a person or a business. A fact about the

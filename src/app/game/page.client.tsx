@@ -13,7 +13,6 @@ import { Article, Card, Div, Main, Spinner } from "fictoan-react";
 // LOCAL COMPONENTS ====================================================================================================
 import { AccountNode } from "$components/AccountNode/AccountNode";
 import { AnimationOverlay } from "$components/AnimationOverlay/AnimationOverlay";
-import { BoardHints } from "$components/BoardHints/BoardHints";
 import { BoardTexture } from "$components/BoardTexture/BoardTexture";
 import { EddVisit } from "$components/EddVisit/EddVisit";
 import { NetworkLayer } from "$components/NetworkLayer/NetworkLayer";
@@ -112,12 +111,6 @@ const GamePage = () => {
         isFinished : gameState.phase === "finished",
         isPreview,
     });
-
-    // The pattern currently in play — the last one unlocked. The hint bar under
-    // the board shows its shape for as long as it is live.
-    const livePattern = gameState.unlockedPatterns > 0
-        ? PATTERNS[gameState.unlockedPatterns - 1]
-        : null;
 
     const introPattern = gameState.introPatternIndex !== null
         ? PATTERNS[gameState.introPatternIndex]
@@ -323,11 +316,6 @@ const GamePage = () => {
                                     onRippleComplete={gameFlow.handleRippleComplete}
                                 />
 
-                                {/* Three reminders along the foot of the board: what to
-                                    do, what this pattern looks like, and how to act on
-                                    it. There for the whole round, because the tutorial
-                                    card is not. */}
-                                {livePattern && <BoardHints pattern={livePattern} />}
                             </>
                         )}
                     </div>

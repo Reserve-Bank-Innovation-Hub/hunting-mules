@@ -19,7 +19,11 @@
 
 /* DURING PLAY /////////////////////////////////////////////////////////////// */
 /* The standings have the band to themselves now. */
+/* During play this is reference, not the thing being played. Dimmed as a whole
+   rather than restyled row by row — the player looks at it between rounds, and
+   the board should win every time they are not. */
 .score-bar-playing {
+    opacity : 0.5;
     display        : flex;
     flex-direction : column;
     gap            : 3px;

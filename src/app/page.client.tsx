@@ -18,11 +18,8 @@ import { withEddMode } from "$lib/eddMode";
 import SplashScreen from "../components/SplashScreen/SplashScreen";
 
 // ASSETS ==============================================================================================================
-import HuntingMulesVideo from "../assets/videos/hunting-mules.mp4";
 import IntroSound from "../assets/sounds/intro.wav";
 import MuleHunterLogo from "../assets/images/mule-hunter-logo.png";
-import MuleHunterSplash from "../assets/images/mule-bg.png";
-import MuleSweeperLogo from "../assets/images/mule-sweeper-logo.jpg";
 
 // STYLES ==============================================================================================================
 import "$/app/home.css";

@@ -9,9 +9,8 @@ import React from "react";
 import { Div, Text } from "fictoan-react";
 
 // ASSETS ==============================================================================================================
-import HuntingMulesVideo from "../../assets/videos/hunting-mules.mp4";
 import MuleHunterLogo from "../../assets/images/mule-hunter-logo.png";
-import MuleRunningVideo from "../../assets/videos/mule-running.mp4";
+import LandingLoop from "../../assets/videos/landing-loop.mp4";
 import RBIHLogo from "../../assets/images/rbih-logo.svg";
 
 // STYLES ==============================================================================================================
@@ -31,7 +30,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onStart }) => {
                 <video
                     id="hero-background-video"
                     autoPlay loop muted playsInline
-                    src={MuleRunningVideo}
+                    src={LandingLoop}
                 />
                 <img id="mule-hunter-logo" src={MuleHunterLogo.src} alt="Mule Hunter Logo" />
                 <Text textColour="white" size="large" opacity="60">by</Text>
