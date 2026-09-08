@@ -14,7 +14,7 @@ import { Leaderboard } from "$components/Leaderboard/Leaderboard";
 // The success graphic the original game showed on its victory screen — a mule
 // struck through. It was the reward for a clean run then, and it is the reward for
 // finishing the eighty seconds now.
-import MulesEliminatedImage from "../../assets/images/mules-eliminated.png";
+import MuleSignImage from "../../assets/images/mule-head.png";
 // The two pixel icons, with their baked-in cream background cleared and the empty
 // margin trimmed, so they sit on the result blocks rather than in a paler square
 // The branch, for the verdicts the player gave on the field visits
@@ -187,7 +187,7 @@ export const ScoreBar = ({
                 {/* THE REWARD ///////////////////////////////////////////////////////////////////////////////// */}
                 <img
                     className="score-bar-result-graphic"
-                    src={MulesEliminatedImage.src}
+                    src={MuleSignImage.src}
                     alt="Mules eliminated"
                 />
 
