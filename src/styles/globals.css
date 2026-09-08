@@ -184,3 +184,34 @@ body {
                  inset 0 1px 0 rgba(245, 245, 245, 0.16),
                  0 3px 9px -3px rgba(0, 0, 0, 0.55);
 }
+
+
+/* NOTHING SCROLLS ON A PHONE ================================================
+   Every screen is measured to fit, but iOS will still let the document itself
+   move a few pixels — rubber-banding, and svh not always agreeing with the
+   toolbar that is actually on screen. That reads as a scrollbar on a page that
+   has nothing to scroll to.
+
+   So the document is pinned and the app shell owns its own height. The shell
+   keeps `overflow-y: auto` rather than `hidden`: every screen has been measured
+   with room to spare down to 320x568, but if some device ever does come up
+   short, the content is still reachable instead of being cut off.
+
+   Only phones. The kiosk is 1080 wide and never matches.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    html, body {
+        height             : 100svh;
+        overflow           : hidden;
+        overscroll-behavior: none;
+    }
+
+    #page-home,
+    .splash-screen-overlay,
+    #game-page {
+        height     : 100svh;
+        min-height : 0;
+        overflow-y : auto;
+        overscroll-behavior : contain;
+    }
+}

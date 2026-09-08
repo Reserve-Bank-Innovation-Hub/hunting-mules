@@ -440,13 +440,28 @@
     }
 
     .score-bar-playing {
-        gap     : 0;
-        padding : 3px 6px;
+        gap     : 1px;
+        padding : 4px 7px 5px;
     }
 
-    /* The heading and the column labels both say what the row already shows */
-    .score-bar-playing .score-bar-playing-title,
-    .score-bar-playing .leaderboard.is-blocks .leaderboard-headings,
+    /* The heading and the column labels stay — without them a lone row is just a
+       number and a name with nothing saying what either is. Only the ellipsis
+       that marks the places above and below goes: with one row it is every row
+       but this one, which is not worth a line of its own. */
+    .score-bar-playing .score-bar-playing-title {
+        font-size      : 8px;
+        letter-spacing : 0.16em;
+    }
+
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-headings {
+        padding : 0 9px 1px;
+    }
+
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-headings span {
+        font-size      : 7px;
+        letter-spacing : 0.12em;
+    }
+
     .score-bar-playing .leaderboard.is-blocks .leaderboard-gap {
         display : none !important;
     }

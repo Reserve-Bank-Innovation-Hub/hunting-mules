@@ -13,10 +13,9 @@ import {
     burstDuration, planBurst, planDecoy, restingBalance, weightedTowardsNewest, PlannedTransaction,
 } from "$lib/behaviours";
 import { Network } from "$lib/network";
-import { formatAmount } from "$lib/transactionUtils";
+import { amountLabel } from "$lib/transactionUtils";
 
 // ASSETS ==============================================================================================================
-import TransactionSound from "../assets/sounds/transaction.wav";
 
 interface UseTransactionsProps {
     nodes                      : Node[];
@@ -34,25 +33,6 @@ interface UseTransactionsProps {
     setNodeBalances            : (updater : (prev : Map<string, number>) => Map<string, number>) => void;
     createRipple               : (nodeId : string, x : number, y : number, isLocked? : boolean, isMuleReceiving? : boolean) => void;
 }
-
-// A cue per transaction turns to mush once the board is busy, and building an
-// Audio element for each one is wasted work in the stretch that can least afford
-// it. One cue per window is enough to read the board by.
-const SOUND_THROTTLE_MS = 140;
-let lastSoundAt = 0;
-
-const playTransactionSound = () => {
-    const now = Date.now();
-    if (now - lastSoundAt < SOUND_THROTTLE_MS) {
-        return;
-    }
-    lastSoundAt = now;
-
-    const audio = new Audio(TransactionSound);
-    audio.play().catch((error) => {
-        console.log("Audio playback failed:", error);
-    });
-};
 
 // Flashes clear themselves when their animation ends. This is the backstop for the
 // case where that never fires — a tab in the background, say — so the list can
@@ -155,7 +135,7 @@ export const useTransactions = ({
             id            : `txn-${Date.now()}-${Math.random()}`,
             fromNode      : planned.fromNode,
             toNode        : planned.toNode,
-            amount        : formatAmount(amount),
+            amount        : amountLabel(amount),
             amountValue   : amount,
             isMuleInflow  : isPattern && planned.isInflow,
             isMuleOutflow : isPattern && !planned.isInflow,
@@ -177,7 +157,6 @@ export const useTransactions = ({
             } ].slice(-MAX_LIVE_FLASHES));
         }
 
-        playTransactionSound();
         setActiveTransactions(prev => [ ...prev, transaction ]);
     }, [ setActiveTransactions, setPatternFlashes ]);
 
@@ -197,7 +176,7 @@ export const useTransactions = ({
                 id           : `noise-${Date.now()}-${Math.random()}`,
                 fromNode     : planned.fromNode,
                 toNode       : planned.toNode,
-                amount       : formatAmount(planned.amount),
+                amount       : amountLabel(planned.amount),
                 amountValue  : planned.amount,
                 movesBalance     : planned.movesBalance,
                 isInflowToHolder : planned.isInflow,

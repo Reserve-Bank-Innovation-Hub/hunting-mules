@@ -23,9 +23,19 @@
         color       : var(--ink);
 
         @media screen and (max-width : 768px) {
-            font-size : 8px;
+            font-size : 9px;
         }
     }
 }
 
-
+/* ON A PHONE ================================================================
+   The capsule was built around the kiosk's 64px disc. Against the phone's 34px
+   one a single amount was wider than three accounts and hid the board it was
+   supposed to be crossing.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    .transaction-card {
+        padding       : 2px 6px !important;
+        border-radius : 7px;
+    }
+}

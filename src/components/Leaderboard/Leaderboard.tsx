@@ -51,7 +51,10 @@ export const Leaderboard = ({
     let start = 0;
 
     if (mineIndex >= 0) {
-        const end = Math.min(rows.length, Math.max(mineIndex + 2, visibleRows));
+        // Keep a place below the player where there is room for one. Capped at the
+        // window size: at a single row, "+2" put the player off the top and showed
+        // whoever was one below them instead.
+        const end = Math.min(rows.length, Math.max(mineIndex + Math.min(2, visibleRows), visibleRows));
         start = Math.max(0, end - visibleRows);
     }
 
