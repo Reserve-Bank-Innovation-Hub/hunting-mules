@@ -215,3 +215,43 @@ body {
         overscroll-behavior : contain;
     }
 }
+
+
+/* A KIOSK IS NOT A BROWSER ==================================================
+   The game is played by tapping fast and repeatedly on a public screen, and the
+   browser's own gestures keep firing over the top of it: double-tap zooms, a
+   long press or a right click opens a context menu, and a double tap on any
+   label selects the word under it.
+
+   None of those belong in a kiosk. They also broke the board — a stray zoom
+   resizes the container the grid is measured from, so it rebuilt under the
+   player mid-round.
+   ========================================================================== */
+
+/* No double-tap zoom, anywhere. `manipulation` still allows scrolling and
+   pinch, so nothing that has to scroll stops working. */
+* {
+    touch-action : manipulation;
+}
+
+html, body {
+    -webkit-tap-highlight-color : transparent;
+}
+
+/* Nothing is selectable, so a double tap cannot highlight a word and a long
+   press cannot raise the iOS callout */
+body {
+    -webkit-touch-callout : none;
+    -webkit-user-select   : none;
+    user-select           : none;
+}
+
+/* ...except where a player is actually meant to type. Without this the name
+   field cannot be selected, edited or corrected. */
+input,
+textarea,
+[contenteditable="true"] {
+    -webkit-touch-callout : default;
+    -webkit-user-select   : text;
+    user-select           : text;
+}

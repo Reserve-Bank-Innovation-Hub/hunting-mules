@@ -1,0 +1,88 @@
+/* SECTION 2 — HOME PAGE: the keyboard the kiosk does not have.
+
+   Built from the game's own parts: keys are the hairline panels used everywhere
+   else, and the one that starts the round is the lime key that already means
+   "go". Nothing new is introduced for it.
+   ========================================================================== */
+
+.osk {
+    display        : flex;
+    flex-direction : column;
+    align-items    : center;
+    gap            : clamp(6px, 0.9vh, 12px);
+    width          : min(880px, 94%);
+    margin         : clamp(18px, 2.6vh, 44px) auto 0;
+    font-family    : var(--font-toon);
+}
+
+.osk-row {
+    display         : flex;
+    justify-content : center;
+    gap             : clamp(5px, 0.7vw, 10px);
+    width           : 100%;
+}
+
+/* A key is a hairline panel, and big enough to hit without looking — this is
+   read and tapped standing up, by somebody who has never seen it before. */
+.osk-key {
+    flex             : 1 1 0;
+    min-width        : 0;
+    height           : clamp(46px, 6.4vh, 78px);
+    padding          : 0;
+    border           : 1px solid var(--hairline);
+    border-radius    : 10px;
+    background-color : var(--bg-lift);
+    color            : var(--ink);
+    font-family      : var(--font-toon);
+    font-size        : clamp(15px, 2vh, 24px);
+    font-weight      : 700;
+    letter-spacing   : 0.02em;
+    cursor           : pointer;
+    transition       : filter 120ms ease-out, transform 120ms ease-out;
+}
+
+.osk-key:active {
+    transform : translateY(1px);
+    filter    : brightness(1.5);
+}
+
+/* Backspace and space carry words rather than a letter, so they are given the
+   room for them and set a step down */
+.osk-key.is-wide {
+    flex      : 1.6 1 0;
+    font-size : clamp(12px, 1.5vh, 17px);
+}
+
+.osk-key.is-back  { color : var(--red-text); }
+.osk-key.is-space { letter-spacing : 0.14em; }
+
+/* THE WAY OUT /////////////////////////////////////////////////////////////// */
+/* The same lime key as START on the page itself, so there is one thing that
+   means "begin" rather than two that look different. */
+.osk-key.is-go {
+    flex           : 0 0 auto;
+    min-width      : clamp(180px, 26%, 300px);
+    background-color : var(--line-lime);
+    border-color   : var(--line-lime);
+    color          : var(--ink-invert);
+    font-size      : clamp(15px, 2vh, 24px);
+    font-weight    : 900;
+    letter-spacing : 0.1em;
+}
+
+.osk-key.is-go.is-waiting {
+    opacity        : 0.34;
+    cursor         : not-allowed;
+    pointer-events : none;
+}
+
+/* The keyboard replaces the page's own START, so that one steps aside while it
+   is up — two of them, one above the other, is one too many. */
+#page-home.has-osk #start-holder {
+    display : none;
+}
+
+@media screen and (max-width : 768px) {
+    /* A phone brings its own keyboard; this should never be reached there */
+    .osk { display : none; }
+}

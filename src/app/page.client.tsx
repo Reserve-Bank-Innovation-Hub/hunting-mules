@@ -13,9 +13,11 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoa
 // LIB =================================================================================================================
 import { cleanName, fetchLeaderboard, isNameTaken, LeaderboardEntry, MAX_NAME_LENGTH } from "$lib/leaderboard";
 import { withEddMode } from "$lib/eddMode";
+import { needsOwnKeyboard } from "$lib/kioskMode";
 
 // LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
+import { OnScreenKeyboard } from "$components/OnScreenKeyboard/OnScreenKeyboard";
 
 // ASSETS ==============================================================================================================
 import IntroSound from "../assets/sounds/intro.wav";
@@ -43,8 +45,13 @@ const HomePage = () => {
     // once here so they can be carried into the round.
     const [ search, setSearch ] = React.useState("");
 
+    // Whether this machine raises a keyboard of its own. A kiosk usually does not,
+    // so the page brings one — see lib/kioskMode.
+    const [ ownKeyboard, setOwnKeyboard ] = React.useState(false);
+
     useEffect(() => {
         setSearch(window.location.search);
+        setOwnKeyboard(needsOwnKeyboard(window.location.search));
         fetchLeaderboard()
             .then(setBoard)
             // A board that cannot be read must not stop anyone playing. The server
@@ -83,7 +90,7 @@ const HomePage = () => {
         <>
             {!audioStarted && <SplashScreen onStart={handleStartAudio} />}
 
-            <Article id="page-home" verticalPadding="tiny">
+            <Article id="page-home" className={ownKeyboard ? "has-osk" : ""} verticalPadding="tiny">
                 <Row horizontalPadding="micro">
                     <Portion>
                         <Div id="logo-holder" horizontallyCentreThis>
@@ -172,6 +179,8 @@ const HomePage = () => {
                                     autoCorrect="off"
                                     autoCapitalize="words"
                                     spellCheck={false}
+                                    inputMode={ownKeyboard ? "none" : "text"}
+                                    enterKeyHint="go"
                                     aria-invalid={isTaken}
                                     onChange={event => setPlayerName(event.target.value)}
                                     onKeyDown={event => {
@@ -191,6 +200,20 @@ const HomePage = () => {
                             )}
                         </Div>
                     </Portion>
+
+                    {/* THE KEYBOARD ///////////////////////////////////////////////////////////////////////// */}
+                    {/* Only where the machine has none of its own */}
+                    {ownKeyboard && (
+                        <Portion>
+                            <OnScreenKeyboard
+                                value={playerName}
+                                onChange={setPlayerName}
+                                onSubmit={() => { if (canStart) window.location.href = gameHref; }}
+                                canSubmit={canStart}
+                                maxLength={MAX_NAME_LENGTH}
+                            />
+                        </Portion>
+                    )}
 
                     <Portion>
                         <Div id="start-holder" horizontallyCentreThis>

@@ -85,3 +85,16 @@ Extra knobs on `?preview=`:
 - `&edd=off` — skip the World Map and Investigation Cards entirely.
 
 Example: `localhost:3000/game?preview=edd&score=3`
+
+## The kiosk's own keyboard
+
+A kiosk touchscreen usually raises no keyboard — Chrome on Windows only does it
+in tablet mode — so the name field could be tapped and focused and still leave
+the player unable to type. The page brings its own (`components/OnScreenKeyboard`).
+
+It turns itself on for a **coarse pointer on a viewport 900px or wider**: a
+touchscreen that is not a phone. Phones and desktops keep their native keyboard.
+`?kiosk=on` / `?kiosk=off` forces it either way, the same as `?edd=`.
+
+When it is on, the input carries `inputMode="none"` so a tablet does not raise
+a second keyboard over the top of it.
