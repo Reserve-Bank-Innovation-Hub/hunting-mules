@@ -136,9 +136,13 @@
 /* SIZES ///////////////////////////////////////////////////////////////////// */
 /* Three widths, because there are three jobs: a tutorial to read, a brief to
    act on, and a file to decide on. Nothing else sets its own width. */
-.icard.is-narrow { width : min(560px, 90vw); }
-.icard.is-medium { width : min(680px, 92vw); }
-.icard.is-wide   { width : min(860px, 92vw); }
+/* Width comes from the container, not the viewport. A vw width inside a padded
+   parent is wider than the parent, so it hangs off one edge and margin:auto has
+   nothing left to centre — which is how the brief ended up 23px from the left
+   and 8px from the right. */
+.icard.is-narrow { width : 100%; max-width : 560px; }
+.icard.is-medium { width : 100%; max-width : 680px; }
+.icard.is-wide   { width : 100%; max-width : 860px; }
 
 /* WHAT A CARD SITS ON /////////////////////////////////////////////////////// */
 /* The screen behind stays visible — it is what the card is about. Dark enough

@@ -19,6 +19,10 @@
     color           : var(--ink);
     cursor          : pointer;
     pointer-events  : auto;
+    /* Tapping quickly on a phone was triggering double-tap zoom, which resizes the
+       container and made the board rebuild mid-round. This also drops the 300ms
+       tap delay, so fast play feels immediate rather than laggy. */
+    touch-action    : manipulation;
     z-index         : 10;
     position        : relative;
     overflow        : visible;
@@ -146,6 +150,11 @@
 
 @media screen and (max-width : 768px) {
     .account-node .account-balance {
-        padding : 1px 5px;
+        /* Sized against the phone's smaller disc — at the kiosk size it was wider
+           than the account it belongs to */
+        top         : calc(100% + 2px);
+        padding     : 1px 4px;
+        font-size   : 9px;
+        line-height : 1.25;
     }
 }

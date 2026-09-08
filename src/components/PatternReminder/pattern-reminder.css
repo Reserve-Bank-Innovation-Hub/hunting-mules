@@ -158,3 +158,51 @@
     /* The diagram is the first thing to go when there is no room for it */
     .pattern-strip-diagram { display : none; }
 }
+
+
+/* ON A PHONE ================================================================
+   Half the screen wide, beside the figures. The three zones stack instead of
+   sitting in a row, and the diagram goes — there is no room for it and the
+   words already say the shape.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    .pattern-strip {
+        flex-direction : column;
+        align-items    : flex-start;
+        gap            : 3px;
+        padding        : 7px 9px;
+        border-radius  : 12px;
+    }
+
+    .pattern-strip-case {
+        flex-direction : row;
+        align-items    : center;
+        gap            : 6px;
+    }
+
+    .pattern-strip-no {
+        font-size : 7px !important;
+    }
+
+    .pattern-strip-pill {
+        padding     : 3px 8px !important;
+        font-size   : 10px !important;
+        line-height : 1.25;
+    }
+
+    /* The zones are stacked now, so the dividers between them would be lying */
+    .pattern-strip-instruction::before,
+    .pattern-strip-diagram::before {
+        display : none;
+    }
+
+    .pattern-strip-instruction {
+        display        : flex;
+        flex-direction : column;
+        align-items    : flex-start;
+        gap            : 0;
+    }
+
+    .pattern-strip-lead  { font-size : 7px !important; letter-spacing : 0.08em; }
+    .pattern-strip-shape { font-size : 12px !important; line-height : 1.2; }
+}

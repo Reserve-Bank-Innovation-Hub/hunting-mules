@@ -35,8 +35,6 @@ export interface TransactionInstance {
     // and which way. Counterparties are deliberately left alone — see behaviours.ts.
     movesBalance      ? : boolean;
     isInflowToHolder  ? : boolean;
-    isBounced     ? : boolean;   // Turned around mid-flight, already on screen and scaled up
-    isReturnLeg   ? : boolean;   // Born as a return journey, so it animates in from scratch
     startTime     ? : number;
 }
 

@@ -138,8 +138,8 @@ export const useTransactions = ({
         }
 
         // An account can only pay away what it is actually holding. This matters when
-        // part of a routine was interrupted — money bounced off a mule the player had
-        // already caught, say — because the pay-away leg was sized for the whole lot.
+        // part of a routine was interrupted — the middle of it landed on an account
+        // the player had already frozen — because the pay-away leg was sized for the lot.
         // Without this the account would hand over money it never received, and every
         // interrupted routine would quietly drain a balance towards zero.
         let amount = planned.amount;
@@ -399,30 +399,16 @@ export const useTransactions = ({
             return;
         }
 
-        // A bounce has already done its job by getting the money home
-        if (completed.isBounced || completed.isReturnLeg) {
-            return;
-        }
-
         const amount = completed.amountValue ?? 0;
         // Same reasoning as the stamp: a caught account is no longer flagged as a
         // mule, so being locked is the whole test
         const hitAFrozenMule = lockedRef.current.has(completed.toNode.id);
 
-        // Money aimed at a mule the player has already caught is turned away at the door
+        // Money aimed at an account the player has already caught is stopped there:
+        // it never lands, so no balance moves and nothing is added to the stolen
+        // figure. The ripple on the frozen account is what says so.
         if (hitAFrozenMule) {
-            const bounce : TransactionInstance = {
-                id          : `bounce-${Date.now()}-${Math.random()}`,
-                fromNode    : completed.toNode,
-                toNode      : completed.fromNode,
-                amount      : completed.amount,
-                amountValue : amount,
-                isReturnLeg : true,
-                startTime   : Date.now(),
-            };
-
             createRipple(completed.toNode.id, completed.toNode.position.x, completed.toNode.position.y, true, false);
-            setTimeout(() => setActiveTransactions(prev => [ ...prev, bounce ]), 250);
             return;
         }
 

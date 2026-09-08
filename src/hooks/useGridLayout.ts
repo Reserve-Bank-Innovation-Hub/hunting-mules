@@ -47,13 +47,34 @@ export const useGridLayout = () : UseGridLayoutReturn => {
         setNetwork,
     } : SetupGridOptions) => {
 
+        // Below this the container cannot have been laid out yet — no usable board is
+        // this small, so there is nothing to be gained by measuring it
+        const SMALLEST_USABLE = 160;
+
         const calculateGrid = () => {
             if (!containerRef.current) {
                 return;
             }
 
+            // MEASURED AGAIN, AND CHECKED AGAIN ==========================================
+            // considerSize approved a size 60ms ago; this is a fresh measurement, and it
+            // can disagree. On a phone it routinely does — tapping quickly collapses the
+            // URL bar, or triggers a double-tap zoom, and the container is mid-transition
+            // when this runs. A collapsed container yields zero rows, an empty gridNodes,
+            // and setBaseNodes([]) then wiped every account off the board while the
+            // transactions already in flight carried on drawing themselves.
+            //
+            // A bad measurement is not a reason to throw the board away. Leave it alone
+            // and wait for the observer to report a real size.
             const rect = containerRef.current.getBoundingClientRect();
+            if (rect.width < SMALLEST_USABLE || rect.height < SMALLEST_USABLE) {
+                return;
+            }
+
             const dimensions = calculateGridDimensions(rect);
+            if (dimensions.rows < 1 || dimensions.columns < 1) {
+                return;
+            }
             const gridConfig = getGridConfig();
             setGridDimensions(dimensions);
 
@@ -146,6 +167,11 @@ export const useGridLayout = () : UseGridLayoutReturn => {
             // Draw the relationships. Every transaction later travels one of these lines.
             setNetwork(buildNetwork(gridNodes));
 
+            // Never publish an empty board, whatever led here
+            if (gridNodes.length === 0) {
+                return;
+            }
+
             setBaseNodes(gridNodes);
             // Small delay to show loading state
             setTimeout(() => {
@@ -163,10 +189,6 @@ export const useGridLayout = () : UseGridLayoutReturn => {
         // whenever it arrives, and any later change rebuilds it the same way.
         let built : { width : number; height : number } | null = null;
         let settle : ReturnType<typeof setTimeout>;
-
-        // Below this the container cannot have been laid out yet — no usable board is
-        // this small, so there is nothing to be gained by measuring it
-        const SMALLEST_USABLE = 160;
 
         const considerSize = (width : number, height : number) => {
             if (width < SMALLEST_USABLE || height < SMALLEST_USABLE) {

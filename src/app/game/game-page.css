@@ -17,6 +17,7 @@
     /* scorecard · reminder strip · network · score area pinned to the bottom 15% */
     grid-template-rows    : auto auto 1fr 15vh;
     height                : 100vh;
+    height                : 100svh;
     gap                   : 16px;
     padding               : 24px;
     font-family           : var(--font-toon);
@@ -74,5 +75,76 @@
 
     p, h6 {
         font-size : 72%;
+    }
+}
+
+
+/* ON A PHONE ================================================================
+   The kiosk has 1920px of height to spend and a phone has about 750, so the
+   same stack leaves almost nothing for the board — which is the one thing the
+   player actually needs to see.
+
+   The two top bars go side by side instead of stacked, the leaderboard shrinks
+   to the player's own row, and everything that was sized for a metre-tall
+   screen is pulled in. Nothing here applies above 768px, so the kiosk is
+   untouched.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    #game-page {
+        /* Two columns for the top bars; the board and the strip below span both */
+        grid-template-columns : 1fr 1fr;
+        grid-template-rows    : auto 1fr auto;
+        gap                   : 6px;
+        /* Reaches under the notch and the home indicator, then pays them back */
+        padding               : calc(6px + env(safe-area-inset-top)) calc(6px + env(safe-area-inset-right))
+                                calc(6px + env(safe-area-inset-bottom)) calc(6px + env(safe-area-inset-left));
+    }
+
+    #scorecard     { grid-column : 1;      grid-row : 1; margin : 0; }
+    .pattern-strip { grid-column : 2;      grid-row : 1; }
+    #play-area     { grid-column : 1 / -1; grid-row : 2; min-height : 0; }
+    #score-area    { grid-column : 1 / -1; grid-row : 3; }
+
+    /* THE FIGURES, IN HALF THE WIDTH ///////////////////////////////////////// */
+    /* Four metrics as a 2x2 with the label over the number, rather than four
+       full-width rows — the stacked list alone was taking a fifth of the screen. */
+    #scorecard > * {
+        padding : 0 !important;
+        margin  : 0 !important;
+        width   : 100% !important;
+    }
+
+    #scorecard .metric-card {
+        display               : grid !important;
+        grid-template-columns : 1fr 1fr;
+        gap                   : 2px 6px;
+        padding               : 7px 9px !important;
+        border-radius         : 12px;
+    }
+
+    #scorecard .metric-card > div {
+        display        : flex !important;
+        flex-direction : column;
+        align-items    : flex-start !important;
+        justify-content : center;
+        gap            : 0 !important;
+        min-width      : 0;
+    }
+
+    #scorecard .metric-card p {
+        font-size      : 7px !important;
+        letter-spacing : 0.08em;
+        white-space    : nowrap;
+        overflow       : hidden;
+        text-overflow  : ellipsis;
+        max-width      : 100%;
+    }
+
+    #scorecard .metric-card h5,
+    #scorecard .metric-card h6 {
+        font-size   : 14px !important;
+        line-height : 1.15;
+        margin      : 0;
+        white-space : nowrap;
     }
 }

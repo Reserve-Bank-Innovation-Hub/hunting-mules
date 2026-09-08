@@ -145,10 +145,14 @@ export const getGridConfig = () => {
     const isMobile = window.innerWidth < 768;
 
     return {
-        CIRCLE_SIZE            : isMobile ? 48 : 64,
+        // A phone is about a fifth of the kiosk's width, so the kiosk's disc is
+        // proportionally enormous there — it was eating the space the player
+        // needs to see a pattern across. The board still targets the same number
+        // of accounts, so a smaller disc buys room between them, not more of them.
+        CIRCLE_SIZE            : isMobile ? 34 : 64,
         // Room under every account for its balance chip, at any screen size
-        MIN_SPACING            : isMobile ? 34 : 42,
-        PADDING                : isMobile ? 28 : 46,
+        MIN_SPACING            : isMobile ? 22 : 42,
+        PADDING                : isMobile ? 10 : 46,
         MAX_CELLS              : 100,                 // Maximum total cells the screen may hold at full density
         MIN_CELLS              : 12,
         TARGET_CELLS           : ACCOUNT_COUNT,

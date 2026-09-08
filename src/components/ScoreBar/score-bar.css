@@ -91,8 +91,9 @@
     position         : fixed;
     left             : 0;
     bottom           : 0;
-    width            : 100vw;
+    width            : 100%;
     height           : 100vh;
+    height           : 100svh;
     border-radius    : 0;
     border           : none;
     box-shadow       : none;
@@ -104,12 +105,13 @@
 
 @keyframes score-bar-rise {
     from { height : 15vh; }
-    to   { height : 100vh; }
+    to   { height : 100svh; }
 }
 
 .score-bar-result {
     /* Never taller than the screen it is shown on */
     max-height      : 100vh;
+    max-height      : 100svh;
     overflow        : hidden;
     display         : flex;
     flex-direction  : column;
@@ -424,4 +426,96 @@
     color  : var(--ink-soft);
     width  : clamp(24px, 2.7vw, 36px);
     height : auto;
+}
+
+
+/* ON A PHONE ================================================================
+   One row — the player's own — and nothing else. The band was showing four
+   places and a set of column headings on a screen with no height to spare, and
+   during play the only thing a player wants from it is where they stand.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    #score-area .score-bar {
+        border-radius : 12px;
+    }
+
+    .score-bar-playing {
+        gap     : 0;
+        padding : 3px 6px;
+    }
+
+    /* The heading and the column labels both say what the row already shows */
+    .score-bar-playing .score-bar-playing-title,
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-headings,
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-gap {
+        display : none !important;
+    }
+
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-row {
+        padding       : 5px 10px;
+        border-radius : 8px;
+    }
+
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-position { font-size : 12px; }
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-name     { font-size : 11px; }
+    .score-bar-playing .leaderboard.is-blocks .leaderboard-score    { font-size : 13px; }
+}
+
+
+/* THE RESULT, ON A PHONE ====================================================
+   The panel was running off the top of the screen — the graphic, the name and
+   three figure tiles are sized for the kiosk. Pulled in so the score, the
+   button and a few places all land in one screen.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    .score-bar.is-result {
+        padding : calc(8px + env(safe-area-inset-top)) 10px
+                  calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .score-bar-result {
+        justify-content : flex-start;
+        gap             : 0;
+    }
+
+    .score-bar-result-graphic {
+        width      : min(90px, 13svh) !important;
+        max-height : 13svh;
+        margin     : 0 auto 2px !important;
+    }
+
+    .score-bar-result-lead { font-size : 11px !important; letter-spacing : 0.16em; }
+    .score-bar-result-name { font-size : clamp(26px, 6.4svh, 46px) !important; margin : 2px 0 !important; }
+    .score-bar-result-sub  { font-size : 9px !important; }
+
+    .score-bar-result-figures {
+        gap        : 6px;
+        margin-top : 8px !important;
+    }
+
+    .score-bar-figure {
+        padding       : 7px 6px !important;
+        border-radius : 10px;
+    }
+
+    .score-bar-figure-label { font-size : 7px !important; line-height : 1.25; }
+    .score-bar-figure-value { font-size : 19px !important; }
+    .score-bar-figure-icon  { width : 15px !important; }
+
+    .score-bar-result .toon-btn {
+        padding   : 10px 26px !important;
+        font-size : 14px !important;
+    }
+
+    .score-bar-board       { margin-top : 8px; }
+    .score-bar-board-title { font-size : 12px !important; }
+    .score-bar-board-head  { margin-bottom : 5px; }
+
+    .score-bar-board .leaderboard.is-blocks .leaderboard-row {
+        padding       : 5px 9px;
+        border-radius : 8px;
+    }
+    .score-bar-board .leaderboard.is-blocks .leaderboard-position { font-size : 12px; }
+    .score-bar-board .leaderboard.is-blocks .leaderboard-name     { font-size : 11px; }
+    .score-bar-board .leaderboard.is-blocks .leaderboard-score    { font-size : 13px; }
 }

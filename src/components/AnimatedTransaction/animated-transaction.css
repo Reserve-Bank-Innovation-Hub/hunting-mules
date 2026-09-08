@@ -7,27 +7,12 @@
     will-change      : transform;
     pointer-events   : none;
     padding          : 6px 12px !important;
-    /* One soft shadow, not two heavy ones. A dozen of these cross the board at a
-       time; at the old weight each cast a card-sized halo and every ordinary payment
-       read as something worth reacting to. The label keeps its size and its lift —
-       it just stops announcing itself. */
+    /* Every payment is drawn the same. The teal cue line already marks the ones
+       belonging to the live pattern; picking the amount out as well said it twice
+       and cost the player the one clean signal by giving them two. */
     border           : 1px solid var(--hairline);
-    /* Ordinary traffic. Quiet on purpose: a dozen of these cross the board at a
-       time, and if they all announce themselves the pattern cannot be seen. */
-    opacity          : 0.72;
     transform-origin : center center;
     transition       : background-color 0.3s ease, border-color 0.3s ease;
-
-    &.bounced {
-        background-color : rgba(239, 68, 68, 0.20);
-        border           : 1px solid var(--bad);
-        box-shadow       : none;
-        animation        : bounce-pulse 0.5s ease-in-out;
-
-        p {
-            color : #FCA5A5;
-        }
-    }
 
     p {
         font-family : var(--font-toon);
@@ -43,49 +28,4 @@
     }
 }
 
-@keyframes bounce-pulse {
-    0%, 100% {
-        transform : scale(1);
-    }
-    50% {
-        transform : scale(1.2);
-    }
-}
 
-@keyframes spin-bounce {
-    0% {
-        transform : rotate(0deg) scale(1);
-    }
-    50% {
-        transform : rotate(-180deg) scale(1.3);
-    }
-    100% {
-        transform : rotate(-360deg) scale(1);
-    }
-}
-
-
-/* PART OF THE PATTERN ======================================================
-   The whole game is telling one movement apart from ordinary traffic, so the
-   transactions belonging to the live pattern are the ones that carry weight —
-   full strength, a lime rim and a trace of lime under them, against neighbours
-   held back at 0.72.
-
-   One shadow and one border. The separation comes from the contrast with
-   everything around it, not from the effect itself. */
-.transaction-card.is-pattern {
-    opacity      : 1;
-    border-color : rgba(190, 242, 100, 0.55);
-    box-shadow   : 0 0 20px -6px rgba(190, 242, 100, 0.45);
-
-    p { color : var(--lime-text); }
-}
-
-/* A bounced payment is a mule refusing money it cannot take — suspicious, so it
-   keeps red and outranks the lime */
-.transaction-card.bounced.is-pattern {
-    border-color : var(--bad);
-    box-shadow   : 0 0 20px -6px rgba(239, 68, 68, 0.45);
-
-    p { color : #FCA5A5; }
-}

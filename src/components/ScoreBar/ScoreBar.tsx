@@ -92,6 +92,24 @@ interface ScoreBarProps {
 }
 
 /**
+ * Whether this is a phone. Read after mount, so the server and the first client
+ * render agree; a phone simply gets its one row on the next paint.
+ */
+const usePhone = () => {
+    const [ isPhone, setIsPhone ] = useState(false);
+
+    useEffect(() => {
+        const query = window.matchMedia("(max-width: 768px)");
+        const sync = () => setIsPhone(query.matches);
+        sync();
+        query.addEventListener("change", sync);
+        return () => query.removeEventListener("change", sync);
+    }, []);
+
+    return isPhone;
+};
+
+/**
  * The bottom band: the live catch count alongside the standings, growing to fill
  * the screen once the 80 seconds are up and becoming the result.
  *
@@ -113,6 +131,7 @@ export const ScoreBar = ({
     // The board was pinned at four rows on a screen with room for three times
     // that, so most of the panel was empty and the player could not see who else
     // was on it. Measured from the space the board is actually given.
+    const isPhone = usePhone();
     const boardRef = useRef<HTMLDivElement>(null);
     const [ boardRows, setBoardRows ] = useState(4);
 
@@ -152,7 +171,7 @@ export const ScoreBar = ({
                         watches while playing is the board they end on */}
                     <Leaderboard
                         rows={rows}
-                        visibleRows={4}
+                        visibleRows={isPhone ? 1 : 4}
                         isConnected={isConnected}
                         variant="blocks"
                     />

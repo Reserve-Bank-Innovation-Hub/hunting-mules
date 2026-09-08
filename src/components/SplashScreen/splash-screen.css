@@ -2,10 +2,11 @@
 
 .splash-screen-overlay {
     position         : fixed;
-    top              : 0;
-    left             : 0;
-    width            : 100vw;
+    /* Inset rather than sized. `width: 100vw` counts the scrollbar, so on a page
+       that scrolls it is wider than the page and shunts everything sideways. */
+    inset            : 0;
     height           : 100vh;
+    height           : 100svh;
     background : rgba(1, 4, 9, 0.97);
     font-family : var(--font-toon);
     display          : flex;
@@ -27,5 +28,50 @@
             width         : 260px;
             margin-bottom : 40px;
         }
+    }
+}
+
+
+/* ON A PHONE ================================================================
+   Everything here was sized for a screen a metre tall — a 260px logo and a
+   40px margin under it are most of a phone's height on their own. Sized off
+   the viewport instead, so the whole thing lands in one screen with no scroll.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    .splash-screen-overlay {
+        /* Opaque. It sits over the home page, and at 0.97 the brief and the name
+           field were ghosting through behind the mule. */
+        background : var(--bg-deep);
+        padding    : calc(12px + env(safe-area-inset-top)) 16px
+                     calc(12px + env(safe-area-inset-bottom));
+
+        #click-to-start {
+            width : 100%;
+            gap   : clamp(8px, 1.6vh, 18px);
+
+            svg {
+                width         : min(200px, 58%);
+                margin-bottom : 0;
+            }
+        }
+    }
+
+    /* The mule takes whatever is left once the wordmark, the credit and the
+       prompt have had theirs — it is the one element that can give */
+    .splash-screen-overlay #hero-background-video {
+        width      : min(100%, 46svh);
+        height     : auto;
+        aspect-ratio : 1;
+        object-fit : contain;
+        border-radius : 12px;
+    }
+
+    .splash-screen-overlay #mule-hunter-logo {
+        width : 92%;
+    }
+
+    .splash-screen-overlay p {
+        font-size : 13px !important;
+        margin    : 0;
     }
 }

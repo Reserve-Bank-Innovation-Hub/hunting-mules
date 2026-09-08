@@ -128,9 +128,15 @@ export const useNodeInteractions = ({
             balancesRef.current,
         );
 
-        setMuleRoles(() => {
-            const next = new Map(remaining);
-            if (replacement) {
+        // Derived from prev, not from the ref. Two accounts caught in the same tick
+        // both read the same rolesRef, so the second write was rebuilding the map
+        // from state that predated the first and quietly undoing it — the board lost
+        // a mule per double-tap. The replacement is still worked out once, above, so
+        // running this updater twice cannot recruit twice.
+        setMuleRoles(prev => {
+            const next = new Map(prev);
+            next.delete(nodeId);
+            if (replacement && !next.has(replacement.nodeId)) {
                 next.set(replacement.nodeId, replacement.behaviour);
             }
             return next;
@@ -141,23 +147,10 @@ export const useNodeInteractions = ({
             setNodeBalances(prev => new Map(prev).set(replacement.nodeId, restingBalance()));
         }
 
-        // Money already on its way to this mule is turned around mid-flight
-        const bouncedAt = Date.now();
-        setActiveTransactions(transactions =>
-            transactions.map(transaction => {
-                if (transaction.toNode.id === nodeId && !transaction.isBounced) {
-                    return {
-                        ...transaction,
-                        isBounced : true,
-                        // Swap the from and to nodes to reverse direction
-                        fromNode  : transaction.toNode,
-                        toNode    : transaction.fromNode,
-                        startTime : bouncedAt,   // Reset animation start time
-                    };
-                }
-                return transaction;
-            }),
-        );
+        // Money already on its way to this account simply does not arrive. It used
+        // to be turned around and flown home as a red pill, which was the only sign
+        // a freeze had done anything — but four of them leaving one account at once
+        // read as noise rather than as feedback.
 
         // The account stays shut down for the rest of the round — stamped, frozen and
         // out of play. It is the player's record of the catch, and it is the reason

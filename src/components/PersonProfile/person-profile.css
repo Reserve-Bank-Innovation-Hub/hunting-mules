@@ -369,3 +369,104 @@
     height  : 100%;
     color   : var(--house-hue);
 }
+
+
+/* ON A PHONE ================================================================
+   The person's card had a 230px floor, which on a 390px screen left about a
+   hundred pixels for the file — the facts were wrapping two words to a line and
+   were effectively unreadable.
+
+   So the proportions inverse: the person becomes a narrow strip of the width,
+   because a silhouette reads perfectly small, and everything the player has to
+   READ takes the rest.
+   ========================================================================== */
+@media screen and (max-width : 768px) {
+    .profile-spread {
+        width      : 94%;
+        max-height : 92svh;
+        gap        : 6px;
+    }
+
+    .profile-spread .icard {
+        --icard-pad : 10px;
+        --icard-gap : 6px;
+        border-radius : 12px;
+    }
+
+    /* A third of the width, and no pixel floor to fight the phone with */
+    .profile-who-card {
+        flex            : 0 0 31%;
+        justify-content : flex-start;
+        padding-top     : 30px !important;
+    }
+
+    .profile-who-card .profile-house {
+        top   : 8px;
+        right : 8px;
+        left  : 8px;
+        padding        : 4px 6px;
+        font-size      : 9px !important;
+        letter-spacing : 0.08em;
+        text-align     : center;
+    }
+
+    .profile-portrait {
+        max-width  : 100%;
+        min-height : 0;
+        border-radius : 10px;
+        padding    : 4px;
+    }
+
+    .profile-subject     { font-size : 8px !important; line-height : 1.3; }
+    .profile-visit-count { font-size : 7px !important; }
+
+    /* THE FILE, WITH THE ROOM IT NEEDS //////////////////////////////////////// */
+    .profile-file-card {
+        overflow-y : auto;
+    }
+
+    .profile-facts-label {
+        padding   : 4px 10px;
+        font-size : 9px !important;
+    }
+
+    .profile-findings { gap : 0; }
+
+    .profile-finding {
+        grid-template-columns : 1fr !important;
+        gap           : 1px !important;
+        padding-bottom : 5px;
+        margin-bottom  : 5px;
+    }
+
+    .profile-finding dt { font-size : 8px !important;  letter-spacing : 0.08em; }
+    .profile-finding dd { font-size : 12px !important; line-height : 1.35; }
+
+    .profile-reason {
+        margin  : 8px 0;
+        padding : 7px 9px;
+        border-radius : 9px;
+    }
+
+    .profile-reason-lead    { font-size : 7px !important; }
+    .profile-reason-pattern { font-size : 12px !important; }
+
+    .profile-verdict-question { font-size : 9px !important; }
+
+    .profile-verdict-options {
+        gap : 6px;
+    }
+
+    .profile-spread .toon-btn {
+        padding        : 8px 12px !important;
+        font-size      : 11px !important;
+        letter-spacing : 0.02em;
+    }
+
+    .profile-spread .toon-btn-caption { font-size : 6px !important; }
+
+    .profile-foot        { font-size : 8px !important; line-height : 1.3; }
+    .profile-reveal-stamp  { font-size : 15px !important; }
+    .profile-reveal-status { font-size : 8px !important; }
+    .profile-reveal-text   { font-size : 12px !important; line-height : 1.4; }
+}
