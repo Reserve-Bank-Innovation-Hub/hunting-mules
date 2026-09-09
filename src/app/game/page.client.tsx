@@ -32,6 +32,7 @@ import { useTransactions } from "$hooks/useTransactions";
 // LIB =================================================================================================================
 import { EDD_ENABLED, EDD_VISITS } from "$lib/gameConfig";
 import { readEddEnabled, withEddMode } from "$lib/eddMode";
+import { withRotation } from "$lib/rotation";
 import { PATTERNS, PatternBehaviour, TOTAL_PATTERNS } from "$lib/roundConfig";
 import { cleanName } from "$lib/leaderboard";
 
@@ -349,7 +350,7 @@ const GamePage = () => {
                     mulesFoundCount={gameState.mulesFoundCount}
                     isFinished={gameState.phase === "finished"}
                     eddCorrect={gameState.eddCorrect}
-                    playAgainHref={withEddMode("/", search)}
+                    playAgainHref={withRotation(withEddMode("/", search), search)}
                     playerName={playerName}
                     rows={leaderboard.rows}
                     position={leaderboard.position}

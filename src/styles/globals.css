@@ -255,3 +255,77 @@ textarea,
     -webkit-user-select   : text;
     user-select           : text;
 }
+
+
+/* A SCREEN HUNG SIDEWAYS ====================================================
+   The kiosk panel is mounted portrait while the machine still drives it as
+   landscape, so the browser hands us a wide viewport and the game lands on its
+   side. Turned here with ?rotate=left (see lib/rotation.ts).
+
+   The frame is the viewport transposed — as wide as the viewport is tall, and
+   as tall as it is wide — then rotated about its own corner so it lands back
+   over the screen. Rotating the frame rather than the page means hit-testing
+   comes with it, so taps land where they look.
+
+   Marked with an ATTRIBUTE rather than a class: fictoan's ThemeProvider assigns
+   className on <html> when it mounts, which wiped a class set before paint — and
+   before paint is exactly when this has to be set, or the board is measured for
+   the unturned shape and ends up in the corner of the turned one.
+
+   Without the flag this is `display: contents`: no box, no effect, nothing to
+   go wrong on a phone or a normal screen.
+   ========================================================================== */
+
+#rotate-frame {
+    display : contents;
+}
+
+html[data-rotate],
+html[data-rotate] body {
+    width    : 100%;
+    height   : 100%;
+    overflow : hidden;
+}
+
+html[data-rotate] #rotate-frame {
+    display          : block;
+    position         : fixed;
+    width            : 100vh;   /* transposed on purpose */
+    height           : 100vw;
+    transform-origin : 0 0;
+    overflow         : hidden;
+}
+
+/* Anticlockwise: the frame starts at the bottom-left corner and swings up */
+html[data-rotate="left"] #rotate-frame {
+    top       : 100vh;
+    left      : 0;
+    transform : rotate(-90deg);
+}
+
+/* Clockwise: from the top-right corner, swinging down */
+html[data-rotate="right"] #rotate-frame {
+    top       : 0;
+    left      : 100vw;
+    transform : rotate(90deg);
+}
+
+/* WHAT THE TURN BREAKS ////////////////////////////////////////////////////// */
+/* Anything sized against the viewport is now measuring the wrong axis: a screen
+   the browser calls 1920x1080 is a 1080x1920 frame once it is turned. The full
+   height screens take their height from the frame instead.
+
+   A transform also makes the frame the containing block for `position: fixed`,
+   so the overlays below are already held to it rather than to the screen — they
+   only need their height corrected the same way. */
+html[data-rotate] #page-home,
+html[data-rotate] #game-page,
+html[data-rotate] .splash-screen-overlay,
+html[data-rotate] .icard-layer,
+html[data-rotate] .score-bar.is-result,
+html[data-rotate] .world-scene {
+    width      : 100%  !important;
+    height     : 100%  !important;
+    min-height : 0     !important;
+    max-height : none  !important;
+}

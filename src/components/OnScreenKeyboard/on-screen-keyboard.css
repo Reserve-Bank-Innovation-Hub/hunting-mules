@@ -88,21 +88,21 @@
    Keys shrink; the layout does not change.
    ========================================================================== */
 @media screen and (max-height : 1200px) {
-    .osk {
+    html:not([data-rotate]) .osk {
         gap        : 4px;
         margin-top : clamp(10px, 1.4vh, 20px);
         width      : min(760px, 96%);
     }
 
-    .osk-key {
+    html:not([data-rotate]) .osk-key {
         height        : clamp(32px, 4.4vh, 50px);
         border-radius : 8px;
         font-size     : clamp(12px, 1.6vh, 18px);
     }
 
-    .osk-key.is-wide { font-size : clamp(9px, 1.2vh, 13px); }
+    html:not([data-rotate]) .osk-key.is-wide { font-size : clamp(9px, 1.2vh, 13px); }
 
-    .osk-key.is-go {
+    html:not([data-rotate]) .osk-key.is-go {
         min-width : clamp(150px, 22%, 230px);
         font-size : clamp(12px, 1.6vh, 18px);
     }

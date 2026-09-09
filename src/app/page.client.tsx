@@ -14,6 +14,7 @@ import { Button, Portion, Row, Text, Article, Heading6, Div, Span } from "fictoa
 import { cleanName, fetchLeaderboard, isNameTaken, LeaderboardEntry, MAX_NAME_LENGTH } from "$lib/leaderboard";
 import { withEddMode } from "$lib/eddMode";
 import { needsOwnKeyboard } from "$lib/kioskMode";
+import { withRotation } from "$lib/rotation";
 
 // LOCAL COMPONENTS ====================================================================================================
 import SplashScreen from "../components/SplashScreen/SplashScreen";
@@ -61,7 +62,7 @@ const HomePage = () => {
 
     const isTaken = isNameTaken(board, trimmedName);
     const canStart = trimmedName.length > 0 && !isTaken;
-    const gameHref = withEddMode(`/game?player=${encodeURIComponent(trimmedName)}`, search);
+    const gameHref = withRotation(withEddMode(`/game?player=${encodeURIComponent(trimmedName)}`, search), search);
 
     useEffect(() => {
         // Create audio element

@@ -66,7 +66,12 @@ export const useGridLayout = () : UseGridLayoutReturn => {
             //
             // A bad measurement is not a reason to throw the board away. Leave it alone
             // and wait for the observer to report a real size.
-            const rect = containerRef.current.getBoundingClientRect();
+            // offsetWidth/Height, not getBoundingClientRect: the rect is the box as
+            // PAINTED, so with the screen turned it comes back transposed and the
+            // board was built landscape and then laid into a portrait container —
+            // five columns of accounts and a third of the screen left empty.
+            const element = containerRef.current;
+            const rect = {width : element.offsetWidth, height : element.offsetHeight};
             if (rect.width < SMALLEST_USABLE || rect.height < SMALLEST_USABLE) {
                 return;
             }
@@ -222,8 +227,7 @@ export const useGridLayout = () : UseGridLayoutReturn => {
 
         if (containerRef.current) {
             observer.observe(containerRef.current);
-            const rect = containerRef.current.getBoundingClientRect();
-            considerSize(rect.width, rect.height);
+            considerSize(containerRef.current.offsetWidth, containerRef.current.offsetHeight);
         }
 
         return () => {

@@ -2,7 +2,10 @@
 import { GridDimensions } from "./gameTypes";
 import { getGridConfig } from "./gameConfig";
 
-export const calculateGridDimensions = (containerRect : DOMRect) : GridDimensions => {
+/** Just the two numbers this needs, so a plain layout size can be passed in. */
+export interface ContainerSize { width : number; height : number; }
+
+export const calculateGridDimensions = (containerRect : ContainerSize) : GridDimensions => {
     const gridConfig = getGridConfig();
     const availableWidth = containerRect.width - (gridConfig.PADDING * 2);
     const availableHeight = containerRect.height - (gridConfig.PADDING * 2);

@@ -103,3 +103,32 @@ types into it. Phones are excluded; they raise a better one themselves.
 
 When it is on, the input carries `inputMode="none"` so a tablet does not raise
 a second keyboard over the top of it.
+
+## Turning the screen
+
+The kiosk panel is hung in portrait while the machine still drives it as
+landscape, so the browser reports a wide viewport and the game lands on its side.
+
+**The proper fix is to rotate the display in the OS** — the browser then reports a
+portrait viewport, every layout in here works as designed, and the OS corrects
+touch coordinates. `?rotate=` is the fallback for when that setting is out of
+reach.
+
+| URL | |
+|---|---|
+| `?rotate=left` | anticlockwise — the one this kiosk needs |
+| `?rotate=right` | clockwise, if the panel is hung the other way |
+| `?rotate=off` | back to normal, and forgets the setting |
+
+It is carried onto the next page like `?edd=`, and remembered for the tab, so it
+survives the jump from home into the round.
+
+Three things it costs, all handled, all easy to trip over again:
+
+- The turn must be set **before the first paint** — an inline script in the
+  layout, not an effect. The board is laid out from a measurement of its
+  container; set later, the grid is built for the unturned shape.
+- It is an **attribute**, not a class. Fictoan's ThemeProvider assigns
+  `className` on `<html>` when it mounts and wipes anything already there.
+- The grid measures `offsetWidth/Height`, not `getBoundingClientRect()`. The
+  rect is the box as *painted*, so under a rotation it comes back transposed.
