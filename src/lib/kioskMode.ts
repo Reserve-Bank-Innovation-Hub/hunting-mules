@@ -5,13 +5,21 @@
 // kiosk usually has none at all — so tapping the name field does nothing, and the
 // player cannot enter the game.
 //
-// Guessed rather than configured, so a kiosk works when it is switched on and
-// nobody has to remember a flag:
+// The test is the VIEWPORT WIDTH and nothing else.
 //
-//   coarse pointer  — it is a touchscreen, so there is no physical keyboard
-//   wide viewport   — it is not a phone, which has a perfectly good one already
+// It used to also require a coarse pointer, on the reasoning that a touchscreen
+// has no physical keyboard. That reasoning is sound and the test is not: kiosk
+// browsers report their pointer inconsistently, and plenty report `fine` — so on
+// the actual hardware the keyboard never appeared, which is the one place it had
+// to. A guess that fails silently on the only machine that needs it is worse than
+// no guess.
 //
-// Either way ?kiosk=on / ?kiosk=off settles it, the same way ?edd= does.
+// So: anything wider than a phone gets the keyboard. A laptop gets one it does
+// not need, which is harmless — the field is still a real input and a physical
+// keyboard still types into it. A phone is excluded because it already raises a
+// better one of its own.
+//
+// ?kiosk=on / ?kiosk=off settles it either way, the same as ?edd=.
 
 export const KIOSK_PARAM = "kiosk";
 
@@ -27,8 +35,7 @@ export const needsOwnKeyboard = (search : string) : boolean => {
         return false;
     }
 
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    return isTouch && window.innerWidth >= KIOSK_MIN_WIDTH;
+    return window.innerWidth >= KIOSK_MIN_WIDTH;
 };
 
 /** Carry an explicit ?kiosk= choice onto the next URL, the way ?edd= is carried. */

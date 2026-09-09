@@ -92,8 +92,13 @@ A kiosk touchscreen usually raises no keyboard — Chrome on Windows only does i
 in tablet mode — so the name field could be tapped and focused and still leave
 the player unable to type. The page brings its own (`components/OnScreenKeyboard`).
 
-It turns itself on for a **coarse pointer on a viewport 900px or wider**: a
-touchscreen that is not a phone. Phones and desktops keep their native keyboard.
+It turns itself on for **any viewport 900px or wider** — width alone, nothing
+else. It first also required a coarse pointer, which was sound reasoning and a
+useless test: kiosk browsers report their pointer inconsistently, so on the real
+hardware the keyboard never appeared. A laptop now gets one it does not need,
+which costs nothing — the field is a real input and a physical keyboard still
+types into it. Phones are excluded; they raise a better one themselves.
+
 `?kiosk=on` / `?kiosk=off` forces it either way, the same as `?edd=`.
 
 When it is on, the input carries `inputMode="none"` so a tablet does not raise
